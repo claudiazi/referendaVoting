@@ -1,0 +1,2281 @@
+{
+  "referenda": [
+    {
+      "id": "150",
+      "passed": false,
+      "block": 9979200,
+      "time": 1636214022034,
+      "totalIssuance": "11978603597089379331",
+      "votes": [
+        {
+          "balance": "60000000000",
+          "accountId": "E8Gips4w5F9PXj5P3RT6Q8fQWP5SrMjbxGMmWtYr7FgS77q",
+          "conviction": "Locked2x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "1716300000000",
+          "accountId": "GkoBEHaeai1DNJb4ehNXGVLM1sq1viz2z9LwsbnzpnenHZN",
+          "conviction": "Locked2x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "11100000000",
+          "accountId": "J4K2REgrrYZW6qQkjjAh9Dq2bgGfczoycBE7nVn3CgvLJdj",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "139175900000000",
+          "accountId": "EGVQCe73TpFyAZx5uKfE1222XfkT3BSKozjgcqzLBnc5eYo",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "100000000000",
+          "accountId": "Gw7WN1pS3aqWNTp3dtH94m7bEXrtn12aGLerW6jRqQnzK5N",
+          "conviction": "Locked6x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "0",
+          "accountId": "G4XtkL4Jj8GfYFWSSJpgKp8Uzsj9wahKgjMFHQwtV5JvEAX",
+          "conviction": "Locked2x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "500000000000000",
+          "accountId": "Fhjpz2V4fd4Cfoth6wTn7bnb35LwcKpKML8VTJct9hisvDG",
+          "conviction": "Locked2x",
+          "isAye": false,
+          "isNay": true,
+          "isEmpty": false
+        },
+        {
+          "balance": "295800000000",
+          "accountId": "GHuTwhh9txr69tHBM2f1mPE6tWn9XCYKMi3nRNFrYvGv9Yy",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "15900000000",
+          "accountId": "Gyy2KykhqA3C4o83iyG3gZPrCKBUbdgaBSzGMH5rBLh5BF5",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "100000000000",
+          "accountId": "CgHSc5anQFPLCB8Nyx6ztNS3KG9mRUFKSf6pMJj4MfgkX59",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "221473600000000",
+          "accountId": "GnxAENseaJAAqaqFbAxVDYAfqyN3B2NsKiUdxFrjCL52Ww6",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "379000000000000",
+          "accountId": "Hq6D31izVPF4VPicYQLZxax9VaRNgMjkUFeVg7AsypQQyrf",
+          "conviction": "Locked2x",
+          "isAye": false,
+          "isNay": true,
+          "isEmpty": false
+        },
+        {
+          "balance": "800000000000",
+          "accountId": "DYFeFrPjQ5RDrin1KUrNsunowSkijk8FrubfEqt6FJRLe4i",
+          "conviction": "Locked3x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "1000000000000",
+          "accountId": "J6fX6nmUjQ1gDsKbhS9BuiUQwM9gyGuAjdDdSxAmQAN3P5M",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "10000000000000",
+          "accountId": "HHinQSdeqMDGdKjgjSxCiFGPNGNXn8YrXLouyh2GqNGJjha",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "1000000000000",
+          "accountId": "HHicZFuRnX3bPYF4bqsqYK2CGpxHXFiNP6ofS9pzMsTVydQ",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "99900000000",
+          "accountId": "FUog2YEfhFKj1BwgGNbFM9CGDDc6Fk6UkZ2VbmuAhFEi6EJ",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "50000000000",
+          "accountId": "GLc5wZaFes1toLy35CteVJzVUJ4aWXSYbCVDzxZzncBcnPh",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "2000000000000",
+          "accountId": "DgPbGF1znQFxv8PF5FLZZCorQR7u64kG4egiwpNp6CDk7nf",
+          "conviction": "Locked6x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "18100000000",
+          "accountId": "GX95MQx99gfRGyVvSpzKiJcYgAmhMdAs8b16VNFemKBoyWe",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "2700000000",
+          "accountId": "F4ovCW46ppYhPTEK8LxvsoqnoPquGCd8pkQKq21vMgw4vMF",
+          "conviction": "None",
+          "isAye": false,
+          "isNay": true,
+          "isEmpty": true
+        },
+        {
+          "balance": "100000000000",
+          "accountId": "HPDkTFRAjir9FonJrgdxUm8G8gt6Na1HCKJHA8ybxUs6Jp6",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "700000000",
+          "accountId": "Ha5E8Jp6QMotgJNQ8qqsv6rM7nPrp9xskXdayW1HE7TT4dP",
+          "conviction": "None",
+          "isAye": false,
+          "isNay": true,
+          "isEmpty": true
+        },
+        {
+          "balance": "0",
+          "accountId": "Gsx3Y1b1kdbGKcWBBqoFu8yEKx3kUWHujDsacYZCyJhA2ZF",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "58419900000000",
+          "accountId": "FhumdZoou6XFoLVrJjbKvhxqBGRrtjLZuPhkYFd72cMnAXW",
+          "conviction": "Locked3x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "5000000000000",
+          "accountId": "CsKvJ4fdesaRALc5swo5iknFDpop7YUwKPJHdmUvBsUcMGb",
+          "conviction": "Locked3x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "1000000000000",
+          "accountId": "EMUt3xQ2BaDhxvNnmgEXVuR8eQNz8Fi5DioMGCYX5y1GYGR",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "143900000000",
+          "accountId": "Gkp3ESe8qaVgoWe4neZde2wMqDsUvJnV4aJZ5kGFJmQUE8q",
+          "conviction": "Locked2x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "0",
+          "accountId": "DpJPsDmUnzxVztRNN6GqFZkwwM1UjpiBdijdKTBo1ykzG4a",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "3000000000000",
+          "accountId": "FFWxNZMYJ7VPBd6QY8SLp1o2er6hRJMHYWaxFQ7NoEBPz2F",
+          "conviction": "Locked2x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "40000000000",
+          "accountId": "DoYC7RhHEkLtuTv9BZDM42V2b1ZoWoqQvVd1bBewr4ituXJ",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "0",
+          "accountId": "FJMJLAVCv1KG3UXBh1Hr54VzHsEF4MQTC4nZrZUUucbEsKJ",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "300200000000",
+          "accountId": "Fm9vPEq8VqUkE5ECfktLjkxnaRCE9jNtQNyDtY61PFweYow",
+          "conviction": "Locked3x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "1000000000000",
+          "accountId": "EijCociWDFh6ZBKY3P6KnvujkmcttiNVrTLS8WvcQ7KDHRx",
+          "conviction": "Locked2x",
+          "isAye": false,
+          "isNay": true,
+          "isEmpty": false
+        },
+        {
+          "balance": "1000000000000",
+          "accountId": "DqoWWKP6oV3zojXJkSDFejy3EcTUXEjC8NPaJQAAtFnkbRc",
+          "conviction": "Locked2x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "1000000000000",
+          "accountId": "G7Pg8TMoQpHDQNq27bb6CTB4uzyk2ccq7poJwQsojNbsipV",
+          "conviction": "Locked3x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "774100000000",
+          "accountId": "EXpkbHrdnNH3v3grh7jbcgAABDBkQf1NZC2oJcdYhcK7Mr2",
+          "conviction": "Locked2x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "519006400000000",
+          "accountId": "GtbnG7k3nukdYgdA6HPoEwxrfGJUcN3wdjEWqovSuFWGeqx",
+          "conviction": "Locked3x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "1000000000000",
+          "accountId": "FtQieVt9TD8KZNLJPaFFjUNiyta7ZD3bhNQN2poYYz3FSD1",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "0",
+          "accountId": "GeV1M6NyucmXKfLYyPi1Fd4d7yVrZSRTR26sYdeqCeDcBLv",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "4000000000000",
+          "accountId": "HTw3PE3FMWnPsZEgM87v6Whp2QxXmj6mCp4vqtujQ6xjrYq",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "50000000000000",
+          "accountId": "E3GCJucLUqmYRfFr6nxndRNpH1toBQxw9JrsV3HWi4At2YG",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "1014000000000",
+          "accountId": "F5DaGLPBkroG9tYGZPaaAaQWqzkNgJgjrz17FAmk1EVNKn9",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "1109300000000",
+          "accountId": "E3JnqZGFU8qcv3hKx2ZVNszYBKorAJPk3pfZ1fN8y51uo5z",
+          "conviction": "None",
+          "isAye": false,
+          "isNay": true,
+          "isEmpty": true
+        },
+        {
+          "balance": "58900000000",
+          "accountId": "GcgU5grX5xkuNzhrvYEKRagHrXcR3PP8Hfmv9aXtuLLxK3q",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "150000000000",
+          "accountId": "FnqFKGD4vy3P7S111itFG4Y8g8cf5RcCnL3QGTzbNWzePyn",
+          "conviction": "Locked6x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "57372500000000",
+          "accountId": "GkmDg8scrddPXTuahbnU76GdAjjfJL6ESq1Nzs9uHQnSkyR",
+          "conviction": "Locked2x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "0",
+          "accountId": "J4uEPhxVH1CDZUscRe1PnSmY8CyC6yfPLjwfJ6RGwomncVW",
+          "conviction": "Locked1x",
+          "isAye": false,
+          "isNay": true,
+          "isEmpty": false
+        },
+        {
+          "balance": "100000000000",
+          "accountId": "DcxxfjDDy4ikNshEfzqpP8ZGShSoRFNuvn16KF6eKUkme4v",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "108289200000000",
+          "accountId": "GTtAMUqnbCEGix2Gcw5na3aCzNYK2xstaEzKdn1nrumvm7C",
+          "conviction": "Locked2x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "1500000000000",
+          "accountId": "CbLdKvBgWnXS4rJrsRGtUUH2bcBVURxECWMDW6VLuvS1E2y",
+          "conviction": "Locked3x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "10000000000000",
+          "accountId": "DSKK9i2KdyyJ1xrDkcuLSNacLFAhq23TJkDsxtNDvKKR2qY",
+          "conviction": "Locked2x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "10000000000000",
+          "accountId": "DtbVgcBQPfZt8oVVP247kjBFHJC2Zef4REKZz5xrzYP9cuS",
+          "conviction": "Locked1x",
+          "isAye": false,
+          "isNay": true,
+          "isEmpty": false
+        },
+        {
+          "balance": "1000000000000",
+          "accountId": "GXR6g86nbAG6cyNjAANhe9yjV92Dztt9F7Eea3sLDYYxbRq",
+          "conviction": "Locked5x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "50000000000000",
+          "accountId": "DroGa6vgtDuLFEhPmTUfLMMeTJQH3h8tCzCDTUTQYcVwmuZ",
+          "conviction": "Locked3x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "50000000000",
+          "accountId": "DwFn2fAtZApvUqq3huKrrutuAyTNfQke6UxC1z7kKEJScHD",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "234900000000",
+          "accountId": "DY9fMFaqXdtY7v7zvyjVMv55rfW46gjj1NpQrA6Xvvbhb1J",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "400000000000",
+          "accountId": "DMRg4rEyEH97PnsxsADNfST9paRZMfZz6gzzm97GH7on4QB",
+          "conviction": "Locked6x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "80000000000",
+          "accountId": "EPrBGuinK6Lw2t45HULYk7VYjKPCgY77wmR3ToqbdvZhHjJ",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "25000000000000",
+          "accountId": "ES8ZXs6YzuBPU4bzWSFQNJmn9YkJ2Z2VNJWjDTxNyD67S4b",
+          "conviction": "Locked6x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "1000000000000",
+          "accountId": "FSHa5hnHQLN1kX4oHeAZbHikxSFiiS3RAYnwpFtD88EH1ev",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "1273500000000",
+          "accountId": "HAHdupz4YD12jzMAfwz2tF2GY2ZzBJVmNJpDrHNrbnBUp5L",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "100000000000",
+          "accountId": "CzyKuhAFHx6cxP3zjQTjifHgH8HaFgts296VAotWdVsZDrj",
+          "conviction": "None",
+          "isAye": false,
+          "isNay": true,
+          "isEmpty": true
+        },
+        {
+          "balance": "0",
+          "accountId": "DY9p22ZMjPi5BRDN9iRYiLkaWnBGUahSAPQ2yBg1dejTFci",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "170400000000",
+          "accountId": "CuYNQevthKs8YoQUUUiQSLbrQpeqJpQhQQgVkWRHW9ST8FM",
+          "conviction": "Locked3x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "0",
+          "accountId": "DB9XnKNuGSkgCmRXKz2pAKoUo9svvJaPN1utRWcrQWgFaVw",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "1000000000",
+          "accountId": "GbpQtmpTJBDysG17bJRxTDnqbLNhKyg6BRBC6wi4Gu4Zsud",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "2000000000000",
+          "accountId": "GvuNXWsF5JGV1WPqKSqZHFcCkGL2bttuD1G2AVdV4MwKQ3x",
+          "conviction": "Locked6x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "0",
+          "accountId": "GUMNAgzjkYqVvvyXW152AHhW2wbUWMX5MdAcw4JgtgzQysD",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "8400000000",
+          "accountId": "J9H3u1gWAU1WvWhC8YvXDN8Qj8YQJwWMG2P7w9YZ6RxP6NC",
+          "conviction": "None",
+          "isAye": false,
+          "isNay": true,
+          "isEmpty": true
+        },
+        {
+          "balance": "0",
+          "accountId": "GtUUbhoJAPYmm7RfJvfGYVSwKrqRvQHTj8dNWaSKzEhSQCc",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "1800000000",
+          "accountId": "F7YxdbVyMrCjPFBC2Juiv4j72EceoFogB7skZ2MdH923hzs",
+          "conviction": "None",
+          "isAye": false,
+          "isNay": true,
+          "isEmpty": true
+        },
+        {
+          "balance": "11300000000",
+          "accountId": "DyjutAWqQhKQ7wRKBpir2GaUWEkLyc8MbCYoPfqLeFybpz7",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "1514700000000",
+          "accountId": "EDwRVyatRNBvySABaEnesbddGiqb8gkvdBywQfDtNcC46Fd",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "100500000000",
+          "accountId": "DdJ5JCj8gRKT9zsFy35YkvT1kPCLznqfRJXCuELuezDYzGc",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "0",
+          "accountId": "HZpkv3s2VgFwoWciXKJh75MJdAq6CVEgUSdUF3PVDv4tu9f",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "500000000000",
+          "accountId": "GLbY69qZrrH1Nr2gwocMtZmYGVbdPZV1aU4bZ6ZM6yPj79Z",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "3048900000000",
+          "accountId": "Ga8qfovGsVRJyageg4BD4MyYCkHbYLKukANAEmXRmzHjrGv",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "99800000000",
+          "accountId": "F7sN7tBbu4oPxcr1VuVMmeRnRZiq2uSasidRx4gaqHTy27n",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "2000000000000",
+          "accountId": "DUn4pF7iG5Dipr832AnkDz1H2sKLUCWC2nzQXKiVDxASymp",
+          "conviction": "Locked1x",
+          "isAye": false,
+          "isNay": true,
+          "isEmpty": false
+        },
+        {
+          "balance": "630000000000",
+          "accountId": "FPMteRzrKFdoTBKdnicLodw5EJUarvpXj8CNwAh6m1wqMBN",
+          "conviction": "Locked5x",
+          "isAye": false,
+          "isNay": true,
+          "isEmpty": false
+        },
+        {
+          "balance": "10000000000",
+          "accountId": "Gv6dFDomBYgLrPXmFA1hgKqCBHZwhwwb868tqgrrnVwpXkz",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "0",
+          "accountId": "EwPf66CqN8RbK6w2EmR8UNbsxN573WzFbebj7nt7cGB267X",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "1500000000000",
+          "accountId": "H7EYjX14srWZEDjfeUNmsCjGJpaFyg8zYrEHzKbULhHgCEZ",
+          "conviction": "Locked2x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "50000000000",
+          "accountId": "DGAxaxC2kxLK7rv439hK8k4RN6K1pvxJEE8Gyot3Wnf1kaR",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "238300000000",
+          "accountId": "J9r4jMHRVdC7nfrWG11EcAcqMySqAqA7jRfc7nRtR36CWH7",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "1800000000000",
+          "accountId": "EJ6dt37Akzzq278RyJvD4WpDZCmymezQS7NjDwrN1jePQUD",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "1800000000000",
+          "accountId": "HCPn7WfTpbNiaZUuRW9tP4MDGfC4LyPkYAZjDNvSSvLXo3J",
+          "conviction": "Locked3x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "1000000000000",
+          "accountId": "GWou2RU8H8P125sz2aJ96PrGrRMTPtirJLdu7cwSY4DHEhx",
+          "conviction": "Locked6x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "3000000000000",
+          "accountId": "EAfrwK6HXDYzMzfgwWYvDTFnK67ovXG13ezWMoeLFweKgNa",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "0",
+          "accountId": "F4egL97ZoX1LeYH7aYbUukuoEHntDytPurabWWpF1Z6GN8X",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "5000000000000",
+          "accountId": "HKtvjeZDzCTboD5tH2zbZ9w58LSKWSzhVoC1ppEjy46p5oA",
+          "conviction": "Locked4x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "100000000000",
+          "accountId": "HqRcfhH8VXMhuCk5JXe28WMgDDuW9MVDVNofe1nnTcefVZn",
+          "conviction": "Locked6x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "1402200000000",
+          "accountId": "HZXYG4jYFXwqwBrhnbjMUSXH49zV2CW8T1pEuHeQTfBNfq5",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "243700000000",
+          "accountId": "JGmrBLZEqaaqLrfRmXkZhsD4JhoPkjRkfXJjj9smCk2UoYA",
+          "conviction": "Locked1x",
+          "isAye": false,
+          "isNay": true,
+          "isEmpty": false
+        },
+        {
+          "balance": "100000000000000",
+          "accountId": "Cg9i2wP8T5pXSssZVsCvtQfsHVjYVSvwiw8LyWRYF4c4xJi",
+          "conviction": "Locked2x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "68200000000",
+          "accountId": "Cn6oMcizGUBQQu5uxmcBsvAHFAbMaRiaEjiA8cMD5Aeosy2",
+          "conviction": "Locked2x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "3000000000000",
+          "accountId": "J1GgRQ3YBEeZXtrJhEusve4Gp5AQFSsHqcp4MwCLXYxMpJT",
+          "conviction": "Locked3x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "24999800000000",
+          "accountId": "D6DkaeRFfH6mwTkHGejk6dsLex58qcbJTCCJCcxfokykdpA",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "560000000000",
+          "accountId": "JFDRAZWZ2k79CUSoSHwuATW7C93Jbf3ztCfMHH4xUvskv45",
+          "conviction": "Locked2x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "22714100000000",
+          "accountId": "FCxGVZoL2hwNV1EFRKnuioVU4CUdRRfFUbnNfCQEi4Ktqd9",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "10374700000000",
+          "accountId": "DaBsZy5LX8jxiGzby1BpqSxMc7eWh5gXFR8aazt1gCr1RKV",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "300000000000",
+          "accountId": "J4vx2fNFVxP7Em2oUkjygEMSpbruH6cQiKxMAhCzUryux2K",
+          "conviction": "Locked3x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "10000000000",
+          "accountId": "F7RZxmNe9jbsFYBmrRHPBQ5oUViTUSwE1piCCFVAJ6PJdmW",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "30000000000000",
+          "accountId": "FLQv1YKitnBJ8BpXassBgA88jVjekdffT9PPr7RVa9u2CWe",
+          "conviction": "None",
+          "isAye": false,
+          "isNay": true,
+          "isEmpty": true
+        },
+        {
+          "balance": "20800000000",
+          "accountId": "DAwrgVKKvUQHN4cJBnwy2aApieMBEVkU5HtJLfrS9BA4H2e",
+          "conviction": "Locked2x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "1000000000000",
+          "accountId": "GLhwvxKw7J8KxnTEmCXXhoNvJmf8sHEQyKqSWrHQMuEyNAG",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "58762700000000",
+          "accountId": "HeMh2BdLrgdE7g5Mu4Cx732FDe4SGLVrf2T2fAV82qaMSDU",
+          "conviction": "Locked4x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "50000000000000",
+          "accountId": "J6TTn21p46c1XzXAZPVTGuQwBxFG2JfTwRnAFwgcdE2SWdz",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "0",
+          "accountId": "EcuPynY6AhNbGyi5sJrW5X6uMVRgSt6vJXStGcwTRe2onhG",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "44000000000000",
+          "accountId": "Hf8C626KBAjitMV7w8AhQWDCiPgUU47htEwbomq5mDMKeyL",
+          "conviction": "Locked2x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "130100000000",
+          "accountId": "DUwTc2XTbimx5FH9wqXYGo4u7PZ6h7CqBAYPHsoCXbGacW2",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "300000000000",
+          "accountId": "HWXKBNibTJsE7TsVju7F96nRUAFd77RvBxHG1CuNaSm2kg1",
+          "conviction": "Locked2x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "2000000000000",
+          "accountId": "EBQNAuaAuhELQJXDWVhSFKhpQPU7pqTCMtWAosTeqCRBZsB",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "1053700000000",
+          "accountId": "DzY2N49xK4XfB6oqggV7bUeriDggYv46JXXzuDT33L6qDYj",
+          "conviction": "Locked4x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "24800000000",
+          "accountId": "EyztNbkYankeshhmVCtGz2CnEXrMmwYwjURNDZgkCRuXPFs",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "135600000000",
+          "accountId": "GeeFWfCg9vgs5VaCoahgHKYHdf2gQrCsGz16RLzUY1dam1g",
+          "conviction": "Locked2x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "1000000000000",
+          "accountId": "Fk6NgL3X9cQPFWDdW3J8nTPdGXRzXYuAg2Zg2rwGGwfxKqc",
+          "conviction": "Locked6x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "50000000000",
+          "accountId": "DVaAHMeXX85gXDgb4W2x1cNhpsh5KKScSpeGgCQMoaf79ka",
+          "conviction": "Locked2x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "100000000000",
+          "accountId": "H2c1gJ5uuUFZGnLRYB7xTcGtR2NotGKQhSzL7W3wFPyggrK",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "0",
+          "accountId": "FY3BPgKxMLJncxFdajDUn2ZwJ4PP4UqkNfDdyct3Ya9YqQ1",
+          "conviction": "Locked6x",
+          "isAye": false,
+          "isNay": true,
+          "isEmpty": false
+        },
+        {
+          "balance": "1585691000000000",
+          "accountId": "D8vZJdm52tKTsfiXcwGXj7nQcXuBQHVGBvPBw6TcH2TfNUB",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "1250000000000",
+          "accountId": "FyqfGLsFfnyCHL1D54GcbTtpnarWNBB98HHxoNsCJR1FS89",
+          "conviction": "Locked6x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "0",
+          "accountId": "FAFC3uLN6urfGxndXYAGSd1f8AfYwBw3sRukfrdz9koqCfr",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "200000000000",
+          "accountId": "CsDAqPWKWz8or7TXspLn5QeggX1SNmno7JZHHd6t8sf52Rr",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "500000000000",
+          "accountId": "FAMw7AGJCJURnYtbpa1ULqEnp4jVtAV3qvn82xQZX27ezBB",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "500000000000",
+          "accountId": "HbnB8gUdVvPC7GfSfXLkE5Sm5bPLJtUHExTJh9Vc9ZVmR4q",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "20000000000",
+          "accountId": "Cuh6qAaDTGYsJ7W7dybaVb8pzSsFh9X2XKYb2r4xsNLLAcD",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "599800000000",
+          "accountId": "GvRDPjmxaeWdtY83syGWwe95rgqwevACvCTvobJU9cEN7uk",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "4200000000",
+          "accountId": "EDUJAncn1jrZLjDHBWVga2mmpASquEv8snL4U8uq4mtrHNC",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "652600000000",
+          "accountId": "DfkJHR2qmzgcJ7t6x87ama1cRhcQntZDNebt1xzTPE8bKrH",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "60093500000000",
+          "accountId": "DirBqq1462kAG3XZCpp43zPdE3uddUeQqtQbtEZxwiQjhpd",
+          "conviction": "Locked3x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "231380400000000",
+          "accountId": "CuJdgb66ScimZcWzuW1T27UDCRym9XshMNuSFwCX3FJyp2d",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "100000000000",
+          "accountId": "FaVGQy2gESEp8EryCEK86DAQ9BLvbAXBdtQT3FpWxQU2AfS",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "2000000000000",
+          "accountId": "F7TDQzmh8qvvhE2BQnoeHfZGHivERz25ugjenukbqeCdNoW",
+          "conviction": "Locked6x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "2000000000000",
+          "accountId": "DKCgiPRfxTmpJfrXGQoNnm1Su8T2yi5b1xTwE2c4PfcziP5",
+          "conviction": "Locked2x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "500000000000",
+          "accountId": "GoRJq3sM23NhfV8zChVj2aUL3G8kD5D3wq1ddftmps2vujz",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "8200000000",
+          "accountId": "FydXsvK3KzFxLf1B8UWY2ETGZaif4aAUYbhArc7b3mEY8JH",
+          "conviction": "Locked6x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "1512100000000",
+          "accountId": "DQRE16AMpDFcgp1PYY1oZz2wZXLLgHwNNahP7FPrK3LgG7z",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "7200000000",
+          "accountId": "GaBY41raWktupcKN4Jj9uovofMzKmqx6caQNdFwMDJccNaZ",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "1900000000",
+          "accountId": "G83pxN2AfWNdT3Z1p3iv17LcghbFrmM1i2q4z364y95W9U7",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "76400000000",
+          "accountId": "GoKXX37KGupXDn4i5iKs1qR9a3zQA9B8PiPPHcrbGpETFFV",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "1000000000000",
+          "accountId": "GP7KxzpjXa1Bji59kiwDjTZhWn7emKUwe2QBowZ7C5ep174",
+          "conviction": "Locked3x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "2000000000000",
+          "accountId": "FoPRQcjYUXWXeQe9mJhSgK3MzfLSpMzB6UURgcqk4en8Fqf",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "0",
+          "accountId": "DaHx97Fj14cp5uf4BkFejJdSgsp8emzASK4Baftma4araAm",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "250000000000",
+          "accountId": "CgGKH1dsPgJkQ3caFsnDtMUWUqVJKEpRt1ekM5RDW4UrYhP",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "12000000000000",
+          "accountId": "HqfNL8eE5Efvw5Wcj8d3tjeoCS3BPfshMHWG6rmtYUrgyrU",
+          "conviction": "Locked4x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "100000000000",
+          "accountId": "JFEQkW1qjfz4C8dSi2T561WM4oXc32MsMCUSzZUU5wnhUjy",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "100000000000",
+          "accountId": "HtKo2nzdstYn55xeydPpctEmKRkog3exGCGWcbboJSkCuxB",
+          "conviction": "Locked6x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "1500000000",
+          "accountId": "Ha1edkJtjmBVaSK67HGBSZ9huoydWqr5afqqLcNCJLjyPo6",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "0",
+          "accountId": "DQDLTidTVRPgRWpeP7ZKvW9ZfSWRqcesQjrVBx9goqq6YpF",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "100000000000",
+          "accountId": "HRTUcHxnxph7NEJAjGk8SbSrPNQNq5aUUoHiu9vWrAv6omQ",
+          "conviction": "Locked3x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "133000000000",
+          "accountId": "Ds1USGkVgc17xMkLntEbq4bxfJgq159tTRXkjsyUHstAyUF",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "1000000000000",
+          "accountId": "FP7Tvuid4tf1aeX9oGLedshiHSaFEQtEMSEDAcDExG8H3GA",
+          "conviction": "Locked2x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "1800000000000",
+          "accountId": "DcopCCQfXMUttax7S1i5TiMbdTAM2DmtUTXvotwGoaiXAum",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "4659400000000",
+          "accountId": "DDsVh6hFjfJ31bdTgoS5RBsLeNNHSXkxp2KTuYhLuL7v1D5",
+          "conviction": "Locked3x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "0",
+          "accountId": "DGV5xU2i1bxVoFwGY8ikvgCCnApitr9JJeAacqFQWt5Haqg",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "5000000000000",
+          "accountId": "Hxei6RXYSkTArwNU94rmtTWSt6SaQPDTLF23Q5pL1arZtqe",
+          "conviction": "Locked2x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "10100000000",
+          "accountId": "EnvWpSqqu9g1rfJFrSeR4WCgPypHtQBnTgY6hWMeDbwD9JM",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "10000000000",
+          "accountId": "EwXJTLGt8pLDGTtWQvsNNNsfRBVSstuwY6ic19RcrWZvDWb",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "29700000000",
+          "accountId": "D3hESDuh2nEtXDg3bq6fyiPmEQgMXjUviHtRt11i9uCX74E",
+          "conviction": "None",
+          "isAye": false,
+          "isNay": true,
+          "isEmpty": true
+        },
+        {
+          "balance": "89800000000",
+          "accountId": "EmDD57Df4hcRKTkXs47D7TAzurPd8eBqnyrereT5oPghS9T",
+          "conviction": "Locked3x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "250000000000",
+          "accountId": "EqjwmRHoob8QJph2oCSdHsdfrJj6uAuTGadov7vdSceV986",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "1000000000000",
+          "accountId": "EaLpVBoHKKZESHBxHcs4vPeaLmNLcv57uuhcbefoeMwwQBi",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "100000000000",
+          "accountId": "DBPMAobDJXUKg9YMZL9ZNVJjJRyE1bbPQSzTCZdge4D6EAV",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "250000000000",
+          "accountId": "FUV4Ce3NuQyWpUkwxhwHAbp5yE9aCBTZqqXuGebKaVBYcmk",
+          "conviction": "Locked2x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "6000000000000",
+          "accountId": "CwVE5LkNLqY7j8WV4tRJtDVFAkCnx2rhK6sgrVRN9YdNZqt",
+          "conviction": "Locked2x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "122700000000",
+          "accountId": "D8Zsz11SrP4yhPPdPT4zvLXM3vo6VskSVkT1EfNPSQfnsLf",
+          "conviction": "Locked3x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "2000000000000",
+          "accountId": "HeJqAxJeVSri9SkJ8PKXWM9vQqTDgxLMeCD7CXUUKAgpsPv",
+          "conviction": "Locked4x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "1000002100000000",
+          "accountId": "GqGPGttgNchNjM2reGqLDYv2MUaM5Qt3Si9fUHHtrGmWdtP",
+          "conviction": "Locked3x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "50000000000",
+          "accountId": "E3Szqz4dfiAy9Z7qgzRx7dAEVPiXhBC6fTBo5RaWV6QtCtG",
+          "conviction": "Locked5x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "100000000000",
+          "accountId": "Gni9F6GoAQjssje3bmEd7Wxi47nrb6aywELzZQtTBwUnTrZ",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "71645100000000",
+          "accountId": "FZyFBAqs93TenupzDHJzW1pxFLxwwo1EJLvT89jhrV368yb",
+          "conviction": "Locked2x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "100000000000",
+          "accountId": "DJRs6i9yDDURhP1Re4GESXAEQmgpawfeuMJwbiC2Y4FikVi",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "300000000000",
+          "accountId": "D5mcW5vZVrC5bGRGfasPqs5bonp7aSsM9uRYL7zNwMEmuAq",
+          "conviction": "Locked6x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "9000000000000",
+          "accountId": "EJ7zbpe3QCFYCBYgtCtBXPYkp9Xc8W2hjj9n3ytQB4ehXRZ",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "25000000000000",
+          "accountId": "CrbJuFZWjY3yft424EMTY9hdbWoU878DFs74v3a8nNDeKJD",
+          "conviction": "Locked2x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "1000000000000",
+          "accountId": "CwYBnfoxb1B6fibdMN4js21DQeqgbqHgwLwacfKFdC7vsyZ",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "20000000000",
+          "accountId": "H6zU7NcdjEti56MMT6eGNByoXzcGEL8bpxJZHY7xUw77Lf3",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "1100000000000",
+          "accountId": "HtSKUKWRPCxCtzsnNfdbN1NN5uVq4yMizb2FqeHSC3YoRTi",
+          "conviction": "Locked2x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "119900000000",
+          "accountId": "FA35GTCKJp2T1GQbi4csnpeD4TwKWMYzQMknnGkvVYuYyVB",
+          "conviction": "None",
+          "isAye": false,
+          "isNay": true,
+          "isEmpty": true
+        },
+        {
+          "balance": "738400000000",
+          "accountId": "FaZoC3B47FSjJiHx1gFn1ut7zfkCDttzzz5hqEyVLLYfzXJ",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "119000000000000",
+          "accountId": "E5W2s8NRAL5yQsBF6CLQiLKFG7qeFf8eojYY4gWUFGLKoAC",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "107300000000",
+          "accountId": "HLEDEHjE44Vyr8JGpSjp5ve9wkoY19JMhFuLkdfadVRYrYw",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "24500000000",
+          "accountId": "GV27nG8to1p2ExKKBEYt7RissVD351uwBAKx82RDvXUc6PW",
+          "conviction": "Locked1x",
+          "isAye": false,
+          "isNay": true,
+          "isEmpty": false
+        },
+        {
+          "balance": "0",
+          "accountId": "DBKmk8vAzQWVDtfwWhiT2yy18aohumJBwrAkygouC4YGdvQ",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "10000000000000",
+          "accountId": "GbkhM5AC6aKq9KVGZK2LB3buty3AtGFreDpFVGBumes2ASR",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "2500000000000",
+          "accountId": "Hec6PvCo6Pz8gvGRgZi7Anwo37nVMDkqVbNo69qDKtzvxHa",
+          "conviction": "Locked3x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "20000000000",
+          "accountId": "E58GPreoSwZhK1JXJmK38xFnfSxhnKQ6k4eB1d2ePAC8H1d",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "121000000000",
+          "accountId": "Fhe7jpFENtqDLaZ9RV8fQEq5ks5cfQmgcV54jaNVZYBNJyT",
+          "conviction": "Locked4x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "200000000000",
+          "accountId": "EFW5hZYe1XNZ3RmjF2G8HS38G9od1r3CopTZ6KCKBHdTJJ2",
+          "conviction": "Locked5x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "38000000000",
+          "accountId": "GvUMbtMiLMvi6tBkZKwwPHJvRLaW46zWXVHKyD3SoQLSutN",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "0",
+          "accountId": "DD3hxPZ6gK7uGaZgjcUje6Gu7A1nkcCfbCrq7U2igJRw8VV",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "60000000000000",
+          "accountId": "H1bSKJxoxzxYRCdGQutVqFGeW7xU3AcN6vyEdZBU7Qb1rsZ",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "1000000000000",
+          "accountId": "DJKmSCnSh6rrCpKo1VA85Ka1eyUyDq1qnYfo9RUCPbZ5hNM",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "0",
+          "accountId": "FVDie4TYm2haarRBiXNzLfxoXn2eJQMuoERXdP6AfDzuufG",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "1500000000000000",
+          "accountId": "DPs2tExwULx8tRc2N7ECrWTzrPhbdVBApLVDiugkusaVH8Q",
+          "conviction": "Locked3x",
+          "isAye": false,
+          "isNay": true,
+          "isEmpty": false
+        },
+        {
+          "balance": "0",
+          "accountId": "G7Bqjnoz98aL8mVwdCZqdbhFFSKgq51C42wFaiyyb9brQCH",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "14960700000000",
+          "accountId": "Fvzw3EPmdoYL319A4LHKAziR1rY4WGjp1FwBNrT4rMtkvyt",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "100000000000",
+          "accountId": "FiUv9u3heH6KLmSTwc2hXS7hFsahbiQ4PniMWoLAFS9AbDv",
+          "conviction": "Locked2x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "1000000000",
+          "accountId": "HQwdAda99q8S3D7AER2tdjJTtHT32SS8uf1RiH56dmZiy5v",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "1000000000000000",
+          "accountId": "FadvDtb2yShmKBoUwjkhK47PEZLU481DZxubSaVY2xmwoCM",
+          "conviction": "Locked3x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "0",
+          "accountId": "FUKCwdGW4LofxJhvTMR8h3f2tP269DZEYEH51JbKCo3UChb",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "5026900000000",
+          "accountId": "DD9YNkQf2dSSmaDRuGeKu7QZK8tEGE6yxpYPLcp558ozauq",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "85000000000000",
+          "accountId": "Gve4JFfF5YkZJNwKTbRVTQCkLXJJhzjJszJjxPvHLb9fho5",
+          "conviction": "Locked3x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "0",
+          "accountId": "Gc2juwUj1rqWkxZmuPFDwX7LtenxwVCCZpGUma5teU7HMHp",
+          "conviction": "Locked3x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "9600000000",
+          "accountId": "DuejWGAPZSwrJUnbTgVxGQCpw2GTd1icP2TwqdZLF1HoEnb",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "500000000000",
+          "accountId": "Hy8UnZSNvchEzKLBZ6X6qXq6xc8gVNGyo8ALuuNUXeTiD6K",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "50000000000000",
+          "accountId": "EAChfSL6tQfjy7vD8YgYB8DCn7A9c1aAsERP9Hx8cj1tqxL",
+          "conviction": "Locked2x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "1000000000000",
+          "accountId": "FoWQ14VTUyBHxRLr22MwRuZMkymDGTu97zmu63qseNDNoGm",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "1700000000",
+          "accountId": "JGvST7KdJjLajXQPPCsQiiN3KP1YDAdh8Jo5UAQkuLv4YPF",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "100000000000",
+          "accountId": "DMkCuik9UA1nKDZzC683Hr6GMermD8Tcqq9HvyCtkfF5QRW",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "500000000000",
+          "accountId": "H9ZW8P5ZTouVnYnXnBkKiGWo63AGQHvKBbA52qcCZPUXXxj",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "100000000000",
+          "accountId": "HyEEgfV59jzDw1Ayt41HmcaWYNjXHh2VqsZG68RDbW735aD",
+          "conviction": "Locked2x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "800000000",
+          "accountId": "FZsme6wwroXCoF7sWDpteuGLGzHrH9BWX3L26FdHuydH7NF",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "300000000",
+          "accountId": "CrmC1pWntXES1UTGKio5DGyjrv5MtSzeSCRdZaFaYH4Ttj8",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "0",
+          "accountId": "DwyFsW1RzykVZT3q1oismv6mtEHuLYazbabvaQQRpcD9f7u",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "200000000000",
+          "accountId": "HULzQRU3XJPesWULXomo1wdR3Vg9FKi2TmZUkAFg2RPmSQB",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "125700000000",
+          "accountId": "DVri8ioVRADUxcaSyheWNrCpvJqqJxrbaqNuaSzm4Era2Vv",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "1487300000000",
+          "accountId": "FUnG16CyD5buJskZJ7FAphvzEqBjWknepE4LeuHFCbDiKmk",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "100000000000",
+          "accountId": "FCn7gCz3Cba4JQmL39qTemJVUDtgtiHwWiJsnDwLt8aAvUq",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "50000000000",
+          "accountId": "HHVeEThUZvNPa6GfvUPELUi6MqJT6MRVNz32xez7Qhts46W",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "217384000000000",
+          "accountId": "DmDrBt3FPyHXrKEdRrnuZBbqNAaMvsvo8DciWNqQE9yr8K9",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "122600000000",
+          "accountId": "HtJ193pbHWCbJ4ntTHPA7bSBUeosDuqxUTrkjMBDXqYZbKh",
+          "conviction": "Locked4x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "20823400000000",
+          "accountId": "GvKyK7PtrcccLzgMmXfoJ1RGKvYgTmAceGQMcaN29iegHjr",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "1000000000000",
+          "accountId": "GZZV6NdyJ8BFGRcxHiGuKjXcQF6JyfgDzUpU9JpMuUNyNkf",
+          "conviction": "Locked3x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "1000000000000",
+          "accountId": "FwJ8wjSYs1NjupuemL2smh6MzLh1XunRxspFjB6uU9bKYjM",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "6100000000",
+          "accountId": "FPYoqsFyVsdKVMVPrK9f3KgRsbzpP5HC4vLWZTEvvU1HBUR",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "0",
+          "accountId": "FUPXC6kGcswwrAgRaMTRX6rY16XZGBapuv3Ao57SgqGbhbc",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "100000000000",
+          "accountId": "Din3cHctLbiKrhPd2gWUqqFNHSwcwpXYVydPrGGujiHXHis",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "5900000000",
+          "accountId": "Et6ze9cQw5smTsFQDMrdrnXuuzoYDKSHSqgQrLTv62B7zkz",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "55000000000000",
+          "accountId": "Ez4AsHErY6svADTciHB4VqdjmEUQsJKfZtsLFoe75sxiNYg",
+          "conviction": "Locked6x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "100000000000",
+          "accountId": "FD7XsxZYTA6NMW1LFNUjuFmyj8ezWkyPxyxQb9qy3cKj89o",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "1000000000000",
+          "accountId": "DgEMSMkP9xTLFAmp3c69wkdUwMhKmnESMx3vsraDg8cgvE2",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "100000000000",
+          "accountId": "DizreWTsALNRLApQwYpH4TWUogaoR8RvUx4diXK2ff51KQa",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "5470000000000",
+          "accountId": "H2QJKFqVueoCexZL3pjHphPCFCg3xpoxSCaL3MJKpwhMuj6",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "800000000",
+          "accountId": "GhPGjMEzxaNXREKqNNFDyKnDCJcUABfM2su9ui5xHPexKnv",
+          "conviction": "None",
+          "isAye": false,
+          "isNay": true,
+          "isEmpty": true
+        },
+        {
+          "balance": "35000000000000",
+          "accountId": "HyBryanRsB1GGKa9ZfqvRc3XpTDipYyRvxNNyZYfWFcenhd",
+          "conviction": "Locked4x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "500000000000",
+          "accountId": "CdF4osQVbX8eoPcSPM35gGAu4XxMVg9NPv1HH3f3iPVyNrb",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "82993500000000",
+          "accountId": "FUJYqVYujnZNsTKxrHfyhAJv1v8nPodc4LEiSHvBBYzK4Kn",
+          "conviction": "Locked4x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "7000000000000",
+          "accountId": "EJpEoUi28o2jXHyVw9e1kUitY4gAtVxsRjSk2zhm3vSBUbL",
+          "conviction": "Locked2x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "1000000000000",
+          "accountId": "DTQdXS9qMiysDs1e1uctBuMzSQqULoM2y1nWBEWs9MmNiVe",
+          "conviction": "Locked6x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "389200000000",
+          "accountId": "EzMiehmJdTEJnWJu6bnV9WxFDWLwpf3sTYHDsze58hFwVjs",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "180000000000000",
+          "accountId": "FcjmeNzPk3vgdENm1rHeiMCxFK96beUoi2kb59FmCoZtkGF",
+          "conviction": "Locked1x",
+          "isAye": false,
+          "isNay": true,
+          "isEmpty": false
+        },
+        {
+          "balance": "7800000000",
+          "accountId": "GTttEd2UN8wiAvC2ZkPoX53s71GMqBfiYq2offAJALg3g22",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "1100000000000",
+          "accountId": "DkWmumq1MNGWNs9mukEFJBYDsuMSHuAE42ZaJZ6SxjvhSbA",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "0",
+          "accountId": "D5uq2vje95nBpSTNSpeTL1WQGkAMb2Xuq83ziBMQBH16W6m",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "15035600000000",
+          "accountId": "DwUDpgt3HBmvDEzFvc4HFo5ZbEfcFNHqk8MZQfSaeSSPZDF",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "0",
+          "accountId": "E8UhTFjbeXA8UpbZg75dtH2DHvvph8pYo6haNGGJCcyfvLs",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "3000000000",
+          "accountId": "Eyk85j1gRDcnTeAJujTHoyAyLc1cgW5U2GPg5pUedfRphch",
+          "conviction": "Locked5x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "181700000000",
+          "accountId": "E5x8zFpsKMbvEVhnhqSij3AMbejAqZVMXh5JQABd3Vo3jpj",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "5000000000000",
+          "accountId": "FUEGFWoPPtX4XkRzEnZnMgwGKENscHXAiEZy6kcgaDz1BY6",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "50000000000000",
+          "accountId": "GEzTQi37rxJtZTrXUr4XbU9dy2WJkcah7Fd13NANSwQmxMt",
+          "conviction": "Locked6x",
+          "isAye": false,
+          "isNay": true,
+          "isEmpty": false
+        },
+        {
+          "balance": "189800000000",
+          "accountId": "H7HvTqoCY7frwsgPZTdnkKhA5Tvcj62wC9ts6LBaDiPRpbw",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "990000000000",
+          "accountId": "FvhAGtVcEgK4CTReFCvtyy1xmbv4RJpiFdTNWoTwFfysY1Z",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "10000000000000",
+          "accountId": "GEn5eNA9Qdc7chgjorPYDSqsS2YxZ4Datke2Kvqok7MD14u",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "1000000000000",
+          "accountId": "EVRR36FbJe7fruwBdwKcEZwm6iyYojB8eWLErzEV5KoeAbX",
+          "conviction": "Locked3x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "1000000000000",
+          "accountId": "FM3bcujoBeCD16SbNeja8sUfH4TT8CPAUdKRCNXaGtevjrA",
+          "conviction": "Locked2x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "30000000000",
+          "accountId": "F2k6FSkA7GDwaJGr7JZbywGAeS8VvvmCaEexWDEBArdyRA4",
+          "conviction": "Locked2x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "2075100000000",
+          "accountId": "Gec4CWzzujfQeseVYnVVUmRh9EviTU1cjuEb7fq35FHkTan",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "192800000000",
+          "accountId": "E4sSsp4k2jnTCAKSM9DbvjJdMiP7zjigfNVdR3k95SaGzGp",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "2800000000000",
+          "accountId": "GRwKjvFaTJTnMZrXkZZVVSV4FDYMFfmpoYuHRdZq7VEEiCk",
+          "conviction": "Locked6x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        }
+      ]
+    },
+    {
+      "id": "151",
+      "passed": true,
+      "block": 9911654,
+      "time": 1635798990003,
+      "totalIssuance": "11978603597069379331",
+      "votes": [
+        {
+          "balance": "100000000000",
+          "accountId": "HqRcfhH8VXMhuCk5JXe28WMgDDuW9MVDVNofe1nnTcefVZn",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "10000000000000",
+          "accountId": "GLVeryFRbg5hEKvQZcAnLvXZEXhiYaBjzSDwrXBXrfPF7wj",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        }
+      ]
+    },
+    {
+      "id": "152",
+      "passed": true,
+      "block": 9965090,
+      "time": 1636127286022,
+      "totalIssuance": "11978603658246518062",
+      "votes": [
+        {
+          "balance": "10000000000000",
+          "accountId": "DSKK9i2KdyyJ1xrDkcuLSNacLFAhq23TJkDsxtNDvKKR2qY",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "500000000000000",
+          "accountId": "H9eSvWe34vQDJAWckeTHWSqSChRat8bgKHG39GC1fjvEm7y",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "100000000000",
+          "accountId": "HqRcfhH8VXMhuCk5JXe28WMgDDuW9MVDVNofe1nnTcefVZn",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "0",
+          "accountId": "EcuPynY6AhNbGyi5sJrW5X6uMVRgSt6vJXStGcwTRe2onhG",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "4000000000000000",
+          "accountId": "HsNnxrKkp5R9oGyfZbRYwr2Dqd6Y5RaFm2t1YoNteM92WEV",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "100000000000",
+          "accountId": "GnkKWrm3x1cBKYsmYHsn5y2jknUgAKdxsH3nz9En9zahF9d",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "20000000000000",
+          "accountId": "GLVeryFRbg5hEKvQZcAnLvXZEXhiYaBjzSDwrXBXrfPF7wj",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "100000000000",
+          "accountId": "FiUv9u3heH6KLmSTwc2hXS7hFsahbiQ4PniMWoLAFS9AbDv",
+          "conviction": "Locked2x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "30000000000000",
+          "accountId": "FegWWJq7AWgkYguRAd796uvNVYburnURpBz7wZ9kf5EoyZ5",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "10000000000000",
+          "accountId": "E8mxJqHLXAqUstFiPUcdrnrhdwYiBmE3C4yiqMrd3tshDNe",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "170000000000000",
+          "accountId": "FcjmeNzPk3vgdENm1rHeiMCxFK96beUoi2kb59FmCoZtkGF",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        }
+      ]
+    },
+    {
+      "id": "153",
+      "passed": true,
+      "block": 10050043,
+      "time": 1636649412027,
+      "totalIssuance": "11978603658246518062",
+      "votes": [
+        {
+          "balance": "1000000000000",
+          "accountId": "FtQieVt9TD8KZNLJPaFFjUNiyta7ZD3bhNQN2poYYz3FSD1",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "100000000000",
+          "accountId": "HqRcfhH8VXMhuCk5JXe28WMgDDuW9MVDVNofe1nnTcefVZn",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "580300000000",
+          "accountId": "HpZxDe4yuBp5v7mRg5opViU6AzpifqpVkWkt9VRmLG2Qj4x",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "80000000000000",
+          "accountId": "JFArxqV6rqPSwBok3zQDnj5jL6vwsZQDwYXXqb1cFygnYVt",
+          "conviction": "Locked1x",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        },
+        {
+          "balance": "10000000000",
+          "accountId": "ES7nMTXLmqMM64HfXPhZgG662N6HAitnQPEneSGxgq3Mfe1",
+          "conviction": "None",
+          "isAye": true,
+          "isNay": false,
+          "isEmpty": false
+        }
+      ]
+    }
+  ],
+  "headerBlock": "10050042"
+}
