@@ -2,5 +2,4 @@ pandas
 matplotlib
 seaborn
 streamlit
-pymongo
-"pymongo[srv]"
+pymongo[tls,srv]
