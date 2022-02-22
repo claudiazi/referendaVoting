@@ -1,3 +1,5 @@
+import os
+
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
@@ -16,8 +18,10 @@ This app performs simple analysis about the past referendum votes.
 )
 
 st.sidebar.header("User Input Features")
-
-votes_df = load_data()
+mongodb_url = os.getenv("MONGODB_URL")
+db_name = os.getenv("DB_NAME")
+table_name = os.getenv("TABLE_NAME")
+votes_df = load_data(mongodb_url=mongodb_url, db_name=db_name, table_name=table_name)
 votes_df = preprocessing(votes_df)
 
 # Sidebar - Referendum selection
