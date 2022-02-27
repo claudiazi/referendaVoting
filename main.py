@@ -54,7 +54,7 @@ df_non_delegated_count_sum = (
     .sort_values(by="id")
 )
 sns.barplot(x=df_non_delegated_count_sum.id.astype(int), y="vote_counts", data=df_non_delegated_count_sum, ci=None, color="palegoldenrod")
-ax.set(xlabel='Referendum ID', ylabel='Counts of votes')
+ax.set(xlabel='Referendum ID', ylabel='Vote counts')
 ax.xaxis.set_major_locator(plt.MaxNLocator(3))
 
 top_bar = mpatches.Patch(color='darkkhaki', label='Delegated Votes')
