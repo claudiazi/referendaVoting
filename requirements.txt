@@ -2,5 +2,4 @@ pandas
 matplotlib
 seaborn
 streamlit
-pip install pandasql
 pymongo[tls,srv]
