@@ -83,7 +83,7 @@ df_votes_balance_perc["perc"] = df_votes_balance_perc["balance_sum"] / df_votes_
 
 with sns.axes_style("white"):
     fig, ax = plt.subplots(figsize=(7, 4))
-    sns.lineplot(x=df_votes_balance_perc.time.dt.strftime('%Y-%m-%d'), y="perc", data=df_votes_balance_perc)
+    sns.lineplot(x=df_votes_balance_perc.time.dt.strftime('%Y-%m-%d'), y="perc", data=df_votes_balance_perc, color="darkkhaki")
     ax.set(xlabel='Time (referendum closed)', ylabel='Turnout (% of total Kusama voted)')
     ax.xaxis.set_major_locator(plt.MaxNLocator(3))
 st.pyplot(fig)
