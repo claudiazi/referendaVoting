@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 import streamlit as st
+import matplotlib.patches as mpatches
 
 from data_preparation import load_data, preprocessing
 
@@ -32,18 +33,34 @@ selected_ids = st.sidebar.slider("Select a range of ids", min_value=min_id, max_
 votes_df = votes_df[(votes_df["id"] >= selected_ids[0]) & (votes_df["id"] <= selected_ids[1])]
 
 # First Chart
+# top bar -> sum all votes (delegated/ non-delegated)
 df_count_sum = (
     votes_df.groupby(["time", "id"])["accountId"]
     .count()
     .reset_index(name="vote_counts")
     .sort_values(by="time")
 )
-
+# bar chart 1: top bars (group of delegated)
 with sns.axes_style("white"):
     fig, ax = plt.subplots(figsize=(7, 4))
-    sns.barplot(x=df_count_sum.time.dt.strftime('%Y-%m-%d'), y="vote_counts", data=df_count_sum, color="salmon")
-    ax.set(xlabel='Time (referendum closed)', ylabel='Counts of votes')
-    ax.xaxis.set_major_locator(plt.MaxNLocator(3))
+    sns.barplot(x=df_count_sum.time.dt.strftime('%Y-%m-%d'), y="vote_counts", data=df_count_sum, color="darkkhaki")
+
+# bottom bar -> talke only delegated=False votes
+df_non_delegated = votes_df[votes_df["isDelegating"] == False]
+df_non_delegated_count_sum = (
+    df_non_delegated.groupby(["time", "id"])["accountId"]
+    .count()
+    .reset_index(name="vote_counts")
+    .sort_values(by="time")
+)
+sns.barplot(x=df_non_delegated_count_sum.time.dt.strftime('%Y-%m-%d'), y="vote_counts", data=df_non_delegated_count_sum, ci=None, color="palegoldenrod")
+ax.set(xlabel='Time (referendum closed)', ylabel='Counts of votes')
+ax.xaxis.set_major_locator(plt.MaxNLocator(3))
+
+top_bar = mpatches.Patch(color='darkkhaki', label='Delegated Votes')
+bottom_bar = mpatches.Patch(color='palegoldenrod', label='Non-delegated Votes')
+plt.legend(handles=[top_bar, bottom_bar])
+
 st.pyplot(fig)
 
 # Second chart
@@ -70,6 +87,7 @@ with sns.axes_style("white"):
     ax.set(xlabel='Time (referendum closed)', ylabel='Turnout (% of total Kusama voted)')
     ax.xaxis.set_major_locator(plt.MaxNLocator(3))
 st.pyplot(fig)
+
 
 df_higest_balance_user = votes_df.groupby("accountId")["balance"].sum().reset_index()
 df_higest_balance_user = df_higest_balance_user.sort_values(
