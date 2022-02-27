@@ -38,12 +38,12 @@ df_count_sum = (
     votes_df.groupby(["time", "id"])["accountId"]
     .count()
     .reset_index(name="vote_counts")
-    .sort_values(by="time")
+    .sort_values(by="id")
 )
 # bar chart 1: top bars (group of delegated)
 with sns.axes_style("white"):
     fig, ax = plt.subplots(figsize=(7, 4))
-    sns.barplot(x=df_count_sum.time.dt.strftime('%Y-%m-%d'), y="vote_counts", data=df_count_sum, color="darkkhaki")
+    sns.barplot(x="id", y="vote_counts", data=df_count_sum, color="darkkhaki")
 
 # bottom bar -> talke only delegated=False votes
 df_non_delegated = votes_df[votes_df["isDelegating"] == False]
@@ -51,10 +51,10 @@ df_non_delegated_count_sum = (
     df_non_delegated.groupby(["time", "id"])["accountId"]
     .count()
     .reset_index(name="vote_counts")
-    .sort_values(by="time")
+    .sort_values(by="id")
 )
-sns.barplot(x=df_non_delegated_count_sum.time.dt.strftime('%Y-%m-%d'), y="vote_counts", data=df_non_delegated_count_sum, ci=None, color="palegoldenrod")
-ax.set(xlabel='Time (referendum closed)', ylabel='Counts of votes')
+sns.barplot(x=df_non_delegated_count_sum.id.astype(int), y="vote_counts", data=df_non_delegated_count_sum, ci=None, color="palegoldenrod")
+ax.set(xlabel='Referendum ID', ylabel='Counts of votes')
 ax.xaxis.set_major_locator(plt.MaxNLocator(3))
 
 top_bar = mpatches.Patch(color='darkkhaki', label='Delegated Votes')
@@ -68,14 +68,14 @@ df_balance_sum = (
     votes_df.groupby(["time", "id"])["balance"]
     .sum()
     .reset_index(name="balance_sum")
-    .sort_values(by="time")
+    .sort_values(by="id")
 )
 
 df_total_issuance_sum = (
     votes_df.groupby(["time", "id"])["totalIssuance"]
     .mean()
     .reset_index(name="total_issuance")
-    .sort_values(by="time")
+    .sort_values(by="id")
 )
 
 df_votes_balance_perc = df_balance_sum.merge(df_total_issuance_sum, how="inner", on=["id", "time"])
@@ -83,8 +83,8 @@ df_votes_balance_perc["perc"] = df_votes_balance_perc["balance_sum"] / df_votes_
 
 with sns.axes_style("white"):
     fig, ax = plt.subplots(figsize=(7, 4))
-    sns.lineplot(x=df_votes_balance_perc.time.dt.strftime('%Y-%m-%d'), y="perc", data=df_votes_balance_perc, color="darkkhaki")
-    ax.set(xlabel='Time (referendum closed)', ylabel='Turnout (% of total Kusama voted)')
+    sns.lineplot(x=df_votes_balance_perc.id.astype(int), y="perc", data=df_votes_balance_perc, color="darkkhaki")
+    ax.set(xlabel='Referendum ID', ylabel='Turnout (% of total Kusama voted)')
     ax.xaxis.set_major_locator(plt.MaxNLocator(3))
 st.pyplot(fig)
 
