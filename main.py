@@ -29,8 +29,16 @@ votes_df = preprocessing(votes_df)
 referendum_ids = sorted(votes_df.id.unique())
 max_id = int(max(referendum_ids))
 min_id = int(min(referendum_ids))
-selected_ids = st.sidebar.slider("Select a range of ids", min_value=min_id, max_value=max_id, value=[min_id, max_id], step=1)
-votes_df = votes_df[(votes_df["id"] >= selected_ids[0]) & (votes_df["id"] <= selected_ids[1])]
+selected_ids = st.sidebar.slider(
+    "Select a range of ids",
+    min_value=min_id,
+    max_value=max_id,
+    value=[min_id, max_id],
+    step=1,
+)
+votes_df = votes_df[
+    (votes_df["id"] >= selected_ids[0]) & (votes_df["id"] <= selected_ids[1])
+]
 
 # First Chart
 # top bar -> sum all votes (delegated/ non-delegated)
@@ -53,12 +61,18 @@ df_non_delegated_count_sum = (
     .reset_index(name="vote_counts")
     .sort_values(by="id")
 )
-sns.barplot(x=df_non_delegated_count_sum.id.astype(int), y="vote_counts", data=df_non_delegated_count_sum, ci=None, color="palegoldenrod")
-ax.set(xlabel='Referendum ID', ylabel='Vote counts')
+sns.barplot(
+    x=df_non_delegated_count_sum.id.astype(int),
+    y="vote_counts",
+    data=df_non_delegated_count_sum,
+    ci=None,
+    color="palegoldenrod",
+)
+ax.set(xlabel="Referendum ID", ylabel="Vote counts", title="Vote counts for selected Referendum IDs")
 ax.xaxis.set_major_locator(plt.MaxNLocator(3))
 
-top_bar = mpatches.Patch(color='darkkhaki', label='Delegated Votes')
-bottom_bar = mpatches.Patch(color='palegoldenrod', label='Non-delegated Votes')
+top_bar = mpatches.Patch(color="darkkhaki", label="Delegated Votes")
+bottom_bar = mpatches.Patch(color="palegoldenrod", label="Non-delegated Votes")
 plt.legend(handles=[top_bar, bottom_bar])
 
 st.pyplot(fig)
@@ -78,13 +92,23 @@ df_total_issuance_sum = (
     .sort_values(by="id")
 )
 
-df_votes_balance_perc = df_balance_sum.merge(df_total_issuance_sum, how="inner", on=["id", "time"])
-df_votes_balance_perc["perc"] = df_votes_balance_perc["balance_sum"] / df_votes_balance_perc["total_issuance"] * 100
+df_votes_balance_perc = df_balance_sum.merge(
+    df_total_issuance_sum, how="inner", on=["id", "time"]
+)
+df_votes_balance_perc["perc"] = (
+    df_votes_balance_perc["balance_sum"] / df_votes_balance_perc["total_issuance"] * 100
+)
 
 with sns.axes_style("white"):
     fig, ax = plt.subplots(figsize=(7, 4))
-    sns.lineplot(x=df_votes_balance_perc.id.astype(int), y="perc", data=df_votes_balance_perc, color="darkkhaki")
-    ax.set(xlabel='Referendum ID', ylabel='Turnout (% of total issued Kusama)')
+    sns.pointplot(
+        x=df_votes_balance_perc.id.astype(int),
+        y="perc",
+        marker='o',
+        data=df_votes_balance_perc,
+        color="darkkhaki",
+    )
+    ax.set(xlabel="Referendum ID", ylabel="Turnout (% of total issued Kusama)", title="Turnout for selected Referendum IDs")
     ax.xaxis.set_major_locator(plt.MaxNLocator(3))
 st.pyplot(fig)
 
