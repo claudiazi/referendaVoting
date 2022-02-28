@@ -88,6 +88,39 @@ with sns.axes_style("white"):
     ax.xaxis.set_major_locator(plt.MaxNLocator(3))
 st.pyplot(fig)
 
+# Third Chart
+df_first_votes = (
+    votes_df.groupby("accountId")["id"].min().reset_index(name="first_voted_id")
+)
+votes_df = votes_df.merge(df_first_votes, on="accountId")
+votes_df.loc[votes_df["id"] == votes_df["first_voted_id"], "is_new"] = 1
+votes_df.loc[votes_df["id"] != votes_df["first_voted_id"], "is_new"] = 0
+df_counts_new = votes_df.groupby("id")["is_new"].sum().reset_index(name='counts_new')
+df_counts_new = pd.merge(df_counts_new, df_count_sum, on="id")
+df_counts_new["new_perc"] = df_counts_new["counts_new"] / df_counts_new["vote_counts"] * 100
+with sns.axes_style("white"):
+    fig, ax = plt.subplots(figsize=(7, 4))
+    sns.barplot(
+        x=df_counts_new.id,
+        y="counts_new",
+        data=df_counts_new,
+        color="palegoldenrod",
+    )
+    ax2 = ax.twinx()
+    sns.pointplot(
+        x=df_counts_new.id,
+        y="new_perc",
+        marker='o',
+        data=df_counts_new,
+        color="darkkhaki",
+    )
+    ax.set(xlabel="Referendum ID", ylabel="New accounts counts", title="New accounts counts for selected Referendum IDs")
+    ax2.set(ylabel="New accounts counts (% of total votes counts)")
+    barplot = mpatches.Patch(color="palegoldenrod", label="New accounts counts")
+    lineplot = mpatches.Patch(color="darkkhaki", label="% of total votes counts")
+    plt.legend(handles=[barplot, lineplot])
+    ax.xaxis.set_major_locator(plt.MaxNLocator(3))
+    st.pyplot(fig)
 
 df_higest_balance_user = votes_df.groupby("accountId")["balance"].sum().reset_index()
 df_higest_balance_user = df_higest_balance_user.sort_values(
