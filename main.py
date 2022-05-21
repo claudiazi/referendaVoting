@@ -6,6 +6,13 @@ import seaborn as sns
 import streamlit as st
 import matplotlib.patches as mpatches
 
+import numpy as np
+import plotly.graph_objects as go
+from plotly import tools
+import plotly.offline as py
+import plotly.express as px
+
+
 from data_preparation import load_data, preprocessing
 
 st.title("Referendum Voting")
@@ -42,18 +49,8 @@ votes_df = votes_df[
 
 # First Chart
 # top bar -> sum all votes (delegated/ non-delegated)
-df_count_sum = (
-    votes_df.groupby(["time", "id"])["accountId"]
-    .count()
-    .reset_index(name="vote_counts")
-    .sort_values(by="id")
-)
-# bar chart 1: top bars (group of delegated)
-with sns.axes_style("white"):
-    fig, ax = plt.subplots(figsize=(7, 4))
-    sns.barplot(x="id", y="vote_counts", data=df_count_sum, color="darkkhaki")
 
-# bottom bar -> talke only delegated=False votes
+# delegated=False votes
 df_non_delegated = votes_df[votes_df["isDelegating"] == False]
 df_non_delegated_count_sum = (
     df_non_delegated.groupby(["time", "id"])["accountId"]
@@ -61,21 +58,61 @@ df_non_delegated_count_sum = (
     .reset_index(name="vote_counts")
     .sort_values(by="id")
 )
-sns.barplot(
-    x=df_non_delegated_count_sum.id.astype(int),
-    y="vote_counts",
-    data=df_non_delegated_count_sum,
-    ci=None,
-    color="palegoldenrod",
+
+# delegated=True votes
+df_delegated = votes_df[votes_df["isDelegating"] == True]
+df_delegated_count_sum = (
+    df_delegated.groupby(["time", "id"])["accountId"]
+    .count()
+    .reset_index(name="vote_counts")
+    .sort_values(by="id")
 )
-ax.set(xlabel="Referendum ID", ylabel="Vote counts", title="Vote counts for selected Referendum IDs")
-ax.xaxis.set_major_locator(plt.MaxNLocator(3))
 
-top_bar = mpatches.Patch(color="darkkhaki", label="Delegated Votes")
-bottom_bar = mpatches.Patch(color="palegoldenrod", label="Non-delegated Votes")
-plt.legend(handles=[top_bar, bottom_bar])
+# COLORS_MAPPER = {
+#     "Delegated Votes": "rgb(0, 0, 100)",
+#     "Non-delegated Votes": "rgb(0, 200, 200)",
+# }
 
-st.pyplot(fig)
+layout = go.Layout(
+    title="<b>Vote counts for selected Referendum IDs</b>",
+    paper_bgcolor="rgb(248, 248, 255)",
+    plot_bgcolor="rgb(248, 248, 255)",
+    barmode="stack",
+    xaxis=dict(title="Referendum ID", linecolor="#BCCCDC"),
+    yaxis=dict(title="Vote counts", linecolor="#021C1E"),
+    legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01),
+)
+
+data = [
+    go.Bar(
+        name="Delegated Votes",
+        x=df_delegated_count_sum["id"],
+        y=df_delegated_count_sum["vote_counts"],
+        marker_color="rgb(0, 0, 100)",
+        customdata=np.transpose([df_count_sum["id"], df_count_sum["vote_counts"]]),
+        hovertemplate="<b>Delegated Votes</b><br><br>"
+        + "Referendum id: %{x:.0f}<br>"
+        + "Vote counts: %{y:.0f}<br>"
+        + "Total counts: %{customdata[1]:.0f}<br>"
+        + "<extra></extra>",
+    ),
+    go.Bar(
+        name="Non-delegated Votes",
+        x=df_non_delegated_count_sum["id"],
+        y=df_non_delegated_count_sum["vote_counts"],
+        customdata=np.transpose([df_count_sum["id"], df_count_sum["vote_counts"]]),
+        marker_color="rgb(0, 200, 200)",
+        hovertemplate="<b>Non-delegated Votes</b><br><br>"
+        + "Referendum id: %{x:.0f}<br>"
+        + "Vote counts: %{y:.0f}<br>"
+        + "Total counts: %{customdata[1]:.0f}<br>"
+        + "<extra></extra>",
+    ),
+]
+
+fig = go.Figure(data=data, layout=layout)
+st.plotly_chart(fig)
+
 
 # Second chart
 df_balance_sum = (
@@ -104,11 +141,15 @@ with sns.axes_style("white"):
     sns.pointplot(
         x=df_votes_balance_perc.id.astype(int),
         y="perc",
-        marker='o',
+        marker="o",
         data=df_votes_balance_perc,
         color="darkkhaki",
     )
-    ax.set(xlabel="Referendum ID", ylabel="Turnout (% of total issued Kusama)", title="Turnout for selected Referendum IDs")
+    ax.set(
+        xlabel="Referendum ID",
+        ylabel="Turnout (% of total issued Kusama)",
+        title="Turnout for selected Referendum IDs",
+    )
     ax.xaxis.set_major_locator(plt.MaxNLocator(3))
 st.pyplot(fig)
 
@@ -119,9 +160,11 @@ df_first_votes = (
 votes_df = votes_df.merge(df_first_votes, on="accountId")
 votes_df.loc[votes_df["id"] == votes_df["first_voted_id"], "is_new"] = 1
 votes_df.loc[votes_df["id"] != votes_df["first_voted_id"], "is_new"] = 0
-df_counts_new = votes_df.groupby("id")["is_new"].sum().reset_index(name='counts_new')
+df_counts_new = votes_df.groupby("id")["is_new"].sum().reset_index(name="counts_new")
 df_counts_new = pd.merge(df_counts_new, df_count_sum, on="id")
-df_counts_new["new_perc"] = df_counts_new["counts_new"] / df_counts_new["vote_counts"] * 100
+df_counts_new["new_perc"] = (
+    df_counts_new["counts_new"] / df_counts_new["vote_counts"] * 100
+)
 with sns.axes_style("white"):
     fig, ax = plt.subplots(figsize=(7, 4))
     sns.barplot(
@@ -134,11 +177,15 @@ with sns.axes_style("white"):
     sns.pointplot(
         x=df_counts_new.id,
         y="new_perc",
-        marker='o',
+        marker="o",
         data=df_counts_new,
         color="darkkhaki",
     )
-    ax.set(xlabel="Referendum ID", ylabel="New accounts counts", title="New accounts counts for selected Referendum IDs")
+    ax.set(
+        xlabel="Referendum ID",
+        ylabel="New accounts counts",
+        title="New accounts counts for selected Referendum IDs",
+    )
     ax2.set(ylabel="New accounts counts (% of total votes counts)")
     barplot = mpatches.Patch(color="palegoldenrod", label="New accounts counts")
     lineplot = mpatches.Patch(color="darkkhaki", label="% of total votes counts")
