@@ -5,6 +5,7 @@ import pandas as pd
 import seaborn as sns
 import streamlit as st
 import matplotlib.patches as mpatches
+from plotly.subplots import make_subplots
 
 import numpy as np
 import plotly.graph_objects as go
@@ -90,7 +91,13 @@ first_graph_layout = go.Layout(
     legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01),
 )
 
-total_count = np.transpose([df_delegated_count_sum["id"], df_delegated_count_sum["vote_counts"] + df_non_delegated_count_sum["vote_counts"]])
+total_count = np.transpose(
+    [
+        df_delegated_count_sum["id"],
+        df_delegated_count_sum["vote_counts"]
+        + df_non_delegated_count_sum["vote_counts"],
+    ]
+)
 
 first_graph_data = [
     go.Bar(
@@ -146,15 +153,16 @@ df_votes_balance_perc["perc"] = (
 )
 
 second_graph_data = go.Scatter(
-        name="Turnout",
-        x=df_votes_balance_perc.id.astype(int),
-        y=df_votes_balance_perc["perc"],
-        mode='lines+markers',
-        line=dict(color="rgb(0, 0, 100)"),
-        marker=dict(color="rgb(0, 0, 100)", size=8),
+    name="Turnout",
+    x=df_votes_balance_perc.id.astype(int),
+    y=df_votes_balance_perc["perc"],
+    mode="lines+markers",
+    line=dict(color="rgb(0, 0, 100)"),
+    marker=dict(color="rgb(0, 0, 100)", size=8),
     hovertemplate="Referendum id: %{x:.0f}<br>"
-        + "Turnout (%): %{y:.4f}<br>"
-        + "<extra></extra>",)
+    + "Turnout (%): %{y:.4f}<br>"
+    + "<extra></extra>",
+)
 
 second_graph_layout = go.Layout(
     title="<b>Turnout for selected Referendum IDs</b>",
@@ -181,34 +189,53 @@ df_counts_new = pd.merge(df_counts_new, df_count_sum, on="id")
 df_counts_new["new_perc"] = (
     df_counts_new["counts_new"] / df_counts_new["vote_counts"] * 100
 )
-with sns.axes_style("white"):
-    fig, ax = plt.subplots(figsize=(7, 4))
-    sns.barplot(
-        x=df_counts_new.id,
-        y="counts_new",
-        data=df_counts_new,
-        color="palegoldenrod",
-    )
-    ax2 = ax.twinx()
-    sns.pointplot(
-        x=df_counts_new.id,
-        y="new_perc",
-        marker="o",
-        data=df_counts_new,
-        color="darkkhaki",
-    )
-    ax.set(
-        xlabel="Referendum ID",
-        ylabel="New accounts counts",
-        title="New accounts counts for selected Referendum IDs",
-    )
-    ax2.set(ylabel="New accounts counts (% of total votes counts)")
-    barplot = mpatches.Patch(color="palegoldenrod", label="New accounts counts")
-    lineplot = mpatches.Patch(color="darkkhaki", label="% of total votes counts")
-    plt.legend(handles=[barplot, lineplot])
-    ax.xaxis.set_major_locator(plt.MaxNLocator(3))
-    st.pyplot(fig)
 
+third_graph_data = [
+    go.Bar(
+        name="New accounts counts",
+        x=df_counts_new["id"],
+        y=df_counts_new["counts_new"],
+        marker_color="rgb(0, 200, 200)",
+        hovertemplate="Referendum id: %{x:.0f}<br>"
+        + "New accounts counts: %{y:.0f}<br>"
+        + "<extra></extra>",
+    ),
+    go.Scatter(
+        name="% of total votes counts",
+        x=df_counts_new["id"],
+        y=df_counts_new["new_perc"],
+        mode="lines+markers",
+        yaxis="y2",
+        line=dict(color="rgb(0, 0, 100)"),
+        marker=dict(color="rgb(0, 0, 100)", size=8),
+        hovertemplate="Referendum id: %{x:.0f}<br>"
+                      + "% of total votes counts: %{y:.4f}<br>"
+                      + "<extra></extra>",
+    ),
+]
+
+third_graph_layout = go.Layout(
+    title="<b>Turnout for selected Referendum IDs</b>",
+    paper_bgcolor="rgb(248, 248, 255)",
+    plot_bgcolor="rgb(248, 248, 255)",
+    barmode="stack",
+    xaxis=dict(title="Referendum ID", linecolor="#BCCCDC"),
+    yaxis=dict(title="New accounts counts", linecolor="#021C1E"),
+    yaxis2=dict(
+        title="New accounts counts (% of total votes counts)",
+        linecolor="#021C1E",
+        anchor="x",
+        overlaying="y",
+        side="right",
+    ),
+    legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01),
+)
+
+fig_third_graph = go.Figure(data=third_graph_data, layout=third_graph_layout)
+st.plotly_chart(fig_third_graph)
+
+
+## Table
 df_higest_balance_user = votes_df.groupby("accountId")["balance"].sum().reset_index()
 df_higest_balance_user = df_higest_balance_user.sort_values(
     by="balance", ascending=False
