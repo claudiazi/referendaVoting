@@ -80,7 +80,7 @@ df_delegated_count_sum = (
 #     "Non-delegated Votes": "rgb(0, 200, 200)",
 # }
 
-layout = go.Layout(
+first_graph_layout = go.Layout(
     title="<b>Vote counts for selected Referendum IDs</b>",
     paper_bgcolor="rgb(248, 248, 255)",
     plot_bgcolor="rgb(248, 248, 255)",
@@ -92,7 +92,7 @@ layout = go.Layout(
 
 total_count = np.transpose([df_delegated_count_sum["id"], df_delegated_count_sum["vote_counts"] + df_non_delegated_count_sum["vote_counts"]])
 
-data = [
+first_graph_data = [
     go.Bar(
         name="Delegated Votes",
         x=df_delegated_count_sum["id"],
@@ -119,8 +119,8 @@ data = [
     ),
 ]
 
-fig = go.Figure(data=data, layout=layout)
-st.plotly_chart(fig)
+fig_first_graph = go.Figure(data=first_graph_data, layout=first_graph_layout)
+st.plotly_chart(fig_first_graph)
 
 
 # Second chart
@@ -145,22 +145,29 @@ df_votes_balance_perc["perc"] = (
     df_votes_balance_perc["balance_sum"] / df_votes_balance_perc["total_issuance"] * 100
 )
 
-with sns.axes_style("white"):
-    fig, ax = plt.subplots(figsize=(7, 4))
-    sns.pointplot(
+second_graph_data = go.Scatter(
+        name="Turnout",
         x=df_votes_balance_perc.id.astype(int),
-        y="perc",
-        marker="o",
-        data=df_votes_balance_perc,
-        color="darkkhaki",
-    )
-    ax.set(
-        xlabel="Referendum ID",
-        ylabel="Turnout (% of total issued Kusama)",
-        title="Turnout for selected Referendum IDs",
-    )
-    ax.xaxis.set_major_locator(plt.MaxNLocator(3))
-st.pyplot(fig)
+        y=df_votes_balance_perc["perc"],
+        mode='lines+markers',
+        line=dict(color="rgb(0, 0, 100)"),
+        marker=dict(color="rgb(0, 0, 100)", size=8),
+    hovertemplate="Referendum id: %{x:.0f}<br>"
+        + "Turnout (%): %{y:.4f}<br>"
+        + "<extra></extra>",)
+
+second_graph_layout = go.Layout(
+    title="<b>Turnout for selected Referendum IDs</b>",
+    paper_bgcolor="rgb(248, 248, 255)",
+    plot_bgcolor="rgb(248, 248, 255)",
+    barmode="stack",
+    xaxis=dict(title="Referendum ID", linecolor="#BCCCDC"),
+    yaxis=dict(title="Turnout (% of total issued Kusama)", linecolor="#021C1E"),
+)
+
+fig_second_graph = go.Figure(data=second_graph_data, layout=second_graph_layout)
+st.plotly_chart(fig_second_graph)
+
 
 # Third Chart
 df_first_votes = (
