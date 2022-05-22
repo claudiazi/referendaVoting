@@ -47,6 +47,13 @@ votes_df = votes_df[
     (votes_df["id"] >= selected_ids[0]) & (votes_df["id"] <= selected_ids[1])
 ]
 
+df_count_sum = (
+    votes_df.groupby(["time", "id"])["accountId"]
+    .count()
+    .reset_index(name="vote_counts")
+    .sort_values(by="id")
+)
+
 # First Chart
 # top bar -> sum all votes (delegated/ non-delegated)
 
@@ -83,13 +90,15 @@ layout = go.Layout(
     legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01),
 )
 
+total_count = np.transpose([df_delegated_count_sum["id"], df_delegated_count_sum["vote_counts"] + df_non_delegated_count_sum["vote_counts"]])
+
 data = [
     go.Bar(
         name="Delegated Votes",
         x=df_delegated_count_sum["id"],
         y=df_delegated_count_sum["vote_counts"],
         marker_color="rgb(0, 0, 100)",
-        customdata=np.transpose([df_count_sum["id"], df_count_sum["vote_counts"]]),
+        customdata=total_count,
         hovertemplate="<b>Delegated Votes</b><br><br>"
         + "Referendum id: %{x:.0f}<br>"
         + "Vote counts: %{y:.0f}<br>"
@@ -100,7 +109,7 @@ data = [
         name="Non-delegated Votes",
         x=df_non_delegated_count_sum["id"],
         y=df_non_delegated_count_sum["vote_counts"],
-        customdata=np.transpose([df_count_sum["id"], df_count_sum["vote_counts"]]),
+        customdata=total_count,
         marker_color="rgb(0, 200, 200)",
         hovertemplate="<b>Non-delegated Votes</b><br><br>"
         + "Referendum id: %{x:.0f}<br>"
