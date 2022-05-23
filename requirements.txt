@@ -4,3 +4,4 @@ seaborn
 streamlit
 #pandasql
 pymongo[tls,srv]
+plotly
