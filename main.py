@@ -21,7 +21,6 @@ st.title("Referendum Voting")
 st.markdown(
     """
 This app performs simple analysis about the past referendum votes.
-* **Python libraries:** base64, pandas, streamlit
 * **Data source:** [kusama].
 """
 )
