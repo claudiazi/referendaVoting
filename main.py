@@ -126,9 +126,10 @@ first_graph_data = [
         + "<extra></extra>",
     ),
 ]
-
-fig_first_graph = go.Figure(data=first_graph_data, layout=first_graph_layout)
-st.plotly_chart(fig_first_graph)
+col1, col2, col3 = st.columns([1, 6, 1])
+with col2:
+    fig_first_graph = go.Figure(data=first_graph_data, layout=first_graph_layout)
+    st.plotly_chart(fig_first_graph)
 
 
 # Second chart
@@ -173,9 +174,10 @@ second_graph_layout = go.Layout(
     xaxis=dict(title="Referendum ID", linecolor="#BCCCDC"),
     yaxis=dict(title="Turnout (% of total issued Kusama)", linecolor="#021C1E"),
 )
-
-fig_second_graph = go.Figure(data=second_graph_data, layout=second_graph_layout)
-st.plotly_chart(fig_second_graph)
+col1, col2, col3 = st.columns([1, 6, 1])
+with col2:
+    fig_second_graph = go.Figure(data=second_graph_data, layout=second_graph_layout)
+    st.plotly_chart(fig_second_graph)
 
 
 # Third Chart
@@ -231,9 +233,10 @@ third_graph_layout = go.Layout(
     ),
     legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01),
 )
-
-fig_third_graph = go.Figure(data=third_graph_data, layout=third_graph_layout)
-st.plotly_chart(fig_third_graph)
+col1, col2, col3 = st.columns([1, 6, 1])
+with col2:
+    fig_third_graph = go.Figure(data=third_graph_data, layout=third_graph_layout)
+    st.plotly_chart(fig_third_graph)
 
 
 ## Forth part
@@ -260,6 +263,7 @@ forth_graph_data_1 = [
         name="median",
         x=df_conviction_median.index,
         y=df_conviction_median["conviction"],
+        yaxis="y2",
         mode="lines+markers",
         line=dict(color="rgb(0, 200, 200)"),
         marker=dict(color="rgb(0, 200, 200)", size=8),
@@ -276,7 +280,7 @@ forth_graph_data_2 = [
         y=df_voted_ksm_mean["voted_ksm"],
         mode="lines+markers",
         line=dict(color="rgb(0, 0, 100)"),
-        marker=dict(color="rgb(0, 0, 100)", size=8),
+        marker=dict(color="rgb(0, 0, 100)", size=6),
         hovertemplate="Referendum id: %{x:.0f}<br>"
         + "voted ksm mean: %{y:.4f}<br>"
         + "<extra></extra>",
@@ -285,9 +289,10 @@ forth_graph_data_2 = [
         name="median",
         x=df_voted_ksm_median.index,
         y=df_voted_ksm_median["voted_ksm"],
+        yaxis="y2",
         mode="lines+markers",
-        line=dict(color="rgb(0, 200, 200)"),
-        marker=dict(color="rgb(0, 200, 200)", size=8),
+        line=dict(color="rgb(0, 200, 200)", dash='dash'),
+        marker=dict(color="rgb(0, 200, 200)", size=6),
         hovertemplate="Referendum id: %{x:.0f}<br>"
         + "voted ksm median: %{y:.4f}<br>"
         + "<extra></extra>",
@@ -299,7 +304,14 @@ forth_graph_layout_1 = go.Layout(
     paper_bgcolor="rgb(248, 248, 255)",
     plot_bgcolor="rgb(248, 248, 255)",
     xaxis=dict(title="Referendum ID", linecolor="#BCCCDC"),
-    yaxis=dict(title="Conviction", linecolor="#021C1E"),
+    yaxis=dict(title="Conviction Mean", linecolor="#021C1E"),
+    yaxis2=dict(
+        title="Conviction Median",
+        linecolor="#021C1E",
+        anchor="x",
+        overlaying="y",
+        side="right",
+    ),
     legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01),
 )
 
@@ -309,6 +321,13 @@ forth_graph_layout_2 = go.Layout(
     plot_bgcolor="rgb(248, 248, 255)",
     xaxis=dict(title="Referendum ID", linecolor="#BCCCDC"),
     yaxis=dict(title="Voted KSM", linecolor="#021C1E"),
+    yaxis2=dict(
+        title="Voted KSM Median",
+        linecolor="#021C1E",
+        anchor="x",
+        overlaying="y",
+        side="right",
+    ),
     legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01),
 )
 
@@ -382,9 +401,10 @@ fifth_graph_layout = go.Layout(
     ),
     legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01),
 )
-
-fig_fifth_graph = go.Figure(data=fifth_graph_data, layout=fifth_graph_layout)
-st.plotly_chart(fig_fifth_graph)
+col1, col2, col3 = st.columns([1, 6, 1])
+with col2:
+    fig_fifth_graph = go.Figure(data=fifth_graph_data, layout=fifth_graph_layout)
+    st.plotly_chart(fig_fifth_graph)
 
 
 ## Table
