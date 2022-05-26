@@ -20,7 +20,7 @@ def preprocessing(df: pd.DataFrame):
     df["id"] = df["id"].astype(int)
     df["voted_ksm"] = pd.to_numeric(df["balance"]).apply(lambda x: x / 1000000000000)
     df["conviction"] = df["conviction"].apply(
-        lambda x: 0.2 if x == "None" else int(re.search("\d", x).group())
+        lambda x: 0.1 if x == "None" else int(re.search("\d", x).group())
     )
     df["locked_amount"] = df["voted_ksm"] * df["conviction"]
     df["time"] = pd.to_datetime(df["time"], unit="ms")
