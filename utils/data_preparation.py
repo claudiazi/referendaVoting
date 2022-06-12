@@ -22,17 +22,20 @@ def preprocessing(df: pd.DataFrame):
     df["conviction"] = df["conviction"].apply(
         lambda x: 0.1 if x == "None" else int(re.search("\d", x).group())
     )
-    df["locked_amount"] = df["voted_ksm"] * df["conviction"]
-    df["time"] = pd.to_datetime(df["time"], unit="ms")
+    df["locked_amount"] = round(df["voted_ksm"] * df["conviction"], 4)
+    df["time"] = pd.to_datetime(df["time"], unit="ms").dt.strftime('%Y-%m-%d %h:%m:%s')
     df = df.drop("votes", axis=1)
     return df
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import os
+
     mongodb_url = os.getenv("MONGODB_URL")
     db_name = os.getenv("DB_NAME")
     table_name = os.getenv("TABLE_NAME")
-    votes_df = load_data(mongodb_url=mongodb_url, db_name=db_name,
-                         table_name=table_name)
+    votes_df = load_data(
+        mongodb_url=mongodb_url, db_name=db_name, table_name=table_name
+    )
     votes_df = preprocessing(votes_df)
+    print(1)
