@@ -23,7 +23,7 @@ def preprocessing(df: pd.DataFrame):
         lambda x: 0.1 if x == "None" else int(re.search("\d", x).group())
     )
     df["locked_amount"] = round(df["voted_ksm"] * df["conviction"], 4)
-    df["time"] = pd.to_datetime(df["time"], unit="ms").dt.strftime('%Y-%m-%d %h:%m:%s')
+    df["time"] = pd.to_datetime(df["time"], unit="ms").dt.strftime('%Y-%m-%d')
     df = df.drop("votes", axis=1)
     return df
 
