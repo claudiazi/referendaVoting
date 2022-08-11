@@ -18,4 +18,27 @@ referendum_columns = [
     "nay_without_conviction",
 ]
 
-votes_columns = ["referendum_index", "votes"]
+votes_columns = [
+    "referendum_index",
+    "account.address",
+    "voting_time",
+    "amount",
+    "conviction",
+    # "isAye",
+    # "isNay",
+    # "isDelegating",
+]
+
+referendum_columns_convert_to_int = [
+    "turnout",
+    "total_issuance",
+    "aye_without_conviction",
+    "nay_without_conviction",
+    "aye_amount",
+    "nay_amount",
+]
+
+votes_columns_convert_to_float = [
+    "conviction",
+    "amount",
+]
