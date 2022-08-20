@@ -114,26 +114,28 @@ def build_tabs():
     )
 
 
-def load_raw_data():
-    df_raw = pd.read_csv("test_data.csv")
-    print("raw data loaded!")
-    return df_raw.to_dict('record')
+#
+# def load_raw_data():
+#     df_raw = pd.read_csv("test_data.csv")
+#     print("raw data loaded!")
+#     return df_raw.to_dict('record')
 
 
-def load_refined_referenda_data(df_raw):
+def load_refined_referenda_data():
     # df_raw = load_data(mongodb_url=mongodb_url, db_name=db_name, table_name=table_name)
-    df_raw = pd.DataFrame(df_raw)
+    df_raw = pd.read_csv("referendum_data.csv")
     df_referendum = preprocessing_referendum(df_raw)
-    print('referendum data loaded!')
-    return df_referendum.to_dict('record')
+    print("referendum data loaded!")
+    return df_referendum.to_dict("record")
 
 
-def load_refined_votes_data(df_raw):
+def load_refined_votes_data():
     # df_raw = load_data(mongodb_url=mongodb_url, db_name=db_name, table_name=table_name)
-    df_raw = pd.DataFrame(df_raw)
+    df_raw = pd.read_csv("votes_data.csv")
     df_votes = preprocessing_votes(df_raw)
-    print('votes data loaded!')
-    return df_votes.to_dict('record')
+    print("votes data loaded!")
+    return df_votes.to_dict("record")
+
 
 #
 # df_raw = load_raw_data()
@@ -144,12 +146,21 @@ def load_refined_votes_data(df_raw):
 def build_tab_1():
     return [
         # rangebar
+        html.Div([], className="two columns"),
         html.Div(
             id="selected-ids",
-            className="twelve columns",
+            className="ten columns",
             children=[
                 html.Br(),
+                html.Br(),
                 dcc.RangeSlider(65, 217),
+                html.Br(),
+                html.Button(
+                    "Confirm",
+                    id="tab-trigger-btn",
+                    n_clicks=0,
+                    style={"display": "inline-block", "float": "right"},
+                ),
             ],
         ),
         html.Div(
@@ -323,16 +334,8 @@ app.layout = html.Div(
             ],
         ),
         # Main app
-        html.Button(
-            "Confirm",
-            id="tab-trigger-btn",
-            n_clicks=0,
-            style={"display": "inline-block", "float": "right"},
-        ),
         dcc.Store(id="raw-data", data=[], storage_type="memory"),
-        dcc.Store(
-            id="votes-data", data=[], storage_type="memory"
-        ),
+        dcc.Store(id="votes-data", data=[], storage_type="memory"),
         dcc.Store(
             id="referenda-data",
             data=[],
@@ -344,31 +347,25 @@ app.layout = html.Div(
 
 
 # Callback to update the stream data
-@app.callback(Output("raw-data", "data"), Input("interval-component", "n_intervals"))
-def update(n_intervals):
-    if n_intervals >= 0:
-        return load_raw_data()
-
 @app.callback(
     [Output("referenda-data", "data"), Output("votes-data", "data")],
-    Input("raw-data", "data")
+    Input("interval-component", "n_intervals"),
 )
-def update_refined_data(raw_data):
-    return load_refined_referenda_data(raw_data), load_refined_votes_data(raw_data)
+def update_refined_data(n_intervals):
+    if n_intervals >= 0:
+        refined_referenda_data = load_refined_referenda_data()
+        refined_votes_data = load_refined_votes_data()
+        return refined_referenda_data, refined_votes_data
 
 
-@app.callback(
-    Output('table-placeholder', 'children'),
-    Input('referenda-data', 'data')
-)
+@app.callback(Output("table-placeholder", "children"), Input("referenda-data", "data"))
 def create_graph1(data):
     dff = pd.DataFrame(data[:])
-    dff = dff[['referendum_index', 'turnout_perc']]
+    dff = dff[["referendum_index", "turnout_perc"]]
     # 2. convert string like JSON to pandas dataframe
     # dff = pd.read_json(data, orient='split')
     my_table = dash_table.DataTable(
-        columns=[{"name": i, "id": i} for i in dff.columns],
-        data=dff.to_dict('records')
+        columns=[{"name": i, "id": i} for i in dff.columns], data=dff.to_dict("records")
     )
     return my_table
 
@@ -441,17 +438,17 @@ def update_bar_chart(n_intervals, votes_data):
     #
     df_votes = pd.DataFrame(votes_data)
     df_counts_sum = (
-        df_votes.groupby("referendum_index")["address"]
-            .count()
-            .reset_index(name="vote_counts")
-            .sort_values(by="referendum_index")
+        df_votes.groupby("referendum_index")["account_address"]
+        .count()
+        .reset_index(name="vote_counts")
+        .sort_values(by="referendum_index")
     )
 
-#     COLORS_MAPPER = {
-#         "Delegated Votes": "rgb(0, 0, 100)",
-#         "Non-delegated Votes": "rgb(0, 200, 200)",
-#     }
-#     #
+    #     COLORS_MAPPER = {
+    #         "Delegated Votes": "rgb(0, 0, 100)",
+    #         "Non-delegated Votes": "rgb(0, 200, 200)",
+    #     }
+    #     #
     first_graph_layout = go.Layout(
         title="<b>Vote counts for selected Referendum IDs</b>",
         paper_bgcolor="rgb(248, 248, 255)",
@@ -500,9 +497,9 @@ def update_bar_chart(n_intervals, votes_data):
             y=df_counts_sum["vote_counts"],
             marker_color="rgb(0, 0, 100)",
             hovertemplate="<b>Delegated Votes</b><br><br>"
-                          + "Referendum id: %{x:.0f}<br>"
-                          + "Total counts: %{customdata[1]:.0f}<br>"
-                          + "<extra></extra>",
+            + "Referendum id: %{x:.0f}<br>"
+            + "Total counts: %{customdata[1]:.0f}<br>"
+            + "<extra></extra>",
         ),
     ]
     fig_first_graph = go.Figure(data=first_graph_data, layout=first_graph_layout)
@@ -510,13 +507,9 @@ def update_bar_chart(n_intervals, votes_data):
 
 
 # Update second chart
-@app.callback(
-    Output("turnout_scatterchart", "figure"),
-    Input("referenda-data", "data")
-)
+@app.callback(Output("turnout_scatterchart", "figure"), Input("referenda-data", "data"))
 def update_bar_chart(referenda_data):
     df_referendum = pd.DataFrame(referenda_data)
-    print(df_referendum["turnout_perc"])
     second_graph_data = go.Scatter(
         name="Turnout",
         x=df_referendum.referendum_index.astype(int),
@@ -525,8 +518,8 @@ def update_bar_chart(referenda_data):
         line=dict(color="rgb(0, 0, 100)"),
         marker=dict(color="rgb(0, 0, 100)", size=8),
         hovertemplate="Referendum id: %{x:.0f}<br>"
-                      + "Turnout (%): %{y:.4f}<br>"
-                      + "<extra></extra>",
+        + "Turnout (%): %{y:.4f}<br>"
+        + "<extra></extra>",
     )
 
     second_graph_layout = go.Layout(
@@ -544,7 +537,8 @@ def update_bar_chart(referenda_data):
 # Update piechart
 @app.callback(
     output=Output("call_module_piechart", "figure"),
-    inputs=Input("referenda-data", "data"))
+    inputs=Input("referenda-data", "data"),
+)
 def update_pie_chart(referenda_data):
     df = pd.DataFrame(referenda_data)
     new_figure = {
@@ -573,5 +567,5 @@ def update_pie_chart(referenda_data):
 
 # Running the server
 if __name__ == "__main__":
-    warnings.filterwarnings(action='ignore')
+    warnings.filterwarnings(action="ignore")
     app.run_server(port=8088, debug=True)
