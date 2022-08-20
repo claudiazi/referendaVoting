@@ -1,5 +1,5 @@
 from ast import literal_eval
-
+import time
 import pandas as pd
 from pymongo import MongoClient
 
@@ -12,12 +12,26 @@ from config import (
 
 
 def load_data(mongodb_url: str, db_name: str, table_name: str) -> pd.DataFrame:
+    start_time = time.time()
     client = MongoClient(mongodb_url)
     db = client[db_name]
     table = db[table_name]
     print(client.server_info())
     df = pd.DataFrame(list(table.find()))
+    print(f"{table_name} has been loaded {(time.time() - start_time):.2f}s")
     return df
+
+    cursor = trade_collection.find({"dt": {"$gte": start_dt, "$lt": end_dt}}).sort("dt")
+    cursor.batch_size(50000)
+    elems = []
+    for c in cursor:
+        elems.append(c)
+    df_trades = pd.DataFrame(elems)
+
+    cursor = db[collection].find(query)
+
+    # Expand the cursor and construct the DataFrame
+    df = pd.DataFrame(list(cursor))
 
 
 def extract_status_time(df: pd.DataFrame, status: str) -> pd.DataFrame:
@@ -29,35 +43,21 @@ def extract_status_time(df: pd.DataFrame, status: str) -> pd.DataFrame:
 
 def preprocessing_referendum(df: pd.DataFrame) -> pd.DataFrame:
     referendum_df = df[referendum_columns]
-    referendum_df = referendum_df[
-        referendum_df["status"].isin(["executed", "passed", "notPassed"])
-    ]
-    referendum_df["timeline"] = referendum_df["timeline"].apply(literal_eval)
-    referendum_df["pre_image"] = referendum_df["pre_image"].apply(
-        lambda x: literal_eval(x) if isinstance(x, str) else None
+    referendum_df["has_passed"] = referendum_df["status"].apply(
+        lambda x: "t"
+        if x in ["executed", "Passed"]
+        else ("wip" if x == "started" else "f")
     )
-    timeline_df = referendum_df.explode("timeline")
-    timeline_df["status"] = timeline_df["timeline"].apply(lambda x: x.get("status"))
-    timeline_df = timeline_df[["referendum_index", "status", "timeline"]]
-    for status in ["started", "passed", "notPassed"]:
-        extract_df = extract_status_time(timeline_df, status)
-        referendum_df = pd.merge(
-            referendum_df, extract_df, on="referendum_index", how="left"
-        )
-    referendum_df["ended_at"] = referendum_df["passed_at"].combine_first(
-        referendum_df["notPassed_at"]
+    referendum_df = referendum_df.rename(
+        columns={
+            "pre_image_author_address": "author_address",
+            "pre_image_call_module": "call_module",
+            "pre_image_call_name": "call_name",
+        }
     )
-    referendum_df["timespan"] = pd.to_datetime(
-        referendum_df["ended_at"], unit="ms"
-    ) - pd.to_datetime(referendum_df["started_at"], unit="ms")
-    referendum_df["call_module"] = referendum_df["pre_image"].apply(
-        lambda x: x.get("call_module") if type(x) == dict else None
-    )
-    referendum_df["call_name"] = referendum_df["pre_image"].apply(
-        lambda x: x.get("call_name") if type(x) == dict else None
-    )
+
     for col in referendum_columns_convert_to_int:
-        referendum_df[col] = referendum_df[col].astype("int")
+        referendum_df[col] = referendum_df[col].apply(lambda x: int(x) if x is not None and x != 'NULL' else None)
     referendum_df["turnout_perc"] = (
         referendum_df["turnout"] / referendum_df["total_issuance"]
     )
@@ -72,8 +72,12 @@ def preprocessing_referendum(df: pd.DataFrame) -> pd.DataFrame:
 
 def preprocessing_votes(df: pd.DataFrame) -> pd.DataFrame:
     votes_df = df[votes_columns]
-    idx = votes_df.groupby(['referendum_index', 'account.address'])[
-              'voting_time'].transform(max) == votes_df['voting_time']
+    idx = (
+        votes_df.groupby(["referendum_index", "account_address"])[
+            "voting_time"
+        ].transform(max)
+        == votes_df["voting_time"]
+    )
     votes_df = votes_df[idx]
     for col in votes_columns_convert_to_float:
         votes_df[col] = votes_df[col].astype("float")
@@ -94,12 +98,11 @@ if __name__ == "__main__":
     import os
 
     mongodb_url = os.getenv("MONGODB_URL")
-    print(mongodb_url)
     db_name = os.getenv("DB_NAME")
-    # table_name = "vote"
-    table_name = os.getenv("TABLE_NAME")
+    table_name = "vote"
+    # table_name = os.getenv("TABLE_NAME")
     df = load_data(mongodb_url=mongodb_url, db_name=db_name, table_name=table_name)
-    # df = pd.read_csv('test_data.csv')
-    # votes_df = preprocessing_votes(df)
+    df = pd.read_csv('referendum_data.csv')
+    votes_df = preprocessing_votes(df)
     referendum_df = preprocessing_referendum(df)
     print(1)
