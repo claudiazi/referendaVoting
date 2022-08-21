@@ -8,4 +8,5 @@ plotly
 dash_daq
 streamlit_option_menu
 dash_bootstrap_components
+substrate-interface
 pandasql

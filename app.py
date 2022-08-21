@@ -10,6 +10,7 @@ from dash import dash_table
 import plotly.graph_objs as go
 import dash_daq as daq
 import numpy as np
+from substrateinterface import SubstrateInterface
 
 import warnings
 
@@ -23,6 +24,39 @@ from utils.data_preparation import (
 
 external_stylesheets = ["https://codepen.io/chriddyp/pen/bWLwgP.css"]
 
+substrate = SubstrateInterface(
+    url="wss://kusama-rpc.polkadot.io",
+    ss58_format=2,
+    type_registry_preset='kusama'
+)
+
+#fetch ongoing referenda
+
+#lowest unbaked
+lowestUnbaked = substrate.query(
+    module='Democracy',
+    storage_function='LowestUnbaked'
+)
+
+#highest unbaked
+highestUnbaked = substrate.query(
+    module='Democracy',
+    storage_function='ReferendumCount'
+)
+
+unbaked = range(int(str(lowestUnbaked)), int(str(highestUnbaked)))
+
+ongoingReferenda = []
+
+for referendum in unbaked:
+    result = substrate.query(
+        module='Democracy',
+        storage_function='ReferendumInfoOf',
+        params=[referendum]
+    )
+    if ("Ongoing" in result.value.keys()):
+        ongoingReferenda.append(result.value)
+    
 app = dash.Dash(
     __name__,
     meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1"}],
