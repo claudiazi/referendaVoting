@@ -1,6 +1,7 @@
-from ast import literal_eval
 import time
+
 import pandas as pd
+from pandasql import sqldf
 from pymongo import MongoClient
 
 from config import (
@@ -94,6 +95,47 @@ def preprocessing_votes(df: pd.DataFrame) -> pd.DataFrame:
     return votes_df
 
 
+def get_df_new_accounts(dict_referendum: pd.DataFrame, dict_votes: pd.DataFrame):
+    global df_first_votes
+    global df_all_votes
+    df_first_votes = pd.DataFrame(dict_referendum)
+    df_all_votes = pd.DataFrame(dict_votes)
+    df_first_votes = df_all_votes.groupby('account_address').agg(
+        first_referendum_index=('referendum_index', 'min')).reset_index()
+    pysqldf = lambda q: sqldf(q, globals())
+    query = """
+        with first_referendum as (
+        
+            select 
+              first_referendum_index as referendum_index
+            , count(distinct account_address) as new_accounts
+            from df_first_votes
+            group by 1
+            
+        )
+        
+        , all_referendum as (
+        
+            select 
+            referendum_index
+            , count(distinct account_address) as all_votes
+            from df_all_votes
+            group by 1
+        )
+        
+        select 
+        referendum_index
+        , new_accounts
+        , all_votes
+        , ifnull(new_accounts * 1.0 / all_votes, 0) as perc_new_accounts
+        from all_referendum
+        left join first_referendum
+            using(referendum_index)
+    """
+    df_new_counts = pysqldf(query)
+    return df_new_counts
+
+
 if __name__ == "__main__":
     import os
 
@@ -101,8 +143,10 @@ if __name__ == "__main__":
     db_name = os.getenv("DB_NAME")
     table_name = "vote"
     # table_name = os.getenv("TABLE_NAME")
-    df = load_data(mongodb_url=mongodb_url, db_name=db_name, table_name=table_name)
-    df = pd.read_csv('referendum_data.csv')
-    votes_df = preprocessing_votes(df)
-    referendum_df = preprocessing_referendum(df)
+    # df = load_data(mongodb_url=mongodb_url, db_name=db_name, table_name=table_name)
+    df_referendum = pd.read_csv('referendum_data.csv')
+    df_votes = pd.read_csv('votes_data.csv')
+    df_votes = preprocessing_votes(df_votes)
+    df_referendum = preprocessing_referendum(df_referendum)
+    df_new_accounts = get_df_new_accounts(df_referendum, df_votes)
     print(1)
