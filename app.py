@@ -18,6 +18,7 @@ from utils.data_preparation import (
     load_data,
     preprocessing_referendum,
     preprocessing_votes,
+    get_df_new_accounts,
 )
 
 external_stylesheets = ["https://codepen.io/chriddyp/pen/bWLwgP.css"]
@@ -146,7 +147,7 @@ def load_refined_votes_data():
 def build_tab_1():
     return [
         # rangebar
-        html.Div([], className="two columns"),
+        html.Div([], className="one column"),
         html.Div(
             id="selected-ids",
             className="ten columns",
@@ -163,25 +164,31 @@ def build_tab_1():
                 ),
             ],
         ),
+        html.Div([], className="one column"),
+        html.Div(className="twelve columns", children=[html.Br()]),
         html.Div(
             id="settings-menu",
             children=[
                 html.Div(
                     id="first-chart",
                     className="six columns",
-                    children=[html.Br(), generate_bar_chart()],
+                    children=[generate_votes_counts_chart()],
                 ),
                 html.Div(
                     id="second-chart",
                     className="six columns",
-                    children=[html.Br(), generate_turnout_chart()],
+                    children=[generate_turnout_chart()],
+                ),
+                html.Div(className="twelve columns", children=[html.Br()]),
+                html.Div(
+                    id="third-chart",
+                    className="six columns",
+                    children=[generate_new_accouts_chart()],
                 ),
                 html.Div(
                     id="first-pie-chart",
-                    className="five columns",
+                    className="six columns",
                     children=[
-                        html.Label(id="metric-select-title", children="Select Metrics"),
-                        html.Br(),
                         generate_piechart(),
                     ],
                 ),
@@ -221,7 +228,7 @@ def generate_piechart():
     )
 
 
-def generate_bar_chart():
+def generate_votes_counts_chart():
     return dcc.Graph(
         id="votes_counts_barchart",
         figure={
@@ -307,12 +314,43 @@ def generate_turnout_chart():
         xaxis=dict(title="Referendum ID", linecolor="#BCCCDC"),
         yaxis=dict(title="Turnout (% of total issued Kusama)", linecolor="#021C1E"),
     )
-    col1, col2, col3 = st.columns([1, 6, 1])
-    with col2:
-        fig_second_graph = go.Figure(data=second_graph_data, layout=second_graph_layout)
-        st.plotly_chart(fig_second_graph)
-        x = (df_votes_balance_perc.id.astype(int),)
-        y = (df_votes_balance_perc["perc"],)
+
+
+def generate_new_accouts_chart():
+    return dcc.Graph(
+        id="new_accounts_barchart",
+        figure={
+            "data": [
+                {
+                    "labels": [],
+                    "values": [],
+                    "marker": {"line": {"color": "white", "width": 1}},
+                    "hoverinfo": "label",
+                    "textinfo": "label",
+                }
+            ],
+            "layout": {
+                "title": "<b>New accounts counts for selected Referendum IDs</b>",
+                "margin": dict(l=20, r=20, t=20, b=20),
+                "showlegend": True,
+                "paper_bgcolor": "rgba(0,0,0,0)",
+                "plot_bgcolor": "rgba(0,0,0,0)",
+                "font": {"color": "white"},
+                "autosize": True,
+                "barmode": "stack",
+                "xaxis": dict(title="Referendum ID", linecolor="#BCCCDC"),
+                "yaxis": dict(title="New accounts counts", linecolor="#021C1E"),
+                "yaxis2": dict(
+                    title="New accounts counts (% of total votes counts)",
+                    linecolor="#021C1E",
+                    anchor="x",
+                    overlaying="y",
+                    side="right",
+                ),
+                "legend": dict(yanchor="top", y=0.99, xanchor="left", x=0.01),
+            },
+        },
+    )
 
 
 app.layout = html.Div(
@@ -417,7 +455,7 @@ def update_interval_state(tab_switch, cur_interval, disabled, cur_stage):
     inputs=[Input("interval-component", "n_intervals")],
     state=[Input("votes-data", "data")],
 )
-def update_bar_chart(n_intervals, votes_data):
+def update_votes_counts_chart(n_intervals, votes_data):
     # delegated=False votes
     # df_non_delegated = df_votes[df_votes["isDelegating"] == 'False']
     # df_non_delegated_count_sum = (
@@ -491,14 +529,14 @@ def update_bar_chart(n_intervals, votes_data):
         #                   + "Total counts: %{customdata[1]:.0f}<br>"
         #                   + "<extra></extra>",
         # ),
-        go.Bar(
+        go.Scatter(
             name="Total Votes",
             x=df_counts_sum["referendum_index"],
             y=df_counts_sum["vote_counts"],
             marker_color="rgb(0, 0, 100)",
             hovertemplate="<b>Delegated Votes</b><br><br>"
             + "Referendum id: %{x:.0f}<br>"
-            + "Total counts: %{customdata[1]:.0f}<br>"
+            + "Votes counts: %{y:.0f}<br>"
             + "<extra></extra>",
         ),
     ]
@@ -514,9 +552,9 @@ def update_bar_chart(referenda_data):
         name="Turnout",
         x=df_referendum.referendum_index.astype(int),
         y=df_referendum["turnout_perc"],
-        mode="lines+markers",
+        # mode="lines+markers",
         line=dict(color="rgb(0, 0, 100)"),
-        marker=dict(color="rgb(0, 0, 100)", size=8),
+        # marker=dict(color="rgb(0, 0, 100)", size=8),
         hovertemplate="Referendum id: %{x:.0f}<br>"
         + "Turnout (%): %{y:.4f}<br>"
         + "<extra></extra>",
@@ -532,6 +570,58 @@ def update_bar_chart(referenda_data):
     )
     fig_second_graph = go.Figure(data=second_graph_data, layout=second_graph_layout)
     return fig_second_graph
+
+
+# Update third chart
+@app.callback(
+    Output("new_accounts_barchart", "figure"),
+    [Input("referenda-data", "data"), Input("votes-data", "data")],
+)
+def update_new_accounts_chart(referenda_data, votes_data):
+    df_new_accounts = get_df_new_accounts(referenda_data, votes_data)
+    third_graph_data = [
+        go.Bar(
+            name="New accounts counts",
+            x=df_new_accounts["referendum_index"],
+            y=df_new_accounts["new_accounts"],
+            marker_color="rgb(0, 200, 200)",
+            hovertemplate="Referendum id: %{x:.0f}<br>"
+            + "New accounts counts: %{y:.0f}<br>"
+            + "<extra></extra>",
+        ),
+        go.Scatter(
+            name="% of total votes counts",
+            x=df_new_accounts["referendum_index"],
+            y=df_new_accounts["perc_new_accounts"],
+            # mode="lines+markers",
+            yaxis="y2",
+            line=dict(color="rgb(0, 0, 100)"),
+            # marker=dict(color="rgb(0, 0, 100)", size=4),
+            hovertemplate="Referendum id: %{x:.0f}<br>"
+            + "% of total votes counts: %{y:.4f}<br>"
+            + "<extra></extra>",
+        ),
+    ]
+
+    third_graph_layout = go.Layout(
+        title="<b>New accounts for selected Referendum IDs</b>",
+        paper_bgcolor="rgb(248, 248, 255)",
+        plot_bgcolor="rgb(248, 248, 255)",
+        barmode="stack",
+        xaxis=dict(title="Referendum ID", linecolor="#BCCCDC"),
+        yaxis=dict(title="New accounts counts", linecolor="#021C1E"),
+        yaxis2=dict(
+            title="New accounts counts (% of total votes counts)",
+            linecolor="#021C1E",
+            anchor="x",
+            overlaying="y",
+            side="right",
+        ),
+        legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01),
+    )
+
+    fig_third_graph = go.Figure(data=third_graph_data, layout=third_graph_layout)
+    return fig_third_graph
 
 
 # Update piechart
