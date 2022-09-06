@@ -2,10 +2,9 @@ pandas
 matplotlib
 seaborn
 dash
-#pandasql
 pymongo[tls,srv]
 plotly
 dash_daq
-streamlit_option_menu
 dash_bootstrap_components
 substrate-interface
+pandasql

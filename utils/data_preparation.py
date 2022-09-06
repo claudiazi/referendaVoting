@@ -1,11 +1,14 @@
-from ast import literal_eval
 import time
+
 import pandas as pd
+from pandasql import sqldf
 from pymongo import MongoClient
+from substrateinterface import SubstrateInterface
 
 from config import (
     referendum_columns,
     votes_columns,
+    ongoing_refenrenda_columns,
     referendum_columns_convert_to_int,
     votes_columns_convert_to_float,
 )
@@ -57,7 +60,9 @@ def preprocessing_referendum(df: pd.DataFrame) -> pd.DataFrame:
     )
 
     for col in referendum_columns_convert_to_int:
-        referendum_df[col] = referendum_df[col].apply(lambda x: int(x) if x is not None and x != 'NULL' else None)
+        referendum_df[col] = referendum_df[col].apply(
+            lambda x: int(x) if x is not None and x != "NULL" else None
+        )
     referendum_df["turnout_perc"] = (
         referendum_df["turnout"] / referendum_df["total_issuance"]
     )
@@ -81,17 +86,99 @@ def preprocessing_votes(df: pd.DataFrame) -> pd.DataFrame:
     votes_df = votes_df[idx]
     for col in votes_columns_convert_to_float:
         votes_df[col] = votes_df[col].astype("float")
-    votes_df["voted_amount_without_conviction"] = votes_df["amount"].apply(
+    votes_df["vote_amount_without_conviction"] = votes_df["amount"].apply(
         lambda x: x / 1000000000000
     )
-    votes_df["voted_amount_with_conviction"] = round(
-        votes_df["voted_amount_without_conviction"] * votes_df["conviction"], 4
+    votes_df["vote_amount_with_conviction"] = round(
+        votes_df["vote_amount_without_conviction"] * votes_df["conviction"], 4
     )
     votes_df["voting_time"] = pd.to_datetime(
         votes_df["voting_time"], unit="s"
     ).dt.strftime("%Y-%m-%d")
-    votes_df = votes_df[votes_columns]
     return votes_df
+
+
+def get_df_new_accounts(dict_referendum: pd.DataFrame, dict_votes: pd.DataFrame):
+    global df_first_votes
+    global df_all_votes
+    df_first_votes = pd.DataFrame(dict_referendum)
+    df_all_votes = pd.DataFrame(dict_votes)
+    df_first_votes = (
+        df_all_votes.groupby("account_address")
+        .agg(first_referendum_index=("referendum_index", "min"))
+        .reset_index()
+    )
+    pysqldf = lambda q: sqldf(q, globals())
+    query = """
+        with first_referendum as (
+        
+            select 
+              first_referendum_index as referendum_index
+            , count(distinct account_address) as new_accounts
+            from df_first_votes
+            group by 1
+            
+        )
+        
+        , all_referendum as (
+        
+            select 
+            referendum_index
+            , count(distinct account_address) as all_votes
+            from df_all_votes
+            group by 1
+        )
+        
+        select 
+        referendum_index
+        , new_accounts
+        , all_votes
+        , ifnull(new_accounts * 1.0 / all_votes, 0) as perc_new_accounts
+        from all_referendum
+        left join first_referendum
+            using(referendum_index)
+    """
+    df_new_counts = pysqldf(query)
+    return df_new_counts
+
+
+def get_substrate_live_data() -> pd.DataFrame:
+    substrate = SubstrateInterface(
+        url="wss://kusama-rpc.polkadot.io", ss58_format=2, type_registry_preset="kusama"
+    )
+    # lowest unbaked
+    lowest_unbaked = substrate.query(
+        module="Democracy", storage_function="LowestUnbaked"
+    )
+
+    # highest unbaked
+    highest_unbaked = substrate.query(
+        module="Democracy", storage_function="ReferendumCount"
+    )
+
+    unbaked = range(int(str(lowest_unbaked)), int(str(highest_unbaked)))
+
+    ongoing_referenda = []
+
+    for referendum in unbaked:
+        result = substrate.query(
+            module="Democracy", storage_function="ReferendumInfoOf", params=[referendum]
+        )
+        if "Ongoing" in result.value.keys():
+            result_dict = result.value["Ongoing"]
+            result_dict.update({'referendum_index': referendum})
+            ongoing_referenda.append(result_dict)
+    df_ongoing_referenda = pd.DataFrame(ongoing_referenda)
+    df_ongoing_referenda = pd.concat(
+        [
+            df_ongoing_referenda.drop(["tally"], axis=1),
+            df_ongoing_referenda["tally"].apply(pd.Series),
+        ],
+        axis=1,
+    )
+    df_ongoing_referenda['ayes_perc'] = df_ongoing_referenda['ayes'] / (df_ongoing_referenda['ayes'] + df_ongoing_referenda['nays'])
+    df_ongoing_referenda = df_ongoing_referenda[ongoing_refenrenda_columns]
+    return df_ongoing_referenda
 
 
 if __name__ == "__main__":
@@ -100,9 +187,13 @@ if __name__ == "__main__":
     mongodb_url = os.getenv("MONGODB_URL")
     db_name = os.getenv("DB_NAME")
     table_name = "vote"
+    df_ongoing_referenda = get_substrate_live_data()
     # table_name = os.getenv("TABLE_NAME")
-    df = load_data(mongodb_url=mongodb_url, db_name=db_name, table_name=table_name)
-    df = pd.read_csv('referendum_data.csv')
-    votes_df = preprocessing_votes(df)
-    referendum_df = preprocessing_referendum(df)
+    # df = load_data(mongodb_url=mongodb_url, db_name=db_name, table_name=table_name)
+    # df_referendum = pd.read_csv('referendum_data.csv')
+    df_votes = pd.read_csv('votes_data.csv')
+    df_votes = preprocessing_votes(df_votes)
+    # df_referendum = preprocessing_referendum(df_referendum)
+    # df_new_accounts = get_df_new_accounts(df_referendum, df_votes)
+    print(df_ongoing_referenda)
     print(1)
