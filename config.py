@@ -27,6 +27,14 @@ votes_columns = [
     # "isDelegating",
 ]
 
+ongoing_refenrenda_columns = [
+    "referendum_index",
+    "threshold",
+    "ayes_perc",
+    "end",
+    "turnout",
+]
+
 referendum_columns_convert_to_int = [
     "turnout",
     "total_issuance",
