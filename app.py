@@ -9,6 +9,8 @@ from dash import dash_table
 from dash import dcc
 from dash import html
 from dash.dependencies import Input, Output, State
+import requests
+import json
 
 from utils.data_preparation import (
     preprocessing_referendum,
@@ -52,6 +54,52 @@ theme = {
     "secondary": "#FFD15F",  # Accent
 }
 
+#read from subsquid endpoint
+
+subSquid_endpoint = "https://squid.subsquid.io/kusama-proposals/v/v1/graphql"
+
+query = """query MyQuery {
+    proposals(where: {type_eq: Referendum}, orderBy: endedAtBlock_DESC) {
+    createdAt
+    createdAtBlock
+    endedAt
+    endedAtBlock
+    updatedAt
+    updatedAtBlock
+    index
+    threshold {
+      ... on ReferendumThreshold {
+        type
+      }
+    }
+    status
+    voting(orderBy: blockNumber_DESC) {
+      timestamp
+      blockNumber
+      balance {
+        ... on SplitVoteBalance {
+          aye
+          nay
+        }
+        ... on StandardVoteBalance {
+          value
+        }
+      }
+      lockPeriod
+      voter
+    }
+    proposer
+    reward
+    payee
+    curator
+    deposit
+    }
+}"""
+
+r = requests.post(subSquid_endpoint, json={'query': query})
+print(r.status_code)
+print(r.text)
+json_data = json.loads(r.text)
 
 def build_banner():
     return html.Div(
