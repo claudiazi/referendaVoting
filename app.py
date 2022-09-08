@@ -1,6 +1,7 @@
 import os
 import time
 import warnings
+from flask_caching import Cache
 
 import dash
 import pandas as pd
@@ -9,6 +10,8 @@ from dash import dash_table
 from dash import dcc
 from dash import html
 from dash.dependencies import Input, Output, State
+import requests
+import json
 
 from utils.data_preparation import (
     preprocessing_referendum,
@@ -52,6 +55,110 @@ theme = {
     "secondary": "#FFD15F",  # Accent
 }
 
+#read from subsquid endpoint
+
+cache = Cache(app.server, config={
+    'CACHE_TYPE': 'filesystem',
+    'CACHE_DIR': './cache'
+})
+
+#save all expired referenda to cache
+
+#update cache on referendum expiry
+
+subSquid_endpoint = "https://squid.subsquid.io/kusama-proposals/v/v1/graphql"
+
+queryExpired = """query MyQuery {
+  proposals(
+    where: {type_eq: Referendum, status_in: Passed, OR: {status_eq: NotPassed}}
+    orderBy: endedAtBlock_DESC
+    limit: 10
+  ) {
+    createdAt
+    createdAtBlock
+    endedAt
+    endedAtBlock
+    updatedAt
+    updatedAtBlock
+    index
+    threshold {
+      ... on ReferendumThreshold {
+        type
+      }
+    }
+    status
+    voting(orderBy: blockNumber_DESC) {
+      timestamp
+      blockNumber
+      balance {
+        ... on SplitVoteBalance {
+          aye
+          nay
+        }
+        ... on StandardVoteBalance {
+          value
+        }
+      }
+      lockPeriod
+      voter
+    }
+  }
+}"""
+
+queryCurrent = """query MyQuery {
+  proposals(
+    where: {type_eq: Referendum, status_eq: Started}
+    orderBy: endedAtBlock_DESC
+  ) {
+    createdAt
+    createdAtBlock
+    endedAt
+    endedAtBlock
+    updatedAt
+    updatedAtBlock
+    index
+    threshold {
+      ... on ReferendumThreshold {
+        type
+      }
+    }
+    status
+    voting(orderBy: blockNumber_DESC) {
+      timestamp
+      blockNumber
+      balance {
+        ... on SplitVoteBalance {
+          aye
+          nay
+        }
+        ... on StandardVoteBalance {
+          value
+        }
+      }
+      lockPeriod
+      voter
+    }
+  }
+}"""
+
+def save_expired_to_file():
+    r = requests.post(subSquid_endpoint, json={'query': queryExpired})
+    print(r.status_code)
+    print(r.text)
+    f = open("referenda.txt", "w")
+    f.write(r.text)
+    f.close()
+    return json.loads(r.text)
+save_expired_to_file()
+
+@cache.cached(300)
+def get_current_ref_data():
+    r = requests.post(subSquid_endpoint, json={'query': queryCurrent})
+    print(r.status_code)
+    print(r.text)
+    return json.loads(r.text)
+json_data = get_current_ref_data()
+print(json_data)
 
 def build_banner():
     return html.Div(

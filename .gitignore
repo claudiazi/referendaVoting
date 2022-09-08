@@ -130,3 +130,9 @@ dmypy.json
 
 
 .idea/
+
+#cache folder
+cache/
+
+#local storage
+referenda.txt
