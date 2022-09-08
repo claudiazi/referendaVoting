@@ -550,10 +550,16 @@ def update_interval_state(tab_switch, cur_interval, disabled, cur_stage):
 # Update first chart
 @app.callback(
     output=Output("votes_counts_barchart", "figure"),
-    inputs=[Input("interval-component", "n_intervals"), Input("selected-ids", "value")],
-    state=[Input("votes-data", "data")],
+    inputs=[
+        Input("interval-component", "n_intervals"),
+        Input("selected-ids", "value"),
+        Input("votes_counts_chart_selection", "value"),
+    ],
+    state=[Input("votes-data", "data"), Input("referenda-data", "data")],
 )
-def update_votes_counts_chart(n_intervals, selected_ids, votes_data):
+def update_votes_counts_chart(
+    n_intervals, selected_ids, selected_chart, votes_data, referenda_data
+):
     # delegated=False votes
     # df_non_delegated = df_votes[df_votes["isDelegating"] == 'False']
     # df_non_delegated_count_sum = (
@@ -573,6 +579,7 @@ def update_votes_counts_chart(n_intervals, selected_ids, votes_data):
     # )
     #
     df_votes = pd.DataFrame(votes_data)
+    df_referenda = pd.DataFrame(referenda_data).sort_values(by="referendum_index")
     if selected_ids:
         df_votes = df_votes[
             (df_votes["referendum_index"] >= selected_ids[0])
@@ -584,7 +591,9 @@ def update_votes_counts_chart(n_intervals, selected_ids, votes_data):
         .reset_index(name="vote_counts")
         .sort_values(by="referendum_index")
     )
-
+    df_counts_sum = df_counts_sum.merge(
+        df_referenda, how="inner", on="referendum_index"
+    )
     #     COLORS_MAPPER = {
     #         "Delegated Votes": "rgb(0, 0, 100)",
     #         "Non-delegated Votes": "rgb(0, 200, 200)",
@@ -597,6 +606,13 @@ def update_votes_counts_chart(n_intervals, selected_ids, votes_data):
         barmode="stack",
         xaxis=dict(title="Referendum ID", linecolor="#BCCCDC"),
         yaxis=dict(title="Vote counts", linecolor="#021C1E"),
+        yaxis2=dict(
+            title="Duration of voting",
+            linecolor="#021C1E",
+            anchor="x",
+            overlaying="y",
+            side="right",
+        ),
         legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01),
     )
     #
@@ -607,42 +623,88 @@ def update_votes_counts_chart(n_intervals, selected_ids, votes_data):
     #         + df_non_delegated_count_sum["vote_counts"],
     #     ]
     # )
-    first_graph_data = [
-        # go.Bar(
-        #     name="Delegated Votes",
-        #     x=df_delegated_count_sum["id"],
-        #     y=df_delegated_count_sum["vote_counts"],
-        #     marker_color="rgb(0, 0, 100)",
-        #     customdata=total_count,
-        #     hovertemplate="<b>Delegated Votes</b><br><br>"
-        #                   + "Referendum id: %{x:.0f}<br>"
-        #                   + "Vote counts: %{y:.0f}<br>"
-        #                   + "Total counts: %{customdata[1]:.0f}<br>"
-        #                   + "<extra></extra>",
-        # ),
-        # go.Bar(
-        #     name="Non-delegated Votes",
-        #     x=df_non_delegated_count_sum["id"],
-        #     y=df_non_delegated_count_sum["vote_counts"],
-        #     customdata=total_count,
-        #     marker_color="rgb(0, 200, 200)",
-        #     hovertemplate="<b>Non-delegated Votes</b><br><br>"
-        #                   + "Referendum id: %{x:.0f}<br>"
-        #                   + "Vote counts: %{y:.0f}<br>"
-        #                   + "Total counts: %{customdata[1]:.0f}<br>"
-        #                   + "<extra></extra>",
-        # ),
-        go.Scatter(
-            name="Total Votes",
-            x=df_counts_sum["referendum_index"],
-            y=df_counts_sum["vote_counts"],
-            marker_color="rgb(0, 0, 100)",
-            hovertemplate="<b>Delegated Votes</b><br><br>"
-            + "Referendum id: %{x:.0f}<br>"
-            + "Votes counts: %{y:.0f}<br>"
-            + "<extra></extra>",
-        ),
-    ]
+    if selected_chart == "Non-/Deligation":
+        first_graph_data = [
+            # go.Bar(
+            #     name="Delegated Votes",
+            #     x=df_delegated_count_sum["id"],
+            #     y=df_delegated_count_sum["vote_counts"],
+            #     marker_color="rgb(0, 0, 100)",
+            #     customdata=total_count,
+            #     hovertemplate="<b>Delegated Votes</b><br><br>"
+            #                   + "Referendum id: %{x:.0f}<br>"
+            #                   + "Vote counts: %{y:.0f}<br>"
+            #                   + "Total counts: %{customdata[1]:.0f}<br>"
+            #                   + "<extra></extra>",
+            # ),
+            # go.Bar(
+            #     name="Non-delegated Votes",
+            #     x=df_non_delegated_count_sum["id"],
+            #     y=df_non_delegated_count_sum["vote_counts"],
+            #     customdata=total_count,
+            #     marker_color="rgb(0, 200, 200)",
+            #     hovertemplate="<b>Non-delegated Votes</b><br><br>"
+            #                   + "Referendum id: %{x:.0f}<br>"
+            #                   + "Vote counts: %{y:.0f}<br>"
+            #                   + "Total counts: %{customdata[1]:.0f}<br>"
+            #                   + "<extra></extra>",
+            # ),
+            go.Bar(
+                name="Total Votes",
+                x=df_counts_sum["referendum_index"],
+                y=df_counts_sum["vote_counts"],
+                marker_color="rgb(0, 0, 100)",
+                hovertemplate="<b>Delegated Votes</b><br><br>"
+                              + "Referendum id: %{x:.0f}<br>"
+                              + "Votes counts: %{y:.0f}<br>"
+                              + "<extra></extra>",
+            ),
+        ]
+    if selected_chart == "Duration":
+        first_graph_data = [
+            # go.Bar(
+            #     name="Delegated Votes",
+            #     x=df_delegated_count_sum["id"],
+            #     y=df_delegated_count_sum["vote_counts"],
+            #     marker_color="rgb(0, 0, 100)",
+            #     customdata=total_count,
+            #     hovertemplate="<b>Delegated Votes</b><br><br>"
+            #                   + "Referendum id: %{x:.0f}<br>"
+            #                   + "Vote counts: %{y:.0f}<br>"
+            #                   + "Total counts: %{customdata[1]:.0f}<br>"
+            #                   + "<extra></extra>",
+            # ),
+            # go.Bar(
+            #     name="Non-delegated Votes",
+            #     x=df_non_delegated_count_sum["id"],
+            #     y=df_non_delegated_count_sum["vote_counts"],
+            #     customdata=total_count,
+            #     marker_color="rgb(0, 200, 200)",
+            #     hovertemplate="<b>Non-delegated Votes</b><br><br>"
+            #                   + "Referendum id: %{x:.0f}<br>"
+            #                   + "Vote counts: %{y:.0f}<br>"
+            #                   + "Total counts: %{customdata[1]:.0f}<br>"
+            #                   + "<extra></extra>",
+            # ),
+            go.Bar(
+                name="Total Votes",
+                x=df_counts_sum["referendum_index"],
+                y=df_counts_sum["vote_counts"],
+                customdata=df_counts_sum["duration"],
+                marker=dict(
+                    color=df_counts_sum[
+                        "duration"
+                    ],  # set color equal to a variable # one of plotly colorscales
+                    colorscale="earth",
+                    showscale=True,
+                ),
+                hovertemplate="<b>Delegated Votes</b><br><br>"
+                + "Referendum id: %{x:.0f}<br>"
+                + "Votes counts: %{y:.0f}<br>"
+                + "Duration: %{customdata:.1f} days<br>"
+                + "<extra></extra>",
+            ),
+        ]
     fig_first_graph = go.Figure(data=first_graph_data, layout=first_graph_layout)
     return fig_first_graph
 
@@ -847,6 +909,6 @@ def update_pie_chart(referenda_data, selected_ids):
 
 
 # # Running the server
-# if __name__ == "__main__":
-#     warnings.filterwarnings(action="ignore")
-#     app.run_server(port=8088, debug=True)
+if __name__ == "__main__":
+    warnings.filterwarnings(action="ignore")
+    app.run_server(port=8088, debug=True)
