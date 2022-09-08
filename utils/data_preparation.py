@@ -51,6 +51,7 @@ def preprocessing_referendum(df: pd.DataFrame) -> pd.DataFrame:
         if x in ["executed", "Passed"]
         else ("wip" if x == "started" else "f")
     )
+    referendum_df = referendum_df[referendum_df["has_passed"].isin(["t", "f"])]
     referendum_df = referendum_df.rename(
         columns={
             "pre_image_author_address": "author_address",
@@ -72,6 +73,7 @@ def preprocessing_referendum(df: pd.DataFrame) -> pd.DataFrame:
     referendum_df["avg_nay_conviction_rate"] = (
         referendum_df["nay_without_conviction"] / referendum_df["nay_amount"]
     )
+    referendum_df["duration"] = referendum_df["duration"] / (60 * 60 * 24)
     return referendum_df
 
 
@@ -187,10 +189,11 @@ if __name__ == "__main__":
     mongodb_url = os.getenv("MONGODB_URL")
     db_name = os.getenv("DB_NAME")
     table_name = "vote"
+    df_referendum = pd.read_csv('referendum_data.csv')
+    df_referendum = preprocessing_referendum(df_referendum)
     df_ongoing_referenda = get_substrate_live_data()
     # table_name = os.getenv("TABLE_NAME")
     # df = load_data(mongodb_url=mongodb_url, db_name=db_name, table_name=table_name)
-    # df_referendum = pd.read_csv('referendum_data.csv')
     df_votes = pd.read_csv('votes_data.csv')
     df_votes = preprocessing_votes(df_votes)
     # df_referendum = preprocessing_referendum(df_referendum)
