@@ -12,6 +12,8 @@ from dash import html
 from dash.dependencies import Input, Output, State
 import requests
 import json
+import dash_daq as daq
+
 
 from utils.data_preparation import (
     preprocessing_referendum,
@@ -27,14 +29,11 @@ external_stylesheets = ["https://codepen.io/chriddyp/pen/bWLwgP.css"]
 app = dash.Dash(
     __name__,
     meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1"}],
-    external_stylesheets=external_stylesheets,
+    # external_stylesheets=external_stylesheets,
 )
 server = app.server
 app.config["suppress_callback_exceptions"] = True
 
-colors = {
-    "background": "#111111",
-}
 
 mongodb_url = os.getenv("MONGODB_URL")
 db_name = os.getenv("DB_NAME")
@@ -48,6 +47,8 @@ suffix_ooc_n = "_OOC_number"
 suffix_ooc_g = "_OOC_graph"
 suffix_indicator = "_indicator"
 
+app_color = {"graph_bg": "#082255", "graph_line": "#007ACE"}
+
 theme = {
     "dark": True,
     "detail": "#2d3038",  # Background-card
@@ -55,110 +56,111 @@ theme = {
     "secondary": "#FFD15F",  # Accent
 }
 
-#read from subsquid endpoint
+# read from subsquid endpoint
 
-cache = Cache(app.server, config={
-    'CACHE_TYPE': 'filesystem',
-    'CACHE_DIR': './cache'
-})
+cache = Cache(app.server, config={"CACHE_TYPE": "filesystem", "CACHE_DIR": "./cache"})
 
-#save all expired referenda to cache
+# save all expired referenda to cache
 
-#update cache on referendum expiry
+# update cache on referendum expiry
 
-subSquid_endpoint = "https://squid.subsquid.io/kusama-proposals/v/v1/graphql"
+# subSquid_endpoint = "https://squid.subsquid.io/kusama-proposals/v/v1/graphql"
+#
+# queryExpired = """query MyQuery {
+#   proposals(
+#     where: {type_eq: Referendum, status_in: Passed, OR: {status_eq: NotPassed}}
+#     orderBy: endedAtBlock_DESC
+#   ) {
+#     createdAt
+#     createdAtBlock
+#     endedAt
+#     endedAtBlock
+#     updatedAt
+#     updatedAtBlock
+#     index
+#     threshold {
+#       ... on ReferendumThreshold {
+#         type
+#       }
+#     }
+#     status
+#     voting(orderBy: blockNumber_DESC) {
+#       timestamp
+#       blockNumber
+#       balance {
+#         ... on SplitVoteBalance {
+#           aye
+#           nay
+#         }
+#         ... on StandardVoteBalance {
+#           value
+#         }
+#       }
+#       lockPeriod
+#       voter
+#       decision
+#     }
+#   }
+# }"""
+#
+# queryCurrent = """query MyQuery {
+#   proposals(
+#     where: {type_eq: Referendum, status_eq: Started}
+#     orderBy: endedAtBlock_DESC
+#   ) {
+#     createdAt
+#     createdAtBlock
+#     endedAt
+#     endedAtBlock
+#     updatedAt
+#     updatedAtBlock
+#     index
+#     threshold {
+#       ... on ReferendumThreshold {
+#         type
+#       }
+#     }
+#     status
+#     voting(orderBy: blockNumber_DESC) {
+#       timestamp
+#       blockNumber
+#       balance {
+#         ... on SplitVoteBalance {
+#           aye
+#           nay
+#         }
+#         ... on StandardVoteBalance {
+#           value
+#         }
+#       }
+#       lockPeriod
+#       voter
+#       decision
+#     }
+#   }
+# }"""
+#
+#
+#
+# def save_expired_to_file():
+#     r = requests.post(subSquid_endpoint, json={"query": queryExpired})
+#     f = open("referenda.json", "w")
+#     f.write(r.text)
+#     f.close()
+#
+#
+# save_expired_to_file()
+#
+# with open("./referenda.json", "r") as f:
+#     data = json.loads(f.read())
 
-queryExpired = """query MyQuery {
-  proposals(
-    where: {type_eq: Referendum, status_in: Passed, OR: {status_eq: NotPassed}}
-    orderBy: endedAtBlock_DESC
-    limit: 10
-  ) {
-    createdAt
-    createdAtBlock
-    endedAt
-    endedAtBlock
-    updatedAt
-    updatedAtBlock
-    index
-    threshold {
-      ... on ReferendumThreshold {
-        type
-      }
-    }
-    status
-    voting(orderBy: blockNumber_DESC) {
-      timestamp
-      blockNumber
-      balance {
-        ... on SplitVoteBalance {
-          aye
-          nay
-        }
-        ... on StandardVoteBalance {
-          value
-        }
-      }
-      lockPeriod
-      voter
-    }
-  }
-}"""
+# @cache.cached(300)
+# def get_current_ref_data():
+#     r = requests.post(subSquid_endpoint, json={'query': queryCurrent})
+#     return json.loads(r.text)
+#
+# json_data = get_current_ref_data()
 
-queryCurrent = """query MyQuery {
-  proposals(
-    where: {type_eq: Referendum, status_eq: Started}
-    orderBy: endedAtBlock_DESC
-  ) {
-    createdAt
-    createdAtBlock
-    endedAt
-    endedAtBlock
-    updatedAt
-    updatedAtBlock
-    index
-    threshold {
-      ... on ReferendumThreshold {
-        type
-      }
-    }
-    status
-    voting(orderBy: blockNumber_DESC) {
-      timestamp
-      blockNumber
-      balance {
-        ... on SplitVoteBalance {
-          aye
-          nay
-        }
-        ... on StandardVoteBalance {
-          value
-        }
-      }
-      lockPeriod
-      voter
-    }
-  }
-}"""
-
-def save_expired_to_file():
-    r = requests.post(subSquid_endpoint, json={'query': queryExpired})
-    print(r.status_code)
-    print(r.text)
-    f = open("referenda.txt", "w")
-    f.write(r.text)
-    f.close()
-    return json.loads(r.text)
-save_expired_to_file()
-
-@cache.cached(300)
-def get_current_ref_data():
-    r = requests.post(subSquid_endpoint, json={'query': queryCurrent})
-    print(r.status_code)
-    print(r.text)
-    return json.loads(r.text)
-json_data = get_current_ref_data()
-print(json_data)
 
 def build_banner():
     return html.Div(
@@ -198,9 +200,26 @@ def build_tabs():
                         disabled=False,
                     ),
                     dcc.Tab(
+                        id="Referendum-tab",
+                        label="Single Referendum View",
+                        value="tab2",
+                        className="custom-tab",
+                        selected_className="custom-tab--selected",
+                        disabled_style={
+                            "backgroundColor": "#2d3038",
+                            "color": "#95969A",
+                            "borderColor": "#23262E",
+                            "display": "flex",
+                            "flex-direction": "column",
+                            "alignItems": "center",
+                            "justifyContent": "center",
+                        },
+                        disabled=False,
+                    ),
+                    dcc.Tab(
                         id="Single-account-tab",
                         label="Single Account View",
-                        value="tab2",
+                        value="tab3",
                         className="custom-tab",
                         selected_className="custom-tab--selected",
                         disabled_style={
@@ -252,48 +271,88 @@ def load_refined_votes_data():
 def build_tab_1():
     return [
         html.Div(className="twelve columns", children=[html.Br()]),
+        html.Div(className="section-banner", children="Ongoing Referenda"),
+        html.Div(className="twelve columns", children=[html.Br()]),
         html.Div(
             id="live-data-table",
             className="twelve columns",
             children=[],
         ),
         html.Div(className="twelve columns", children=[html.Br()]),
+        html.Div(className="section-banner", children="Past Referenda"),
         html.Div(className="twelve columns", children=[html.Br()]),
-        html.Div([], className="one column"),
-        # rangebar
         html.Div(
-            id="id-rangebar",
-            className="ten columns",
-            children=[],
+            children=[
+                html.Div([], className="one column"),
+                # rangebar
+                html.Div(
+                    id="id-rangebar",
+                    className="ten columns",
+                    children=["Loading"],
+                ),
+                html.Div([], className="one column"),
+            ]
         ),
-        html.Div([], className="one column"),
+        html.Div(className="twelve columns", children=[html.Br()]),
         html.Div(
-            id="confirm-selected-ids",
             className="twelve columns",
             children=[
-                html.Button(
-                    "Confirm",
-                    id="tab-trigger-btn",
-                    n_clicks=0,
-                    style={"display": "inline-block", "float": "right"},
-                )
+                html.Div(
+                    className="six columns graph-block",
+                    children=[
+                        html.Div(
+                            className="twelve columns",
+                            children=[
+                                daq.ToggleSwitch(
+                                    id="votes_counts_chart_selection",
+                                    label=["Votes Split", "Duration"],
+                                    value=True,
+                                )
+                            ],
+                        ),
+                        html.Div(
+                            id="first-chart",
+                            className="twelve columns",
+                            children=[
+                                generate_votes_counts_chart(),
+                            ],
+                        ),
+                    ],
+                ),
+                html.Div(
+                    className="six columns",
+                    children=[
+                        html.Div(
+                            className="seven columns",
+                            children=[
+                                html.H4(
+                                    "Turnout",
+                                    className="graph__title",
+                                )
+                            ],
+                        ),
+                        html.Div(
+                            className="four columns",
+                            children=[
+                                daq.ToggleSwitch(
+                                    id="turn_out_chart_selection",
+                                    label=["Absolute", "Percentage"],
+                                    value=True,
+                                )
+                            ],
+                        ),
+                        html.Div(
+                            id="second-chart",
+                            className="twelve columns",
+                            children=[generate_turnout_chart()],
+                        ),
+                    ],
+                ),
             ],
         ),
         html.Div(className="twelve columns", children=[html.Br()]),
         html.Div(
-            id="settings-menu",
             children=[
-                html.Div(
-                    id="first-chart",
-                    className="six columns",
-                    children=[generate_votes_counts_chart()],
-                ),
-                html.Div(
-                    id="second-chart",
-                    className="six columns",
-                    children=[generate_turnout_chart()],
-                ),
-                html.Div(className="twelve columns", children=[html.Br()]),
                 html.Div(
                     id="third-chart",
                     className="six columns",
@@ -304,6 +363,10 @@ def build_tab_1():
                     className="six columns",
                     children=[generate_voted_ksm_graph()],
                 ),
+            ]
+        ),
+        html.Div(
+            children=[
                 html.Div(
                     id="first-pie-chart",
                     className="six columns",
@@ -316,7 +379,41 @@ def build_tab_1():
                     className="five columns",
                     children=[],
                 ),
-            ],
+            ]
+        ),
+    ]
+
+
+def build_tab_2():
+    return [
+        html.Div(className="twelve columns", children=[html.Br()]),
+        html.Div(className="section-banner", children="Ongoing Referenda"),
+        html.Div(className="twelve columns", children=[html.Br()]),
+        html.Div(
+            dcc.Input(
+                id="my_txt_input",
+                type="text",
+                debounce=True,
+                # changes to input are sent to Dash server only on enter or losing focus
+                pattern=r"^[A-Za-z].*",  # Regex: string must start with letters only
+                spellCheck=True,
+                inputMode="latin",
+                # provides a hint to browser on type of data that might be entered by the user.
+                name="text",
+                # the name of the control, which is submitted with the form data
+                list="browser",
+                # identifies a list of pre-defined options to suggest to the user
+                n_submit=0,
+                # number of times the Enter key was pressed while the input had focus
+                n_submit_timestamp=-1,  # last time that Enter was pressed
+                autoFocus=True,
+                # the element should be automatically focused after the page loaded
+                n_blur=0,  # number of times the input lost focus
+                n_blur_timestamp=-1,  # last time the input lost focus.
+                # selectionDirection='', # the direction in which selection occurred
+                # selectionStart='',     # the offset into the element's text content of the first selected character
+                # selectionEnd='',       # the offset into the element's text content of the last selected character
+            )
         ),
     ]
 
@@ -361,7 +458,6 @@ def generate_votes_counts_chart():
                 }
             ],
             "layout": {
-                "title": "<b>Vote counts for selected Referendum IDs</b>",
                 "margin": dict(l=20, r=20, t=20, b=20),
                 "showlegend": True,
                 "paper_bgcolor": "rgba(0,0,0,0)",
@@ -520,10 +616,10 @@ app.layout = html.Div(
         Output("votes-data", "data"),
         Output("id-rangebar", "children"),
     ],
-    Input("interval-component", "n_intervals"),
+    [Input("app-tabs", "value"), Input("interval-component", "n_intervals")],
 )
-def update_historical_data(n_intervals):
-    if n_intervals >= 0:
+def update_historical_data(tab_switch, n_intervals):
+    if n_intervals >= 0 and tab_switch == "tab1":
         refined_referenda_data = load_refined_referenda_data()
         refined_votes_data = load_refined_votes_data()
         df = pd.DataFrame(refined_referenda_data)
@@ -534,6 +630,7 @@ def update_historical_data(n_intervals):
             refined_votes_data,
             dcc.RangeSlider(id="selected-ids", min=range_min, max=range_max),
         )
+    return (None, None, None)
 
 
 # Callback to update the live data
@@ -621,6 +718,8 @@ def create_graph1(data, selected_ids):
 def render_tab_content(tab_switch, stopped_interval):
     if tab_switch == "tab1":
         return build_tab_1(), stopped_interval
+    if tab_switch == "tab2":
+        return build_tab_2(), stopped_interval
     return (
         html.Div(
             id="status-container",
@@ -665,26 +764,8 @@ def update_interval_state(tab_switch, cur_interval, disabled, cur_stage):
     state=[Input("votes-data", "data"), Input("referenda-data", "data")],
 )
 def update_votes_counts_chart(
-    n_intervals, selected_ids, selected_chart, votes_data, referenda_data
+    n_intervals, selected_ids, selected_toggle_value, votes_data, referenda_data
 ):
-    # delegated=False votes
-    # df_non_delegated = df_votes[df_votes["isDelegating"] == 'False']
-    # df_non_delegated_count_sum = (
-    #     df_non_delegated.groupby("referendum_index")["address"]
-    #         .count()
-    #         .reset_index(name="vote_counts")
-    #         .sort_values(by="referendum_index")
-    # )
-    #
-    # # delegated=True votes
-    # df_delegated = df_votes[df_votes["isDelegating"] == 'True']
-    # df_delegated_count_sum = (
-    #     df_delegated.groupby("referendum_index")["address"]
-    #         .count()
-    #         .reset_index(name="vote_counts")
-    #         .sort_values(by="referendum_index")
-    # )
-    #
     df_votes = pd.DataFrame(votes_data)
     df_referenda = pd.DataFrame(referenda_data).sort_values(by="referendum_index")
     if selected_ids:
@@ -692,6 +773,7 @@ def update_votes_counts_chart(
             (df_votes["referendum_index"] >= selected_ids[0])
             & (df_votes["referendum_index"] <= selected_ids[1])
         ]
+
     df_counts_sum = (
         df_votes.groupby("referendum_index")["account_address"]
         .count()
@@ -700,17 +782,12 @@ def update_votes_counts_chart(
     )
     df_counts_sum = df_counts_sum.merge(
         df_referenda, how="inner", on="referendum_index"
-    )
-    #     COLORS_MAPPER = {
-    #         "Delegated Votes": "rgb(0, 0, 100)",
-    #         "Non-delegated Votes": "rgb(0, 200, 200)",
-    #     }
-    #     #
+    ).sort_values(by="referendum_index")
     first_graph_layout = go.Layout(
-        title="<b>Vote counts for selected Referendum IDs</b>",
-        paper_bgcolor="rgb(248, 248, 255)",
-        plot_bgcolor="rgb(248, 248, 255)",
+        title="<b>Vote Count</b>",
         barmode="stack",
+        paper_bgcolor="#161a28",
+        plot_bgcolor="#161a28",
         xaxis=dict(title="Referendum ID", linecolor="#BCCCDC"),
         yaxis=dict(title="Vote counts", linecolor="#021C1E"),
         yaxis2=dict(
@@ -721,78 +798,51 @@ def update_votes_counts_chart(
             side="right",
         ),
         legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01),
+        template="plotly_dark",
     )
-    #
-    # total_count = np.transpose(
-    #     [
-    #         df_delegated_count_sum["id"],
-    #         df_delegated_count_sum["vote_counts"]
-    #         + df_non_delegated_count_sum["vote_counts"],
-    #     ]
-    # )
-    if selected_chart == "Non-/Deligation":
+    if selected_toggle_value == False:
+        df_aye = df_votes[df_votes["passed"] == True]
+        df_aye_count_sum = (
+            df_aye.groupby("referendum_index")["account_address"]
+            .count()
+            .reset_index(name="vote_counts")
+            .sort_values(by="referendum_index")
+        )
+        df_nay = df_votes[df_votes["passed"] == False]
+        df_nay_count_sum = (
+            df_nay.groupby("referendum_index")["account_address"]
+            .count()
+            .reset_index(name="vote_counts")
+            .sort_values(by="referendum_index")
+        )
         first_graph_data = [
-            # go.Bar(
-            #     name="Delegated Votes",
-            #     x=df_delegated_count_sum["id"],
-            #     y=df_delegated_count_sum["vote_counts"],
-            #     marker_color="rgb(0, 0, 100)",
-            #     customdata=total_count,
-            #     hovertemplate="<b>Delegated Votes</b><br><br>"
-            #                   + "Referendum id: %{x:.0f}<br>"
-            #                   + "Vote counts: %{y:.0f}<br>"
-            #                   + "Total counts: %{customdata[1]:.0f}<br>"
-            #                   + "<extra></extra>",
-            # ),
-            # go.Bar(
-            #     name="Non-delegated Votes",
-            #     x=df_non_delegated_count_sum["id"],
-            #     y=df_non_delegated_count_sum["vote_counts"],
-            #     customdata=total_count,
-            #     marker_color="rgb(0, 200, 200)",
-            #     hovertemplate="<b>Non-delegated Votes</b><br><br>"
-            #                   + "Referendum id: %{x:.0f}<br>"
-            #                   + "Vote counts: %{y:.0f}<br>"
-            #                   + "Total counts: %{customdata[1]:.0f}<br>"
-            #                   + "<extra></extra>",
-            # ),
             go.Bar(
-                name="Total Votes",
-                x=df_counts_sum["referendum_index"],
-                y=df_counts_sum["vote_counts"],
+                name="Aye Votes",
+                x=df_aye_count_sum["referendum_index"],
+                y=df_aye_count_sum["vote_counts"],
                 marker_color="rgb(0, 0, 100)",
-                hovertemplate="<b>Delegated Votes</b><br><br>"
-                              + "Referendum id: %{x:.0f}<br>"
-                              + "Votes counts: %{y:.0f}<br>"
-                              + "<extra></extra>",
+                customdata=df_counts_sum["vote_counts"],
+                hovertemplate="<b>Aye Votes</b><br><br>"
+                + "Referendum id: %{x:.0f}<br>"
+                + "Aye vote counts: %{y:.0f}<br>"
+                + "Total counts: %{customdata:.0f}<br>"
+                + "<extra></extra>",
+            ),
+            go.Bar(
+                name="Nay Votes",
+                x=df_nay_count_sum["referendum_index"],
+                y=df_nay_count_sum["vote_counts"],
+                customdata=df_counts_sum["vote_counts"],
+                marker_color="rgb(0, 200, 200)",
+                hovertemplate="<b>Nay Votes</b><br><br>"
+                + "Referendum id: %{x:.0f}<br>"
+                + "Nay Vote counts: %{y:.0f}<br>"
+                + "Total counts: %{customdata:.0f}<br>"
+                + "<extra></extra>",
             ),
         ]
-    if selected_chart == "Duration":
+    if selected_toggle_value == True:
         first_graph_data = [
-            # go.Bar(
-            #     name="Delegated Votes",
-            #     x=df_delegated_count_sum["id"],
-            #     y=df_delegated_count_sum["vote_counts"],
-            #     marker_color="rgb(0, 0, 100)",
-            #     customdata=total_count,
-            #     hovertemplate="<b>Delegated Votes</b><br><br>"
-            #                   + "Referendum id: %{x:.0f}<br>"
-            #                   + "Vote counts: %{y:.0f}<br>"
-            #                   + "Total counts: %{customdata[1]:.0f}<br>"
-            #                   + "<extra></extra>",
-            # ),
-            # go.Bar(
-            #     name="Non-delegated Votes",
-            #     x=df_non_delegated_count_sum["id"],
-            #     y=df_non_delegated_count_sum["vote_counts"],
-            #     customdata=total_count,
-            #     marker_color="rgb(0, 200, 200)",
-            #     hovertemplate="<b>Non-delegated Votes</b><br><br>"
-            #                   + "Referendum id: %{x:.0f}<br>"
-            #                   + "Vote counts: %{y:.0f}<br>"
-            #                   + "Total counts: %{customdata[1]:.0f}<br>"
-            #                   + "<extra></extra>",
-            # ),
             go.Bar(
                 name="Total Votes",
                 x=df_counts_sum["referendum_index"],
@@ -997,7 +1047,7 @@ def update_pie_chart(referenda_data, selected_ids):
                 "labels": df["call_module"].value_counts().index.tolist(),
                 "values": list(df["call_module"].value_counts()),
                 "type": "pie",
-                "marker": {"colors": colors, "li": dict(color="white", width=2)},
+                "marker": {"li": dict(color="white", width=2)},
                 "hoverinfo": "label",
                 "textinfo": "label",
             }
