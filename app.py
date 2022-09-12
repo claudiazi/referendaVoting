@@ -13,6 +13,7 @@ from dash.dependencies import Input, Output, State
 import requests
 import json
 import dash_daq as daq
+from tabs.main_tab import *
 
 
 from utils.data_preparation import (
@@ -268,307 +269,35 @@ def load_refined_votes_data():
 # votes_dict = load_refined_votes_data(df_raw)
 
 
-def build_tab_1():
-    return [
-        html.Div(className="twelve columns", children=[html.Br()]),
-        html.Div(className="section-banner", children="Ongoing Referenda"),
-        html.Div(className="twelve columns", children=[html.Br()]),
-        html.Div(
-            id="live-data-table",
-            className="twelve columns",
-            children=[],
-        ),
-        html.Div(className="twelve columns", children=[html.Br()]),
-        html.Div(className="section-banner", children="Past Referenda"),
-        html.Div(className="twelve columns", children=[html.Br()]),
-        html.Div(
-            children=[
-                html.Div([], className="one column"),
-                # rangebar
-                html.Div(
-                    id="id-rangebar",
-                    className="ten columns",
-                    children=["Loading"],
-                ),
-                html.Div([], className="one column"),
-            ]
-        ),
-        html.Div(className="twelve columns", children=[html.Br()]),
-        html.Div(
-            className="twelve columns",
-            children=[
-                html.Div(
-                    className="six columns graph-block",
-                    children=[
-                        html.Div(
-                            className="twelve columns",
-                            children=[
-                                daq.ToggleSwitch(
-                                    id="votes_counts_chart_selection",
-                                    label=["Votes Split", "Duration"],
-                                    value=True,
-                                )
-                            ],
-                        ),
-                        html.Div(
-                            id="first-chart",
-                            className="twelve columns",
-                            children=[
-                                generate_votes_counts_chart(),
-                            ],
-                        ),
-                    ],
-                ),
-                html.Div(
-                    className="six columns",
-                    children=[
-                        html.Div(
-                            className="seven columns",
-                            children=[
-                                html.H4(
-                                    "Turnout",
-                                    className="graph__title",
-                                )
-                            ],
-                        ),
-                        html.Div(
-                            className="four columns",
-                            children=[
-                                daq.ToggleSwitch(
-                                    id="turn_out_chart_selection",
-                                    label=["Absolute", "Percentage"],
-                                    value=True,
-                                )
-                            ],
-                        ),
-                        html.Div(
-                            id="second-chart",
-                            className="twelve columns",
-                            children=[generate_turnout_chart()],
-                        ),
-                    ],
-                ),
-            ],
-        ),
-        html.Div(className="twelve columns", children=[html.Br()]),
-        html.Div(
-            children=[
-                html.Div(
-                    id="third-chart",
-                    className="six columns",
-                    children=[generate_new_accouts_chart()],
-                ),
-                html.Div(
-                    id="forth-chart",
-                    className="six columns",
-                    children=[generate_voted_ksm_graph()],
-                ),
-            ]
-        ),
-        html.Div(
-            children=[
-                html.Div(
-                    id="first-pie-chart",
-                    className="six columns",
-                    children=[
-                        generate_piechart(),
-                    ],
-                ),
-                html.Div(
-                    id="table-placeholder",
-                    className="five columns",
-                    children=[],
-                ),
-            ]
-        ),
-    ]
-
-
 def build_tab_2():
     return [
         html.Div(className="twelve columns", children=[html.Br()]),
-        html.Div(className="section-banner", children="Ongoing Referenda"),
         html.Div(className="twelve columns", children=[html.Br()]),
         html.Div(
-            dcc.Input(
-                id="my_txt_input",
-                type="text",
-                debounce=True,
-                # changes to input are sent to Dash server only on enter or losing focus
-                pattern=r"^[A-Za-z].*",  # Regex: string must start with letters only
-                spellCheck=True,
-                inputMode="latin",
-                # provides a hint to browser on type of data that might be entered by the user.
-                name="text",
-                # the name of the control, which is submitted with the form data
-                list="browser",
-                # identifies a list of pre-defined options to suggest to the user
-                n_submit=0,
-                # number of times the Enter key was pressed while the input had focus
-                n_submit_timestamp=-1,  # last time that Enter was pressed
-                autoFocus=True,
-                # the element should be automatically focused after the page loaded
-                n_blur=0,  # number of times the input lost focus
-                n_blur_timestamp=-1,  # last time the input lost focus.
-                # selectionDirection='', # the direction in which selection occurred
-                # selectionStart='',     # the offset into the element's text content of the first selected character
-                # selectionEnd='',       # the offset into the element's text content of the last selected character
-            )
+            className="section-banner",
+            children=[
+                html.Div(
+                    className="twelve columns",
+                    children=[
+                        html.P(
+                            "Type in the Referendum index: ",
+                            style={"display": "inline-block", "margin-right": "8px"},
+                        ),
+                        dcc.Input(id="referendum_input", placeholder="number"),
+                        html.Div(id="referendum_input_warning", children=[]),
+                    ],
+                ),
+                html.Button(
+                    "Confirm",
+                    id="referendum-trigger-btn",
+                    n_clicks=0,
+                    style={"display": "inline-block", "float": "middle"},
+                ),
+            ],
         ),
+        dcc.Store(id="specific-referendum-data", data=[], storage_type="memory"),
+        dcc.Store(id="specific-referendum-votes-data", data=[], storage_type="memory"),
     ]
-
-
-def generate_piechart():
-    return dcc.Graph(
-        id="call_module_piechart",
-        figure={
-            "data": [
-                {
-                    "labels": [],
-                    "values": [],
-                    "type": "pie",
-                    "marker": {"line": {"color": "white", "width": 1}},
-                    "hoverinfo": "label",
-                    "textinfo": "label",
-                }
-            ],
-            "layout": {
-                "margin": dict(l=20, r=20, t=20, b=20),
-                "showlegend": True,
-                "paper_bgcolor": "rgba(0,0,0,0)",
-                "plot_bgcolor": "rgba(0,0,0,0)",
-                "font": {"color": "white"},
-                "autosize": True,
-            },
-        },
-    )
-
-
-def generate_votes_counts_chart():
-    return dcc.Graph(
-        id="votes_counts_barchart",
-        figure={
-            "data": [
-                {
-                    "labels": [],
-                    "values": [],
-                    "marker": {"line": {"color": "white", "width": 1}},
-                    "hoverinfo": "label",
-                    "textinfo": "label",
-                }
-            ],
-            "layout": {
-                "margin": dict(l=20, r=20, t=20, b=20),
-                "showlegend": True,
-                "paper_bgcolor": "rgba(0,0,0,0)",
-                "plot_bgcolor": "rgba(0,0,0,0)",
-                "font": {"color": "white"},
-                "autosize": True,
-                "barmode": "stack",
-                "xaxis": dict(title="Referendum ID", linecolor="#BCCCDC"),
-                "yaxis": dict(title="Vote counts", linecolor="#021C1E"),
-                "legend": dict(yanchor="top", y=0.99, xanchor="left", x=0.01),
-            },
-        },
-    )
-
-
-def generate_turnout_chart():
-    return dcc.Graph(
-        id="turnout_scatterchart",
-        figure={
-            "data": [
-                {
-                    "x": [],
-                    "y": [],
-                    "mode": "lines+markers",
-                    "line": {"color": "#f4d44d"},
-                    # rgb(0, 0, 100)
-                    "marker": dict(color="rgb(0, 0, 100)", size=8),
-                    "hovertemplate": "Referendum id: %{x:.0f}<br>"
-                    + "Turnout (%): %{y:.4f}<br>"
-                    + "<extra></extra>",
-                }
-            ],
-            "layout": {
-                "title": "<b>Turnout for selected Referendum IDs</b>",
-                "margin": dict(l=20, r=20, t=20, b=20),
-                "showlegend": True,
-                "paper_bgcolor": "rgba(0,0,0,0)",
-                # rgb(248, 248, 255)
-                "plot_bgcolor": "rgba(0,0,0,0)",
-                # rgb(248, 248, 255)
-                "font": {"color": "white"},
-                "autosize": True,
-                "barmode": "stack",
-                "xaxis": dict(title="Referendum ID", linecolor="#BCCCDC"),
-                "yaxis": dict(
-                    title="Turnout (% of total issued Kusama)", linecolor="#021C1E"
-                ),
-                "legend": dict(yanchor="top", y=0.99, xanchor="left", x=0.01),
-            },
-        },
-    )
-
-
-def generate_new_accouts_chart():
-    return dcc.Graph(
-        id="new_accounts_barchart",
-        figure={
-            "data": [],
-            "layout": {
-                "title": "<b>New accounts counts for selected Referendum IDs</b>",
-                "margin": dict(l=20, r=20, t=20, b=20),
-                "showlegend": True,
-                "paper_bgcolor": "rgba(0,0,0,0)",
-                "plot_bgcolor": "rgba(0,0,0,0)",
-                "font": {"color": "white"},
-                "autosize": True,
-                "barmode": "stack",
-                "xaxis": dict(title="Referendum ID", linecolor="#BCCCDC"),
-                "yaxis": dict(title="New accounts counts", linecolor="#021C1E"),
-                "yaxis2": dict(
-                    title="New accounts counts (% of total votes counts)",
-                    linecolor="#021C1E",
-                    anchor="x",
-                    overlaying="y",
-                    side="right",
-                ),
-                "legend": dict(yanchor="top", y=0.99, xanchor="left", x=0.01),
-            },
-        },
-    )
-
-
-def generate_voted_ksm_graph():
-    return dcc.Graph(
-        id="voted_ksm_scatterchart",
-        figure={
-            "data": [],
-            "layout": {
-                "title": "<b>Voted KSM with conviction Mean and Median for selected Referendum IDs</b>",
-                "margin": dict(l=20, r=20, t=20, b=20),
-                "showlegend": True,
-                "paper_bgcolor": "rgba(0,0,0,0)",
-                # rgb(248, 248, 255)
-                "plot_bgcolor": "rgba(0,0,0,0)",
-                # rgb(248, 248, 255)
-                "font": {"color": "white"},
-                "autosize": True,
-                "barmode": "stack",
-                "xaxis": dict(title="Referendum ID", linecolor="#BCCCDC"),
-                "yaxis": dict(title="Locked KSM - Mean", linecolor="#021C1E"),
-                "yaxis2": dict(
-                    title="Locked KSM - Median & Quantile",
-                    linecolor="#021C1E",
-                    anchor="x",
-                    overlaying="y",
-                    side="right",
-                ),
-                "legend": dict(yanchor="top", y=0.99, xanchor="left", x=0.01),
-            },
-        },
-    )
 
 
 app.layout = html.Div(
@@ -614,23 +343,72 @@ app.layout = html.Div(
     [
         Output("referenda-data", "data"),
         Output("votes-data", "data"),
-        Output("id-rangebar", "children"),
     ],
-    [Input("app-tabs", "value"), Input("interval-component", "n_intervals")],
+    [Input("interval-component", "n_intervals")],
 )
-def update_historical_data(tab_switch, n_intervals):
-    if n_intervals >= 0 and tab_switch == "tab1":
+def update_historical_data(n_intervals):
+    if n_intervals >= 0:
         refined_referenda_data = load_refined_referenda_data()
         refined_votes_data = load_refined_votes_data()
-        df = pd.DataFrame(refined_referenda_data)
-        range_min = df["referendum_index"].min()
-        range_max = df["referendum_index"].max()
+
         return (
             refined_referenda_data,
             refined_votes_data,
-            dcc.RangeSlider(id="selected-ids", min=range_min, max=range_max),
         )
-    return (None, None, None)
+
+@app.callback(
+    Output("id-rangebar", "children"),
+    [Input("referenda-data", "data")],
+)
+def create_rangeslider(refined_referenda_data):
+    df = pd.DataFrame(refined_referenda_data)
+    range_min = df["referendum_index"].min()
+    range_max = df["referendum_index"].max()
+    return dcc.RangeSlider(id="selected-ids", min=range_min, max=range_max)
+
+
+# Callback to update the referendum df
+@app.callback(
+    [
+        Output("specific-referendum-data", "data"),
+        Output("specific-referendum-votes-data", "data"),
+        Output("referendum_input_warning", "children"),
+    ],
+    [
+        Input("referendum-trigger-btn", "n_clicks"),
+        Input("referendum_input", "value"),
+        Input("referenda-data", "data"),
+        Input("votes-data", "data"),
+    ],
+)
+def update_specific_referendum_data(
+    n_clicks, referendum_input, referenda_data, votes_data
+):
+    warning = None
+    df_specific_referendum = pd.DataFrame()
+    if referendum_input:
+        df_referenda = pd.DataFrame(referenda_data)
+        df_votes = pd.DataFrame(votes_data)
+        try:
+            df_specific_referendum = df_referenda[
+                df_referenda.referendum_index == int(referendum_input)
+            ]
+            df_specific_referendum_votes = df_votes[
+                df_votes.referendum_index == int(referendum_input)
+            ]
+        except:
+            warning = html.P(
+                className="alert alert-danger", children=["Invalid input"]
+            )
+        if df_specific_referendum.empty:
+            warning = html.P(
+                className="alert alert-danger", children=["Invalid input"]
+            )
+        return (
+            df_specific_referendum.to_dict("record"),
+            df_specific_referendum.to_dict("record"),
+            [warning],
+        )
 
 
 # Callback to update the live data
@@ -747,11 +525,9 @@ def render_tab_content(tab_switch, stopped_interval):
 def update_interval_state(tab_switch, cur_interval, disabled, cur_stage):
     if disabled:
         return cur_interval
-
     if tab_switch == "tab1":
         return cur_interval
     return cur_stage
-
 
 # Update first chart
 @app.callback(
@@ -1063,6 +839,8 @@ def update_pie_chart(referenda_data, selected_ids):
         },
     }
     return new_figure
+
+
 
 
 # # Running the server
