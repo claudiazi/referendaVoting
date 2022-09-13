@@ -62,10 +62,16 @@ def preprocessing_referendum(df: pd.DataFrame) -> pd.DataFrame:
 
     for col in referendum_columns_convert_to_int:
         referendum_df[col] = referendum_df[col].apply(
-            lambda x: int(x) if x is not None and x != "NULL" else None
+            lambda x: int(x) / 1000000000000 if x is not None and x != "NULL" else None
         )
     referendum_df["turnout_perc"] = (
         referendum_df["turnout"] / referendum_df["total_issuance"]
+    )
+    referendum_df["aye_turnout_perc"] = (
+        referendum_df["aye_amount"] / referendum_df["total_issuance"]
+    )
+    referendum_df["nay_turnout_perc"] = (
+        referendum_df["nay_amount"] / referendum_df["total_issuance"]
     )
     referendum_df["avg_aye_conviction_rate"] = (
         referendum_df["aye_without_conviction"] / referendum_df["aye_amount"]
@@ -189,13 +195,14 @@ if __name__ == "__main__":
     mongodb_url = os.getenv("MONGODB_URL")
     db_name = os.getenv("DB_NAME")
     table_name = "vote"
+    df_votes = pd.read_csv('votes_data.csv')
+    df_votes = preprocessing_votes(df_votes)
     df_referendum = pd.read_csv('referendum_data.csv')
     df_referendum = preprocessing_referendum(df_referendum)
     df_ongoing_referenda = get_substrate_live_data()
     # table_name = os.getenv("TABLE_NAME")
     # df = load_data(mongodb_url=mongodb_url, db_name=db_name, table_name=table_name)
-    df_votes = pd.read_csv('votes_data.csv')
-    df_votes = preprocessing_votes(df_votes)
+
     # df_referendum = preprocessing_referendum(df_referendum)
     # df_new_accounts = get_df_new_accounts(df_referendum, df_votes)
     print(df_ongoing_referenda)
