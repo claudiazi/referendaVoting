@@ -158,7 +158,7 @@ body {
 }
 
 #Main-tab.custom-tab--selected, #Referendum-tab.custom-tab--selected, #Single-account-tab.custom-tab--selected {
-  border-bottom: #91dfd2 solid 4px !important;
+  border-bottom: #e6007a solid 4px !important;
 }
 
 .section-banner {
@@ -183,9 +183,16 @@ body {
 .daq-toggleswitch--light__label{
   font-size: 1rem !important;
 }
+.dlqMgb, .eMfdXL, .igrnnx{
+  background:#e6007a !important;
+}
+
 
 /* Main Dashboard Tab
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
+.rc-slider-track {
+  background-color: #e6007a;
+}
 
 #top-section-container {
   height: 40rem;
@@ -816,4 +823,30 @@ body {
   #Single-account-tab.custom-tab {
     margin-left: 0;
   }
+}
+
+.card {
+  text-align: center;
+}
+.card .card-title {
+  text-align: left;
+  font-weight: lighter;
+  font-size: 2.5rem;
+}
+
+.card .card-value {
+  font-size: 1.5rem;
+}
+
+.card .card-target {
+  font-size: 1rem;
+  font-weight: lighter;
+}
+
+.card .down {
+  color: red;
+}
+
+.card .up {
+  color: green;
 }
