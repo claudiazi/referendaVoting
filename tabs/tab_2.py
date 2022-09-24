@@ -96,7 +96,7 @@ def build_charts():
         ),
         html.Div(
             className="twelve columns",
-            id="card_row_1",
+            id="tab_2_card_row_1",
             children=[],
         ),
         html.Div(className="twelve columns", children=[html.Br()]),
@@ -105,7 +105,7 @@ def build_charts():
         ),
         html.Div(
             className="twelve columns",
-            id="card_row_2",
+            id="tab_2_card_row_2",
             children=[],
         ),
         html.Div(className="twelve columns", children=[html.Br()]),
@@ -297,7 +297,7 @@ def update_timeline(referenda_data, children_content):
 
 
 @app.callback(
-    output=Output("card_row_1", "children"),
+    output=Output("tab_2_card_row_1", "children"),
     inputs=[
         Input("specific-referenda-stats", "data"),
     ],
@@ -369,7 +369,7 @@ def update_card1(referenda_data):
 
 
 @app.callback(
-    output=Output("card_row_2", "children"),
+    output=Output("tab_2_card_row_2", "children"),
     inputs=[
         Input("specific-referenda-stats", "data"),
     ],
