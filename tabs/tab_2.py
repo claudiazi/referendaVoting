@@ -539,7 +539,6 @@ def cum_voted_amount_chart(referendum_data):
                 # + "<extra></extra>",
             ),
         ]
-        print(df_aye["voted_amount_with_conviction"])
 
         third_graph_layout = go.Layout(
             title="<b>Voted Amount Distribution</b>",

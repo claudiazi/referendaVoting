@@ -913,7 +913,6 @@ def update_pie_chart(referenda_data, selected_ids, click_selected_section):
             & (df_referenda["referendum_index"] <= selected_ids[1])
         ]
     if click_selected_section:
-        print(click_selected_section)
         click_selected_section = click_selected_section["points"][0]["label"]
         df_referenda = df_referenda[df_referenda["section"] == click_selected_section]
     df_method_group_count = df_referenda["method"].value_counts()
