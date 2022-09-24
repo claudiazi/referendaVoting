@@ -9,10 +9,7 @@ from dash import html
 from dash.dependencies import Input, Output
 
 from app import app
-from utils.data_preparation import (
-    get_df_new_accounts,
-    get_substrate_live_data,
-)
+from config import voting_group_dict, voting_group_perc_dict, voting_group_colors
 from utils.plotting import data_perc_bars, blank_figure
 
 
@@ -89,7 +86,7 @@ def build_tab_1():
                     ],
                 ),
                 html.Div(
-                    className="six columns",
+                    className="six columns graph-block",
                     children=[
                         html.Div(
                             className="twelve columns",
@@ -129,7 +126,7 @@ def build_tab_1():
             className="twelve columns",
             children=[
                 html.Div(
-                    className="six columns",
+                    className="six columns graph-block",
                     children=[
                         html.Div(
                             className="twelve columns",
@@ -163,14 +160,14 @@ def build_tab_1():
                     ],
                 ),
                 html.Div(
-                    className="six columns",
+                    className="six columns graph-block",
                     children=[
                         html.Div(
                             className="twelve columns",
                             children=[
                                 daq.ToggleSwitch(
                                     id="conviction_selection",
-                                    label=["Mean", "Median"],
+                                    label=["Median", "Mean"],
                                     value=True,
                                 )
                             ],
@@ -182,7 +179,12 @@ def build_tab_1():
                                 dcc.Loading(
                                     id="loading-icon",
                                     children=[
-                                        html.Div(dcc.Graph(id="voted_ksm_scatterchart"))
+                                        html.Div(
+                                            dcc.Graph(
+                                                id="voted_ksm_scatterchart",
+                                                figure=blank_figure(),
+                                            )
+                                        )
                                     ],
                                     type="default",
                                 )
@@ -192,25 +194,174 @@ def build_tab_1():
                 ),
             ],
         ),
+        html.Div(className="twelve columns", children=[html.Br()]),
+        html.Div(
+            className="twelve columns",
+            children=[
+                html.Div(
+                    className="six columns graph-block",
+                    children=[
+                        html.Div(
+                            className="twelve columns",
+                            children=[
+                                daq.ToggleSwitch(
+                                    id="voting_time_selection",
+                                    label=["Absolute", "Percentage"],
+                                    value=True,
+                                )
+                            ],
+                        ),
+                        html.Div(
+                            id="fifth-chart",
+                            className="twelve columns",
+                            children=[
+                                dcc.Loading(
+                                    id="loading-icon",
+                                    children=[
+                                        html.Div(
+                                            dcc.Graph(
+                                                id="voting_time_barchart",
+                                                figure=blank_figure(),
+                                            )
+                                        )
+                                    ],
+                                    type="default",
+                                )
+                            ],
+                        ),
+                    ],
+                ),
+                html.Div(
+                    className="six columns graph-block",
+                    children=[
+                        html.Div(
+                            id="sixth-chart",
+                            className="twelve columns",
+                            children=[
+                                html.Div(
+                                    className="twelve columns", children=[html.Br()]
+                                ),
+                                html.Div(
+                                    id="fifth-chart",
+                                    className="twelve columns",
+                                    children=[
+                                        dcc.Loading(
+                                            id="loading-icon",
+                                            children=[
+                                                html.Div(
+                                                    dcc.Graph(
+                                                        id="vote_timing_distribution",
+                                                        figure=blank_figure(),
+                                                    )
+                                                )
+                                            ],
+                                            type="default",
+                                        )
+                                    ],
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ],
+        ),
+        html.Div(className="twelve columns", children=[html.Br()]),
         html.Div(
             children=[
                 html.Div(
-                    id="first-pie-chart",
-                    className="six columns",
+                    id="section-piechart",
+                    className="six columns graph-block",
                     children=[
                         dcc.Loading(
                             id="loading-icon",
-                            children=[html.Div(dcc.Graph(id="call_module_piechart"))],
+                            children=[
+                                html.Div(
+                                    dcc.Graph(
+                                        id="section_piechart",
+                                        figure=blank_figure(),
+                                    )
+                                ),
+                                html.Button(
+                                    "Clear Selection",
+                                    id="clear-radio",
+                                    className="reset-button",
+                                ),
+                            ],
                             type="default",
                         )
                     ],
                 ),
                 html.Div(
-                    id="table-placeholder",
-                    className="five columns",
-                    children=[],
+                    id="section-piechart",
+                    className="six columns graph-block",
+                    children=[
+                        dcc.Loading(
+                            id="loading-icon",
+                            children=[
+                                html.Div(
+                                    dcc.Graph(
+                                        id="method_piechart",
+                                        figure=blank_figure(),
+                                    )
+                                )
+                            ],
+                            type="default",
+                        )
+                    ],
                 ),
             ]
+        ),
+        html.Div(
+            className="twelve columns",
+            children=[
+                html.Div(
+                    className="six columns graph-block",
+                    children=[
+                        html.Div(className="twelve columns", children=[html.Br()]),
+                        html.Div(
+                            id="fifth-chart",
+                            className="twelve columns",
+                            children=[
+                                dcc.Loading(
+                                    id="loading-icon",
+                                    children=[
+                                        html.Div(
+                                            dcc.Graph(
+                                                id="proposer_piechart",
+                                                figure=blank_figure(),
+                                            )
+                                        )
+                                    ],
+                                    type="default",
+                                )
+                            ],
+                        ),
+                    ],
+                ),
+                html.Div(
+                    className="six columns graph-block",
+                    children=[
+                        html.Div(
+                            id="sixth-chart",
+                            className="twelve columns",
+                            children=[
+                                dcc.Loading(
+                                    id="loading-icon",
+                                    children=[
+                                        html.Div(
+                                            dcc.Graph(
+                                                id="threshold_piechart",
+                                                figure=blank_figure(),
+                                            )
+                                        )
+                                    ],
+                                    type="default",
+                                )
+                            ],
+                        ),
+                    ],
+                ),
+            ],
         ),
     ]
 
@@ -220,24 +371,13 @@ layout = build_tab_1()
 
 @app.callback(
     Output("id-rangebar", "children"),
-    [Input("referenda-data", "data")],
+    [Input("closed-referenda-data", "data")],
 )
-def create_rangeslider(refined_referenda_data):
-    df = pd.DataFrame(refined_referenda_data)
+def create_rangeslider(closed_referenda_data):
+    df = pd.DataFrame(closed_referenda_data)
     range_min = df["referendum_index"].min()
     range_max = df["referendum_index"].max()
     return dcc.RangeSlider(id="selected-ids", min=range_min, max=range_max)
-
-
-# Callback to update the live data
-@app.callback(
-    Output("ongoing-referenda-data", "data"),
-    Input("interval-component-live", "n_intervals"),
-)
-def update_live_data(n_intervals):
-    if n_intervals >= 0:
-        df_ongoing_referenda = get_substrate_live_data()
-        return df_ongoing_referenda.to_dict("record")
 
 
 @app.callback(
@@ -246,7 +386,7 @@ def update_live_data(n_intervals):
 def create_live_data_table(data):
     dff = pd.DataFrame(data[:])
     print(f"live data updated {time.time()}")
-    dff = dff[["referendum_index", "threshold", "ayes_perc", "turnout"]]
+    dff = dff[["referendum_index", "section", "turnout_aye_perc", "voted_amount_total"]]
 
     my_table = dash_table.DataTable(
         data=dff.to_dict("records"),
@@ -262,7 +402,7 @@ def create_live_data_table(data):
                     "color": "black",
                 }
             ]
-            + data_perc_bars(dff, "ayes_perc")
+            + data_perc_bars(dff, "turnout_aye_perc")
         ),
         style_cell={
             "width": "100px",
@@ -275,26 +415,6 @@ def create_live_data_table(data):
     return my_table
 
 
-@app.callback(
-    Output("table-placeholder", "children"),
-    [Input("referenda-data", "data"), Input("selected-ids", "value")],
-)
-def create_graph1(data, selected_ids):
-    dff = pd.DataFrame(data[:])
-    if selected_ids:
-        dff = dff[
-            (dff["referendum_index"] >= selected_ids[0])
-            & (dff["referendum_index"] <= selected_ids[1])
-        ]
-    dff = dff[["referendum_index", "turnout_perc"]]
-    # 2. convert string like JSON to pandas dataframe
-    # dff = pd.read_json(data, orient='split')
-    my_table = dash_table.DataTable(
-        columns=[{"name": i, "id": i} for i in dff.columns], data=dff.to_dict("records")
-    )
-    return my_table
-
-
 # Update first chart
 @app.callback(
     output=Output("votes_counts_barchart", "figure"),
@@ -302,29 +422,26 @@ def create_graph1(data, selected_ids):
         Input("interval-component", "n_intervals"),
         Input("selected-ids", "value"),
         Input("votes_counts_chart_selection", "value"),
+        Input("section_piechart", "clickData"),
     ],
-    state=[Input("votes-data", "data"), Input("referenda-data", "data")],
+    state=Input("closed-referenda-data", "data"),
 )
 def update_votes_counts_chart(
-    n_intervals, selected_ids, selected_toggle_value, votes_data, referenda_data
+    n_intervals,
+    selected_ids,
+    selected_toggle_value,
+    click_selected_section,
+    referenda_data,
 ):
-    df_votes = pd.DataFrame(votes_data)
     df_referenda = pd.DataFrame(referenda_data).sort_values(by="referendum_index")
     if selected_ids:
-        df_votes = df_votes[
-            (df_votes["referendum_index"] >= selected_ids[0])
-            & (df_votes["referendum_index"] <= selected_ids[1])
+        df_referenda = df_referenda[
+            (df_referenda["referendum_index"] >= selected_ids[0])
+            & (df_referenda["referendum_index"] <= selected_ids[1])
         ]
-
-    df_counts_sum = (
-        df_votes.groupby("referendum_index")["account_address"]
-        .count()
-        .reset_index(name="vote_counts")
-        .sort_values(by="referendum_index")
-    )
-    df_counts_sum = df_counts_sum.merge(
-        df_referenda, how="inner", on="referendum_index"
-    ).sort_values(by="referendum_index")
+    if click_selected_section:
+        click_selected_section = click_selected_section["points"][0]["label"]
+        df_referenda = df_referenda[df_referenda["section"] == click_selected_section]
     first_graph_layout = go.Layout(
         title="<b>Vote Count</b>",
         barmode="stack",
@@ -334,66 +451,50 @@ def update_votes_counts_chart(
         yaxis=dict(title="Vote counts", linecolor="#021C1E"),
         legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01),
         template="plotly_dark",
+        hovermode="x",
     )
     if selected_toggle_value == False:
-        df_aye = df_votes[df_votes["passed"] == True]
-        df_aye_count_sum = (
-            df_aye.groupby("referendum_index")["account_address"]
-            .count()
-            .reset_index(name="vote_counts")
-            .sort_values(by="referendum_index")
-        )
-        df_nay = df_votes[df_votes["passed"] == False]
-        df_nay_count_sum = (
-            df_nay.groupby("referendum_index")["account_address"]
-            .count()
-            .reset_index(name="vote_counts")
-            .sort_values(by="referendum_index")
-        )
         first_graph_data = [
             go.Bar(
                 name="Aye Votes",
-                x=df_aye_count_sum["referendum_index"],
-                y=df_aye_count_sum["vote_counts"],
+                x=df_referenda["referendum_index"],
+                y=df_referenda["count_aye"],
                 marker_color="rgb(0, 0, 100)",
-                customdata=df_counts_sum["vote_counts"],
-                hovertemplate="<b>Aye Votes</b><br><br>"
-                + "Referendum id: %{x:.0f}<br>"
-                + "Aye vote counts: %{y:.0f}<br>"
-                + "Total counts: %{customdata:.0f}<br>"
-                + "<extra></extra>",
+                customdata=df_referenda["count_total"],
+                # hovertemplate="<b>Aye Votes</b><br><br>"
+                # + "Vote count: %{y:.0f}<br>"
+                # + "Total counts: %{customdata:.0f}<br>"
+                # + "<extra></extra>",
             ),
             go.Bar(
                 name="Nay Votes",
-                x=df_nay_count_sum["referendum_index"],
-                y=df_nay_count_sum["vote_counts"],
-                customdata=df_counts_sum["vote_counts"],
-                marker_color="rgb(0, 200, 200)",
-                hovertemplate="<b>Nay Votes</b><br><br>"
-                + "Referendum id: %{x:.0f}<br>"
-                + "Nay Vote counts: %{y:.0f}<br>"
-                + "Total counts: %{customdata:.0f}<br>"
-                + "<extra></extra>",
+                x=df_referenda["referendum_index"],
+                y=df_referenda["count_nay"],
+                customdata=df_referenda["count_total"],
+                marker_color="#B7B8BB",
+                # hovertemplate="<b>Nay Votes</b><br><br>"
+                # + "Vote count: %{y:.0f}<br>"
+                # + "Total counts: %{customdata:.0f}<br>"
+                # + "<extra></extra>",
             ),
         ]
     if selected_toggle_value == True:
         first_graph_data = [
             go.Bar(
                 name="Total Votes",
-                x=df_counts_sum["referendum_index"],
-                y=df_counts_sum["vote_counts"],
-                customdata=df_counts_sum["duration"],
+                x=df_referenda["referendum_index"],
+                y=df_referenda["count_total"],
+                customdata=df_referenda["vote_duration"],
                 marker=dict(
-                    color=df_counts_sum[
-                        "duration"
+                    color=df_referenda[
+                        "vote_duration"
                     ],  # set color equal to a variable # one of plotly colorscales
                     colorscale="earth",
                     showscale=True,
                 ),
-                hovertemplate="<b>Delegated Votes</b><br><br>"
-                + "Referendum id: %{x:.0f}<br>"
-                + "Votes counts: %{y:.0f}<br>"
-                + "Duration: %{customdata:.1f} days<br>"
+                hovertemplate="<b>Referendum</b><br><br>"
+                + "Duration: %{customdata:.0f}<br>"
+                + "Total counts: %{y:.0f}<br>"
                 + "<extra></extra>",
             ),
         ]
@@ -405,23 +506,23 @@ def update_votes_counts_chart(
 @app.callback(
     output=Output("turnout_scatterchart", "figure"),
     inputs=[Input("turn_out_chart_selection", "value")],
-    state=[Input("referenda-data", "data"), Input("selected-ids", "value")],
+    state=[Input("closed-referenda-data", "data"), Input("selected-ids", "value")],
 )
 def update_bar_chart(selected_toggle_value, referenda_data, selected_ids):
-    df_referendum = pd.DataFrame(referenda_data)
+    df_referenda = pd.DataFrame(referenda_data)
     if selected_ids:
-        df_referendum = df_referendum[
-            (df_referendum["referendum_index"] >= selected_ids[0])
-            & (df_referendum["referendum_index"] <= selected_ids[1])
+        df_referenda = df_referenda[
+            (df_referenda["referendum_index"] >= selected_ids[0])
+            & (df_referenda["referendum_index"] <= selected_ids[1])
         ]
     if selected_toggle_value == False:
         second_graph_data = [
             go.Scatter(
                 name="Aye Votes",
-                x=df_referendum["referendum_index"],
-                y=df_referendum["aye_amount"],
+                x=df_referenda["referendum_index"],
+                y=df_referenda["voted_amount_aye"],
                 fill="tozeroy",
-                customdata=df_referendum["turnout"],
+                customdata=df_referenda["voted_amount_total"],
                 stackgroup="one",  # define stack group
                 hovertemplate="<b>Aye Votes</b><br><br>"
                 + "Referendum id: %{x:.0f}<br>"
@@ -431,9 +532,9 @@ def update_bar_chart(selected_toggle_value, referenda_data, selected_ids):
             ),
             go.Scatter(
                 name="Nay Votes",
-                x=df_referendum["referendum_index"],
-                y=df_referendum["nay_amount"],
-                customdata=df_referendum["turnout"],
+                x=df_referenda["referendum_index"],
+                y=df_referenda["voted_amount_nay"],
+                customdata=df_referenda["voted_amount_total"],
                 fill="tonexty",
                 stackgroup="one",  # define stack group
                 hovertemplate="<b>Nay Votes</b><br><br>"
@@ -443,14 +544,14 @@ def update_bar_chart(selected_toggle_value, referenda_data, selected_ids):
                 + "<extra></extra>",
             ),
         ]
-    if selected_toggle_value == True:
+    else:
         second_graph_data = [
             go.Bar(
                 name="Aye Votes",
-                x=df_referendum["referendum_index"],
-                y=df_referendum["aye_turnout_perc"],
+                x=df_referenda["referendum_index"],
+                y=df_referenda["turnout_aye_perc"],
                 marker_color="rgb(0, 0, 100)",
-                customdata=df_referendum["turnout_perc"],
+                customdata=df_referenda["turnout_total_perc"],
                 hovertemplate="<b>Aye Votes</b><br><br>"
                 + "Referendum id: %{x:.1f}<br>"
                 + "Turnout perc - aye: %{y:.1f}<br>"
@@ -459,14 +560,14 @@ def update_bar_chart(selected_toggle_value, referenda_data, selected_ids):
             ),
             go.Bar(
                 name="Nay Votes",
-                x=df_referendum["referendum_index"],
-                y=df_referendum["nay_turnout_perc"],
-                customdata=df_referendum["turnout_perc"],
+                x=df_referenda["referendum_index"],
+                y=df_referenda["turnout_nay_perc"],
+                customdata=df_referenda["turnout_total_perc"],
                 marker_color="rgb(0, 200, 200)",
                 hovertemplate="<b>Nay Votes</b><br><br>"
-                + "Referendum id: %{x:.1f}<br>"
-                + "Turnout perc - nay: %{y:.1f}<br>"
-                + "Turnout perc: %{customdata:.1f}<br>"
+                + "Referendum id: %{x:.2f}<br>"
+                + "Turnout perc - nay: %{y:.2f}<br>"
+                + "Turnout perc: %{customdata:.2f}<br>"
                 + "<extra></extra>",
             ),
         ]
@@ -480,6 +581,7 @@ def update_bar_chart(selected_toggle_value, referenda_data, selected_ids):
         yaxis=dict(title="Turnout (% of total issued Kusama)", linecolor="#021C1E"),
         legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.8),
         template="plotly_dark",
+        hovermode="x",
     )
     fig_second_graph = go.Figure(data=second_graph_data, layout=second_graph_layout)
     return fig_second_graph
@@ -487,59 +589,62 @@ def update_bar_chart(selected_toggle_value, referenda_data, selected_ids):
 
 # Update third chart
 @app.callback(
-    Output("new_accounts_barchart", "figure"),
-    [
-        Input("referenda-data", "data"),
-        Input("votes-data", "data"),
+    output=Output("new_accounts_barchart", "figure"),
+    inputs=[Input("new_accounts_selection", "value")],
+    state=[
+        Input("closed-referenda-data", "data"),
         Input("selected-ids", "value"),
     ],
 )
-def update_new_accounts_chart(referenda_data, votes_data, selected_ids):
-    df_new_accounts = get_df_new_accounts(referenda_data, votes_data)
+def update_new_accounts_chart(selected_toggle_value, referenda_data, selected_ids):
+    df_referenda = pd.DataFrame(referenda_data)
     if selected_ids:
-        df_new_accounts = df_new_accounts[
-            (df_new_accounts["referendum_index"] >= selected_ids[0])
-            & (df_new_accounts["referendum_index"] <= selected_ids[1])
+        df_referenda = df_referenda[
+            (df_referenda["referendum_index"] >= selected_ids[0])
+            & (df_referenda["referendum_index"] <= selected_ids[1])
         ]
-    third_graph_data = [
-        go.Bar(
-            name="New accounts counts",
-            x=df_new_accounts["referendum_index"],
-            y=df_new_accounts["new_accounts"],
-            marker_color="rgb(0, 200, 200)",
-            hovertemplate="Referendum id: %{x:.0f}<br>"
-            + "New accounts counts: %{y:.0f}<br>"
-            + "<extra></extra>",
-        ),
-        go.Scatter(
-            name="% of total votes counts",
-            x=df_new_accounts["referendum_index"],
-            y=df_new_accounts["perc_new_accounts"],
-            # mode="lines+markers",
-            yaxis="y2",
-            line=dict(color="rgb(0, 0, 100)"),
-            # marker=dict(color="rgb(0, 0, 100)", size=4),
-            hovertemplate="Referendum id: %{x:.0f}<br>"
-            + "% of total votes counts: %{y:.4f}<br>"
-            + "<extra></extra>",
-        ),
-    ]
-
+    if selected_toggle_value == False:
+        third_graph_data = [
+            go.Bar(
+                name="New accounts counts",
+                x=df_referenda["referendum_index"],
+                y=df_referenda["count_new"],
+                marker_color="#e6007a",
+                hovertemplate="Referendum id: %{x:.0f}<br>"
+                + "New accounts counts: %{y:.0f}<br>"
+                + "<extra></extra>",
+            ),
+        ]
+    else:
+        third_graph_data = [
+            go.Scatter(
+                name="% of total votes counts",
+                x=df_referenda["referendum_index"],
+                y=df_referenda["count_new_perc"],
+                # mode="lines+markers",
+                line=dict(color="#e6007a"),
+                # marker=dict(color="rgb(0, 0, 100)", size=4),
+                hovertemplate="Referendum id: %{x:.0f}<br>"
+                + "% of total votes counts: %{y:.4f}<br>"
+                + "<extra></extra>",
+            ),
+        ]
     third_graph_layout = go.Layout(
-        title="<b>New accounts for selected Referendum IDs</b>",
-        paper_bgcolor="rgb(248, 248, 255)",
-        plot_bgcolor="rgb(248, 248, 255)",
+        title="<b>New Accounts</b>",
+        paper_bgcolor="#161a28",
+        plot_bgcolor="#161a28",
         barmode="stack",
         xaxis=dict(title="Referendum ID", linecolor="#BCCCDC"),
         yaxis=dict(title="New accounts counts", linecolor="#021C1E"),
-        yaxis2=dict(
-            title="New accounts counts (% of total votes counts)",
-            linecolor="#021C1E",
-            anchor="x",
-            overlaying="y",
-            side="right",
-        ),
+        # yaxis2=dict(
+        #     title="New accounts counts (% of total votes counts)",
+        #     linecolor="#021C1E",
+        #     anchor="x",
+        #     overlaying="y",
+        #     side="right",
+        # ),
         legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01),
+        template="plotly_dark",
     )
 
     fig_third_graph = go.Figure(data=third_graph_data, layout=third_graph_layout)
@@ -548,101 +653,439 @@ def update_new_accounts_chart(referenda_data, votes_data, selected_ids):
 
 # Update forth chart
 @app.callback(
-    Output("voted_ksm_scatterchart", "figure"),
-    [Input("votes-data", "data"), Input("selected-ids", "value")],
+    output=Output("voted_ksm_scatterchart", "figure"),
+    inputs=[Input("conviction_selection", "value")],
+    state=[Input("closed-referenda-data", "data"), Input("selected-ids", "value")],
 )
-def update_vote_amount_with_conviction_chart(votes_data, selected_ids):
-    df_votes = pd.DataFrame(votes_data)
+def update_vote_amount_with_conviction_chart(
+    selected_toggle_value, referenda_data, selected_ids
+):
+    df_referenda = pd.DataFrame(referenda_data)
     if selected_ids:
-        df_votes = df_votes[
-            (df_votes["referendum_index"] >= selected_ids[0])
-            & (df_votes["referendum_index"] <= selected_ids[1])
+        df_referenda = df_referenda[
+            (df_referenda["referendum_index"] >= selected_ids[0])
+            & (df_referenda["referendum_index"] <= selected_ids[1])
         ]
-    df_vote_amount_with_conviction_mean = (
-        df_votes[["referendum_index", "vote_amount_with_conviction"]]
-        .groupby("referendum_index")
-        .mean()
-    )
-    df_vote_amount_with_conviction_median = (
-        df_votes[["referendum_index", "vote_amount_with_conviction"]]
-        .groupby("referendum_index")
-        .median()
-    )
-    forth_graph_data = [
-        go.Scatter(
-            name="mean",
-            x=df_vote_amount_with_conviction_mean.index,
-            y=df_vote_amount_with_conviction_mean["vote_amount_with_conviction"],
-            mode="lines+markers",
-            line=dict(color="rgb(0, 0, 100)", dash="dot"),
-            marker=dict(color="rgb(0, 0, 100)", size=4),
-            hovertemplate="Referendum index: %{x:.0f}<br>"
-            + "vote amount with conviction mean: %{y:.4f}<br>"
-            + "<extra></extra>",
-        ),
-        go.Scatter(
-            name="median",
-            x=df_vote_amount_with_conviction_median.index,
-            y=df_vote_amount_with_conviction_median["vote_amount_with_conviction"],
-            yaxis="y2",
-            mode="lines+markers",
-            line=dict(color="rgb(0, 200, 200)", dash="dash"),
-            marker=dict(color="rgb(0, 200, 200)", size=6),
-            hovertemplate="Referendum index: %{x:.0f}<br>"
-            + "vote amount with conviction median: %{y:.4f}<br>"
-            + "<extra></extra>",
-        ),
-    ]
-    forth_graph_layout = go.Layout(
-        title="<b>Locked KSM Mean and Median for selected Referendum IDs</b>",
-        paper_bgcolor="rgb(248, 248, 255)",
-        plot_bgcolor="rgb(248, 248, 255)",
-        xaxis=dict(title="Referendum ID", linecolor="#BCCCDC"),
-        yaxis=dict(title="Vote Amount with Conviction - Mean", linecolor="#021C1E"),
-        yaxis2=dict(
-            title="Vote Amount with Conviction - Median",
-            linecolor="#021C1E",
-            anchor="x",
-            overlaying="y",
-            side="right",
-        ),
-        legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01),
-    )
+    if selected_toggle_value == False:
+        forth_graph_data = [
+            go.Scatter(
+                name="mean",
+                x=df_referenda["referendum_index"],
+                y=df_referenda["conviction_mean"],
+                mode="lines+markers",
+                line=dict(color="#e6007a"),
+                marker=dict(color="#e6007a", size=4),
+                hovertemplate="Referendum index: %{x:.0f}<br>"
+                + "vote amount with conviction mean: %{y:.4f}<br>"
+                + "<extra></extra>",
+            ),
+        ]
+        forth_graph_layout = go.Layout(
+            title="<b>Locked KSM Mean and Median for selected Referendum IDs</b>",
+            paper_bgcolor="#161a28",
+            plot_bgcolor="#161a28",
+            template="plotly_dark",
+            xaxis=dict(title="Referendum ID", linecolor="#BCCCDC"),
+            yaxis=dict(
+                title="Vote Amount with Conviction - Median", linecolor="#021C1E"
+            ),
+            legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01),
+        )
+    else:
+        forth_graph_data = [
+            go.Scatter(
+                name="median",
+                x=df_referenda["referendum_index"],
+                y=df_referenda["conviction_median"],
+                mode="lines+markers",
+                line=dict(color="#e6007a"),
+                marker=dict(color="#e6007a", size=4),
+                hovertemplate="Referendum index: %{x:.0f}<br>"
+                + "vote amount with conviction median: %{y:.4f}<br>"
+                + "<extra></extra>",
+            ),
+        ]
+        forth_graph_layout = go.Layout(
+            title="<b>Locked KSM Mean and Median for selected Referendum IDs</b>",
+            paper_bgcolor="#161a28",
+            plot_bgcolor="#161a28",
+            template="plotly_dark",
+            xaxis=dict(title="Referendum ID", linecolor="#BCCCDC"),
+            yaxis=dict(
+                title="Vote Amount with Conviction - Meean", linecolor="#021C1E"
+            ),
+            legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01),
+        )
     fig_forth_graph = go.Figure(data=forth_graph_data, layout=forth_graph_layout)
     return fig_forth_graph
 
 
-# Update piechart
+# Update fifth chart
 @app.callback(
-    Output("call_module_piechart", "figure"),
-    [Input("referenda-data", "data"), Input("selected-ids", "value")],
+    output=Output("voting_time_barchart", "figure"),
+    inputs=[Input("voting_time_selection", "value")],
+    state=[Input("closed-referenda-data", "data"), Input("selected-ids", "value")],
+)
+def update_voting_time_barchart(selected_toggle_value, referenda_data, selected_ids):
+    df_referenda = pd.DataFrame(referenda_data)
+    if selected_ids:
+        df_referenda = df_referenda[
+            (df_referenda["referendum_index"] >= selected_ids[0])
+            & (df_referenda["referendum_index"] <= selected_ids[1])
+        ]
+
+    if selected_toggle_value == False:
+        fifth_graph_data = []
+        for count, voting_time_group in enumerate(
+            [
+                "count_0_4_1_4_vote_duration",
+                "count_1_4_2_4_vote_duration",
+                "count_2_4_3_4_vote_duration",
+                "count_3_4_4_4_vote_duration",
+            ]
+        ):
+            fifth_graph_data.append(
+                go.Bar(
+                    x=df_referenda["referendum_index"],
+                    y=df_referenda[voting_time_group],
+                    name=f"{voting_group_dict[voting_time_group]}",
+                    customdata=df_referenda["count_total"],
+                    marker=dict(color=voting_group_colors[count]),
+                    # hovertemplate="Referendum id: %{x:.0f}<br>"
+                    # + "Group count: %{y:.0f}<br>"
+                    # + "Total: %{customdata:.0f}<br>"
+                    # + "<extra></extra>",
+                )
+            )
+        fifth_graph_layout = go.Layout(
+            title="<b>When Wallets Voted</b>",
+            paper_bgcolor="#161a28",
+            plot_bgcolor="#161a28",
+            barmode="stack",
+            xaxis=dict(title="Referendum ID", linecolor="#BCCCDC"),
+            yaxis=dict(title="Count of voting time groups", linecolor="#021C1E"),
+            legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.8),
+            template="plotly_dark",
+            hovermode="x",
+        )
+    else:
+        fifth_graph_data = []
+        for count, voting_time_group in enumerate(
+            [
+                "count_0_4_1_4_vote_duration_perc",
+                "count_1_4_2_4_vote_duration_perc",
+                "count_2_4_3_4_vote_duration_perc",
+                "count_3_4_4_4_vote_duration_perc",
+            ]
+        ):
+            fifth_graph_data.append(
+                go.Bar(
+                    x=df_referenda["referendum_index"],
+                    y=df_referenda[voting_time_group],
+                    marker=dict(color=voting_group_colors[count]),
+                    name=f"{voting_group_perc_dict[voting_time_group]}",
+                    customdata=df_referenda["count_total"],
+                    hovertemplate="%{y:.2f}",
+                )
+            )
+        fifth_graph_layout = go.Layout(
+            title="<b>When Wallets Voted</b>",
+            paper_bgcolor="#161a28",
+            plot_bgcolor="#161a28",
+            barmode="stack",
+            xaxis=dict(title="Referendum ID", linecolor="#BCCCDC"),
+            yaxis=dict(title="Count of voting time groups (%)", linecolor="#021C1E"),
+            legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.8),
+            template="plotly_dark",
+            hovermode="x",
+        )
+    fig_fifth_graph = go.Figure(data=fifth_graph_data, layout=fifth_graph_layout)
+    return fig_fifth_graph
+
+
+# Update sixth chart
+@app.callback(
+    output=Output("vote_timing_distribution", "figure"),
+    inputs=[
+        Input("voting_time_selection", "value"),
+        Input("section_piechart", "clickData"),
+    ],
+    state=[Input("closed-referenda-data", "data"), Input("selected-ids", "value")],
+)
+def update_vote_timing_distribution(
+    selected_toggle_value, click_selected_section, referenda_data, selected_ids
+):
+    df_referenda = pd.DataFrame(referenda_data)
+    if selected_ids:
+        df_referenda = df_referenda[
+            (df_referenda["referendum_index"] >= selected_ids[0])
+            & (df_referenda["referendum_index"] <= selected_ids[1])
+        ]
+    df_voting_group_sum = df_referenda[
+        [
+            "count_0_4_1_4_vote_duration",
+            "count_1_4_2_4_vote_duration",
+            "count_2_4_3_4_vote_duration",
+            "count_3_4_4_4_vote_duration",
+        ]
+    ].sum()
+    sixth_graph_data = [
+        go.Pie(
+            labels=[voting_group_dict[key] for key in df_voting_group_sum.index],
+            values=df_voting_group_sum.values,
+            customdata=df_referenda["count_total"],
+            marker=dict(colors=voting_group_colors),
+            # hovertemplate="Referendum id: %{x:.0f}<br>"
+            # + "Group count: %{y:.0f}<br>"
+            # + "Total: %{customdata:.0f}<br>"
+            # + "<extra></extra>",
+        )
+    ]
+    sixth_graph_layout = go.Layout(
+        title="<b>When Wallets Voted</b>",
+        paper_bgcolor="#161a28",
+        plot_bgcolor="#161a28",
+        barmode="stack",
+        xaxis=dict(title="Referendum ID", linecolor="#BCCCDC"),
+        yaxis=dict(title="Count of voting time groups", linecolor="#021C1E"),
+        legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.8),
+        template="plotly_dark",
+        hovermode="x",
+    )
+
+    fig_sixth_graph = go.Figure(data=sixth_graph_data, layout=sixth_graph_layout)
+    return fig_sixth_graph
+
+#
+# Update seventh chart
+@app.callback(
+    Output("section_piechart", "figure"),
+    [Input("closed-referenda-data", "data"), Input("selected-ids", "value")],
 )
 def update_pie_chart(referenda_data, selected_ids):
-    df = pd.DataFrame(referenda_data)
+    df_referenda = pd.DataFrame(referenda_data)
     if selected_ids:
-        df = df[
-            (df["referendum_index"] >= selected_ids[0])
-            & (df["referendum_index"] <= selected_ids[1])
+        df_referenda = df_referenda[
+            (df_referenda["referendum_index"] >= selected_ids[0])
+            & (df_referenda["referendum_index"] <= selected_ids[1])
         ]
-    new_figure = {
-        "data": [
-            {
-                "labels": df["call_module"].value_counts().index.tolist(),
-                "values": list(df["call_module"].value_counts()),
-                "type": "pie",
-                "marker": {"li": dict(color="white", width=2)},
-                "hoverinfo": "label",
-                "textinfo": "label",
-            }
-        ],
-        "layout": {
-            "margin": dict(t=20, b=50),
-            "uirevision": True,
-            "font": {"color": "white"},
-            "showlegend": False,
-            "paper_bgcolor": "rgba(0,0,0,0)",
-            "plot_bgcolor": "rgba(0,0,0,0)",
-            "autosize": True,
-        },
-    }
-    return new_figure
+    df_section_group_count = df_referenda["section"].value_counts()
+    seventh_graph_data = [
+        go.Pie(
+            labels=df_section_group_count.index,
+            values=df_section_group_count.values,
+            marker=dict(colors=voting_group_colors),
+            textposition="inside",
+            # hovertemplate="Referendum id: %{x:.0f}<br>"
+            # + "Group count: %{y:.0f}<br>"
+            # + "Total: %{customdata:.0f}<br>"
+            # + "<extra></extra>",
+        )
+    ]
+    seventh_graph_layout = go.Layout(
+        title="<b>Section</b>",
+        paper_bgcolor="#161a28",
+        plot_bgcolor="#161a28",
+        legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.8),
+        template="plotly_dark",
+        hovermode="x",
+        autosize=True,
+        clickmode="event+select",
+    )
+    fig_seventh_graph = go.Figure(data=seventh_graph_data, layout=seventh_graph_layout)
+    return fig_seventh_graph
+
+
+# Update eighth chart
+@app.callback(
+    Output("method_piechart", "figure"),
+    [
+        Input("closed-referenda-data", "data"),
+        Input("selected-ids", "value"),
+        Input("section_piechart", "clickData"),
+    ],
+)
+def update_pie_chart(referenda_data, selected_ids, click_selected_section):
+    df_referenda = pd.DataFrame(referenda_data)
+    if selected_ids:
+        df_referenda = df_referenda[
+            (df_referenda["referendum_index"] >= selected_ids[0])
+            & (df_referenda["referendum_index"] <= selected_ids[1])
+        ]
+    if click_selected_section:
+        print(click_selected_section)
+        click_selected_section = click_selected_section["points"][0]["label"]
+        df_referenda = df_referenda[df_referenda["section"] == click_selected_section]
+    df_method_group_count = df_referenda["method"].value_counts()
+    eighth_graph_data = [
+        go.Pie(
+            labels=df_method_group_count.index,
+            values=df_method_group_count.values,
+            marker=dict(colors=voting_group_colors),
+            textposition="inside",
+            # hovertemplate="Referendum id: %{x:.0f}<br>"
+            # + "Group count: %{y:.0f}<br>"
+            # + "Total: %{customdata:.0f}<br>"
+            # + "<extra></extra>",
+        )
+    ]
+    eighth_graph_layout = go.Layout(
+        title="<b>Method</b>",
+        paper_bgcolor="#161a28",
+        plot_bgcolor="#161a28",
+        legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.8),
+        template="plotly_dark",
+        hovermode="x",
+        autosize=True,
+        clickmode="event+select",
+    )
+    fig_eighth_graph = go.Figure(data=eighth_graph_data, layout=eighth_graph_layout)
+    return fig_eighth_graph
+
+
+# Update ninth chart
+@app.callback(
+    Output("proposer_piechart", "figure"),
+    [
+        Input("closed-referenda-data", "data"),
+        Input("selected-ids", "value"),
+        Input("section_piechart", "clickData"),
+    ],
+)
+def update_pie_chart(referenda_data, selected_ids, click_selected_section):
+    df_referenda = pd.DataFrame(referenda_data)
+    if selected_ids:
+        df_referenda = df_referenda[
+            (df_referenda["referendum_index"] >= selected_ids[0])
+            & (df_referenda["referendum_index"] <= selected_ids[1])
+        ]
+    if click_selected_section:
+        click_selected_section = click_selected_section["points"][0]["label"]
+        df_referenda = df_referenda[df_referenda["section"] == click_selected_section]
+    df_proposer_count = df_referenda["proposer"].value_counts()
+    ninth_graph_data = [
+        go.Pie(
+            labels=df_proposer_count.index,
+            values=df_proposer_count.values,
+            marker=dict(colors=voting_group_colors),
+            textposition="inside",
+            # hovertemplate="Referendum id: %{x:.0f}<br>"
+            # + "Group count: %{y:.0f}<br>"
+            # + "Total: %{customdata:.0f}<br>"
+            # + "<extra></extra>",
+        )
+    ]
+    ninth_graph_layout = go.Layout(
+        title="<b>Proposer</b>",
+        paper_bgcolor="#161a28",
+        plot_bgcolor="#161a28",
+        legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.8),
+        template="plotly_dark",
+        hovermode="x",
+        autosize=True,
+        clickmode="event+select",
+    )
+    fig_ninth_graph = go.Figure(data=ninth_graph_data, layout=ninth_graph_layout)
+    return fig_ninth_graph
+
+
+# Update tenth chart
+@app.callback(
+    Output("threshold_piechart", "figure"),
+    [
+        Input("closed-referenda-data", "data"),
+        Input("selected-ids", "value"),
+    ],
+)
+def update_threshold_piechart(referenda_data, selected_ids):
+    df_referenda = pd.DataFrame(referenda_data)
+    if selected_ids:
+        df_referenda = df_referenda[
+            (df_referenda["referendum_index"] >= selected_ids[0])
+            & (df_referenda["referendum_index"] <= selected_ids[1])]
+    df_threshold_count = df_referenda["threshold_type"].value_counts()
+    tenth_graph_data = [
+        go.Pie(
+            labels=df_threshold_count.index,
+            values=df_threshold_count.values,
+            marker=dict(colors=voting_group_colors),
+            textposition="inside",
+            # hovertemplate="Referendum id: %{x:.0f}<br>"
+            # + "Group count: %{y:.0f}<br>"
+            # + "Total: %{customdata:.0f}<br>"
+            # + "<extra></extra>",
+        )
+    ]
+    tenth_graph_layout = go.Layout(
+        title="<b>Proposer</b>",
+        paper_bgcolor="#161a28",
+        plot_bgcolor="#161a28",
+        legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.8),
+        template="plotly_dark",
+        hovermode="x",
+        autosize=True,
+        clickmode="event+select",
+    )
+    fig_tenth_graph = go.Figure(data=tenth_graph_data, layout=tenth_graph_layout)
+    return fig_tenth_graph
+
+@app.callback(
+    Output("section_piechart", "clickData"),
+    [Input("clear-radio", "n_clicks")],
+)
+def clear_section_selections(*args):
+    return None
+
+
+# # callback function for on_hover
+# def hide_traces_on_hover(trace, points, selector):
+#     if len(points.point_inds)==1: # identify hover
+#         i = points.trace_index # get the index of the hovered trace
+#         f.data[i].visible = True # keep the hovered trace visible
+#         # create a list of traces you want to hide
+#         hide_traces = [l_trace for idx, l_trace in enumerate(f.data) if idx != i]
+#         for l_trace in hide_traces: # iterate over hide_traces
+#             l_trace.visible = 'legendonly' # hide all remaining traces
+
+#fig = go.FigureWidget() # create figure widget
+# def hide_traces_on_click(fig, trace, points, selector):
+#     if len(points.point_inds)==1: # identify hover
+#         i = points.trace_index # get the index of the hovered trace
+#         fig.data[i].visible = True # keep the hovered trace visible
+#         # create a list of traces you want to hide
+#         hide_traces = [l_trace for idx, l_trace in enumerate(f.data) if idx != i]
+#         for l_trace in hide_traces: # iterate over hide_traces
+#             l_trace.visible = 'legendonly' # hide all remaining traces
+# import plotly.express as px
+#
+# def get_figure(x, y, selectedpoints, selectedpoints_local):
+#
+#     fig = px.pie(labels=x,values=y)
+#     fig.update_traces(selectedpoints=selectedpoints, unselected={'marker': { 'opacity': 0.3 }, 'textfont': { 'color': 'rgba(0, 0, 0, 0)' } })
+#
+#     fig.update_layout(title="<b>Section</b>",
+#         paper_bgcolor="#161a28",
+#         plot_bgcolor="#161a28",
+#         legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.8),
+#         template="plotly_dark",
+#         hovermode="x",
+#         autosize=True,
+#         clickmode="event+select")
+#
+#     return fig
+#
+#
+# @app.callback(
+#     Output("section_piechart", "figure"),
+#     [Input("closed-referenda-data", "data"), Input("selected-ids", "value"), Input("section_piechart", "clickData")],
+# )
+# def update_pie_chart(referenda_data, selected_ids, selected_section):
+#     df_referenda = pd.DataFrame(referenda_data)
+#     if selected_ids:
+#         df_referenda = df_referenda[
+#             (df_referenda["referendum_index"] >= selected_ids[0])
+#             & (df_referenda["referendum_index"] <= selected_ids[1])
+#         ]
+#     df_section_group_count = df_referenda["section"].value_counts()
+#     all_secions = df_referenda["section"].unique()
+#     return get_figure(df_section_group_count, df_section_group_count.index, df_section_group_count.values, all_secions, selected_section)
