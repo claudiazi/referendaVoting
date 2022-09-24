@@ -1,3 +1,19 @@
+voting_group_dict = {
+    "count_0_4_1_4_vote_duration": "0/4 - 1/4 vote duration",
+    "count_1_4_2_4_vote_duration": "1/4 - 2/4 vote duration",
+    "count_2_4_3_4_vote_duration": "2/4 - 3/4 vote duration",
+    "count_3_4_4_4_vote_duration": "3/4 - 4/4 vote duration",
+}
+
+voting_group_perc_dict = {
+    "count_0_4_1_4_vote_duration_perc": "0/4 - 1/4 vote duration",
+    "count_1_4_2_4_vote_duration_perc": "1/4 - 2/4 vote duration",
+    "count_2_4_3_4_vote_duration_perc": "2/4 - 3/4 vote duration",
+    "count_3_4_4_4_vote_duration_perc": "3/4 - 4/4 vote duration",
+}
+
+voting_group_colors = ["gold", "mediumturquoise", "darkorange", "lightgreen"]
+
 referendum_columns = [
     "referendum_index",
     "pre_image_author_address",
