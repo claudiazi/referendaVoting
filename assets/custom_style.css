@@ -850,3 +850,19 @@ body {
 .card .up {
   color: green;
 }
+
+/* reduce row height */
+.dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner tr{
+    min-height: 20px;
+    height: 20px;
+}
+/* reduce header height */
+.dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner tr:first-of-type{
+    min-height: 25px;
+    height: 25px;
+}
+.dash-table-container .dash-spreadsheet-container {
+    padding-left: 2rem;
+      padding-right: 2rem;
+  padding-bottom: 1.5rem;
+}
