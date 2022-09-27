@@ -21,7 +21,7 @@ def build_banner():
         id="banner",
         className="banner",
         children=[
-            html.H1("Kusama Governance Dashboard - Referendum Analysis"),
+            html.H1("Kusama Governance Dashboard"),
         ],
     )
 
@@ -87,7 +87,7 @@ def build_tabs():
                     ),
                 ])
 
-subsquid_endpoint = "https://squid.subsquid.io/referenda-dashboard/v/1/graphql"
+subsquid_endpoint = "https://squid.subsquid.io/referenda-dashboard/v/0/graphql"
 
 server = app.server
 app.layout = html.Div(
