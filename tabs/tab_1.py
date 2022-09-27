@@ -61,7 +61,7 @@ def build_tab_1():
                                     id="votes_counts_chart_selection",
                                     className="toggle_switch",
                                     label=["Votes Split", "Duration"],
-                                    value=True,
+                                    value=False,
                                 )
                             ],
                         ),
@@ -95,7 +95,7 @@ def build_tab_1():
                                     id="turn_out_chart_selection",
                                     className="toggle_switch",
                                     label=["Absolute", "Percentage"],
-                                    value=True,
+                                    value=False,
                                 )
                             ],
                         ),
@@ -135,7 +135,7 @@ def build_tab_1():
                                     id="new_accounts_selection",
                                     className="toggle_switch",
                                     label=["Absolute", "Percentage"],
-                                    value=True,
+                                    value=False,
                                 )
                             ],
                         ),
@@ -168,7 +168,7 @@ def build_tab_1():
                                 daq.ToggleSwitch(
                                     id="conviction_selection",
                                     label=["Median", "Mean"],
-                                    value=True,
+                                    value=False,
                                 )
                             ],
                         ),
@@ -207,7 +207,7 @@ def build_tab_1():
                                 daq.ToggleSwitch(
                                     id="voting_time_selection",
                                     label=["Absolute", "Percentage"],
-                                    value=True,
+                                    value=False,
                                 )
                             ],
                         ),
@@ -377,7 +377,12 @@ def create_rangeslider(closed_referenda_data):
     df = pd.DataFrame(closed_referenda_data)
     range_min = df["referendum_index"].min()
     range_max = df["referendum_index"].max()
-    return dcc.RangeSlider(id="selected-ids", min=range_min, max=range_max)
+    return dcc.RangeSlider(
+        id="selected-ids",
+        min=range_min,
+        max=range_max,
+        tooltip={"placement": "top", "always_visible": True},
+    )
 
 
 @app.callback(
@@ -399,7 +404,7 @@ def create_live_data_table(data):
                         "column_id": "referendum_index",
                     },
                     "fontWeight": "bold",
-                    "color": "black",
+                    "color": "#e6007a",
                 }
             ]
             + data_perc_bars(dff, "turnout_aye_perc")
@@ -410,7 +415,18 @@ def create_live_data_table(data):
             "maxWidth": "100px",
             "overflow": "hidden",
             "textOverflow": "ellipsis",
+            "fontSize": 12,
+            "fontFamily": "Unbounded Blond",
         },
+        style_header={"backgroundColor": "#161a28", "color": "white"},
+        style_data={"backgroundColor": "#161a28", "color": "white"},
+        #   style_table={"height": "200px", "overflowY": "auto"},
+        #    css=[
+        #        {"selector": ".dash-spreadsheet tr th", "rule": "height: 30px;"},
+        #        # set height of header
+        #        {"selector": ".dash-spreadsheet tr td", "rule": "height: 25px;"},
+        #        # set height of body rows
+        #    ]
     )
     return my_table
 
@@ -459,7 +475,7 @@ def update_votes_counts_chart(
                 name="Aye Votes",
                 x=df_referenda["referendum_index"],
                 y=df_referenda["count_aye"],
-                marker_color="rgb(0, 0, 100)",
+                marker_color="#ffffff",
                 customdata=df_referenda["count_total"],
                 # hovertemplate="<b>Aye Votes</b><br><br>"
                 # + "Vote count: %{y:.0f}<br>"
@@ -471,7 +487,7 @@ def update_votes_counts_chart(
                 x=df_referenda["referendum_index"],
                 y=df_referenda["count_nay"],
                 customdata=df_referenda["count_total"],
-                marker_color="#B7B8BB",
+                marker_color="#e6007a",
                 # hovertemplate="<b>Nay Votes</b><br><br>"
                 # + "Vote count: %{y:.0f}<br>"
                 # + "Total counts: %{customdata:.0f}<br>"
@@ -484,16 +500,31 @@ def update_votes_counts_chart(
                 name="Total Votes",
                 x=df_referenda["referendum_index"],
                 y=df_referenda["count_total"],
-                customdata=df_referenda["vote_duration"],
+                customdata=[
+                    f"{x * 24:.2f} hours" if x < 1 else f"{x:.2f} days"
+                    for x in df_referenda["vote_duration"]
+                ],
                 marker=dict(
                     color=df_referenda[
                         "vote_duration"
                     ],  # set color equal to a variable # one of plotly colorscales
-                    colorscale="earth",
+                    colorscale=[
+                        [0, "#ffe6f5"],
+                        [0.1, "#ffb3e0"],
+                        [0.2, "#ff99d6"],
+                        [0.3, "#ff80cc"],
+                        [0.4, "#ff66c2"],
+                        [0.5, "#ff4db8"],
+                        [0.6, "#ff33ad"],
+                        [0.7, "#ff1aa3"],
+                        [0.8, "#e6007a"],
+                        [0.9, "#cc007a"],
+                        [1, "#b3006b"],
+                    ],
                     showscale=True,
                 ),
-                hovertemplate="<b>Referendum</b><br><br>"
-                + "Duration: %{customdata:.0f}<br>"
+                hovertemplate="<b>Referendum %{x}</b><br><br>"
+                + "Duration: %{customdata} <br>"
                 + "Total counts: %{y:.0f}<br>"
                 + "<extra></extra>",
             ),
@@ -525,9 +556,9 @@ def update_bar_chart(selected_toggle_value, referenda_data, selected_ids):
                 customdata=df_referenda["voted_amount_total"],
                 stackgroup="one",  # define stack group
                 hovertemplate="<b>Aye Votes</b><br><br>"
-                + "Referendum id: %{x:.0f}<br>"
-                + "Aye amount: %{y:.0f}<br>"
-                + "Turnout: %{customdata:.0f}<br>"
+                + "Referendum: %{x:.0f}<br>"
+                + "Aye amount: %{y:.1f}<br>"
+                + "Turnout: %{customdata:.2f}<br>"
                 + "<extra></extra>",
             ),
             go.Scatter(
@@ -538,9 +569,9 @@ def update_bar_chart(selected_toggle_value, referenda_data, selected_ids):
                 fill="tonexty",
                 stackgroup="one",  # define stack group
                 hovertemplate="<b>Nay Votes</b><br><br>"
-                + "Referendum id: %{x:.0f}<br>"
-                + "Nay Amount: %{y:.0f}<br>"
-                + "Turnout: %{customdata:.0f}<br>"
+                + "Referendum: %{x:.0f}<br>"
+                + "Nay Amount: %{y:.1f}<br>"
+                + "Turnout: %{customdata:.2f}<br>"
                 + "<extra></extra>",
             ),
         ]
@@ -550,7 +581,7 @@ def update_bar_chart(selected_toggle_value, referenda_data, selected_ids):
                 name="Aye Votes",
                 x=df_referenda["referendum_index"],
                 y=df_referenda["turnout_aye_perc"],
-                marker_color="rgb(0, 0, 100)",
+                marker_color="#3D9970",
                 customdata=df_referenda["turnout_total_perc"],
                 hovertemplate="<b>Aye Votes</b><br><br>"
                 + "Referendum id: %{x:.1f}<br>"
@@ -563,7 +594,7 @@ def update_bar_chart(selected_toggle_value, referenda_data, selected_ids):
                 x=df_referenda["referendum_index"],
                 y=df_referenda["turnout_nay_perc"],
                 customdata=df_referenda["turnout_total_perc"],
-                marker_color="rgb(0, 200, 200)",
+                marker_color="#e6007a",
                 hovertemplate="<b>Nay Votes</b><br><br>"
                 + "Referendum id: %{x:.2f}<br>"
                 + "Turnout perc - nay: %{y:.2f}<br>"
@@ -675,19 +706,19 @@ def update_vote_amount_with_conviction_chart(
                 mode="lines+markers",
                 line=dict(color="#e6007a"),
                 marker=dict(color="#e6007a", size=4),
-                hovertemplate="Referendum index: %{x:.0f}<br>"
-                + "vote amount with conviction mean: %{y:.4f}<br>"
+                hovertemplate="Referendum %{x:.0f}<br>"
+                + "conviction mean: %{y:.3f}<br>"
                 + "<extra></extra>",
             ),
         ]
         forth_graph_layout = go.Layout(
-            title="<b>Locked KSM Mean and Median for selected Referendum IDs</b>",
+            title="<b>Conviction Mean</b>",
             paper_bgcolor="#161a28",
             plot_bgcolor="#161a28",
             template="plotly_dark",
             xaxis=dict(title="Referendum ID", linecolor="#BCCCDC"),
             yaxis=dict(
-                title="Vote Amount with Conviction - Median", linecolor="#021C1E"
+                title="Conviction Mean", linecolor="#021C1E"
             ),
             legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01),
         )
@@ -700,19 +731,19 @@ def update_vote_amount_with_conviction_chart(
                 mode="lines+markers",
                 line=dict(color="#e6007a"),
                 marker=dict(color="#e6007a", size=4),
-                hovertemplate="Referendum index: %{x:.0f}<br>"
-                + "vote amount with conviction median: %{y:.4f}<br>"
+                hovertemplate="Referendum %{x:.0f}<br>"
+                + "Conviction median: %{y:.3f}<br>"
                 + "<extra></extra>",
             ),
         ]
         forth_graph_layout = go.Layout(
-            title="<b>Locked KSM Mean and Median for selected Referendum IDs</b>",
+            title="<b>Conviction Median</b>",
             paper_bgcolor="#161a28",
             plot_bgcolor="#161a28",
             template="plotly_dark",
             xaxis=dict(title="Referendum ID", linecolor="#BCCCDC"),
             yaxis=dict(
-                title="Vote Amount with Conviction - Meean", linecolor="#021C1E"
+                title="Conviction - Median", linecolor="#021C1E"
             ),
             legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01),
         )
@@ -855,6 +886,7 @@ def update_vote_timing_distribution(
 
     fig_sixth_graph = go.Figure(data=sixth_graph_data, layout=sixth_graph_layout)
     return fig_sixth_graph
+
 
 #
 # Update seventh chart
@@ -1001,7 +1033,8 @@ def update_threshold_piechart(referenda_data, selected_ids):
     if selected_ids:
         df_referenda = df_referenda[
             (df_referenda["referendum_index"] >= selected_ids[0])
-            & (df_referenda["referendum_index"] <= selected_ids[1])]
+            & (df_referenda["referendum_index"] <= selected_ids[1])
+        ]
     df_threshold_count = df_referenda["threshold_type"].value_counts()
     tenth_graph_data = [
         go.Pie(
@@ -1028,6 +1061,7 @@ def update_threshold_piechart(referenda_data, selected_ids):
     fig_tenth_graph = go.Figure(data=tenth_graph_data, layout=tenth_graph_layout)
     return fig_tenth_graph
 
+
 @app.callback(
     Output("section_piechart", "clickData"),
     [Input("clear-radio", "n_clicks")],
@@ -1046,7 +1080,7 @@ def clear_section_selections(*args):
 #         for l_trace in hide_traces: # iterate over hide_traces
 #             l_trace.visible = 'legendonly' # hide all remaining traces
 
-#fig = go.FigureWidget() # create figure widget
+# fig = go.FigureWidget() # create figure widget
 # def hide_traces_on_click(fig, trace, points, selector):
 #     if len(points.point_inds)==1: # identify hover
 #         i = points.trace_index # get the index of the hovered trace
