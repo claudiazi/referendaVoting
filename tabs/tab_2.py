@@ -10,10 +10,10 @@ from utils.plotting import blank_figure
 import dash_daq as daq
 import plotly.graph_objs as go
 import dash_bootstrap_components as dbc
-
+import datetime
 import plotly.express as px
 
-subsquid_endpoint = "https://squid.subsquid.io/referenda-dashboard/v/1/graphql"
+subsquid_endpoint = "https://squid.subsquid.io/referenda-dashboard/v/0/graphql"
 
 
 def load_specific_referendum_stats(referendum_index):
@@ -234,12 +234,25 @@ def update_timeline(referenda_data, children_content):
                 "not_passed_at",
             ]
         ]
+        df_timeline["now"] = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
+        df_timeline["now"] = df_timeline.apply(
+            lambda row: row["now"]
+            if (
+                not row["executed_at"]
+                and not row["passed_at"]
+                and not row["not_passed_at"]
+                and not row["cancelled_at"]
+            )
+            else None,
+            axis=1,
+        )
         timeline_colors = {
             "created_at": "#e1f5c4",
             "cancelled_at": "#ede574",
             "executed_at": "#f9d423",
             "passed_at": "#fc913a",
             "not_passed_at": "#ff4e50",
+            "now": "#00d7ff",
         }
         df_timeline = df_timeline.set_index(("referendum_index"))
         df_timeline = df_timeline.stack().reset_index()
@@ -252,6 +265,7 @@ def update_timeline(referenda_data, children_content):
             "executed_at",
             "passed_at",
             "not_passed_at",
+            "now",
         ]:
             df = df_timeline[df_timeline["timeline"] == timeline]
             first_graph_data.append(
@@ -292,6 +306,12 @@ def update_timeline(referenda_data, children_content):
                 width=4,
                 dash="dot",
             ),
+        )
+        fig_first_graph.update_layout(
+            yaxis_range=[
+                df_timeline["timestamp"].min(),
+                df_timeline["timestamp"].max(),
+            ],
         )
     return fig_first_graph
 
