@@ -381,21 +381,26 @@ def create_rangeslider(closed_referenda_data):
         id="selected-ids",
         min=range_min,
         max=range_max,
+        value=[160, range_max],
         tooltip={"placement": "top", "always_visible": True},
     )
 
 
 @app.callback(
-    Output("live-data-table", "children"), Input("ongoing-referenda-data", "data")
+    Output("live-data-table", "children"), [Input("ongoing-referenda-data", "data")]
 )
-def create_live_data_table(data):
-    dff = pd.DataFrame(data[:])
+def create_live_data_table(ongoing_referenda_data):
+    df = pd.DataFrame(ongoing_referenda_data)
     print(f"live data updated {time.time()}")
-    dff = dff[["referendum_index", "section", "turnout_aye_perc", "voted_amount_total"]]
-
+    df["voted_amount_aye_perc"] = df["voted_amount_aye"] / df["voted_amount_total"] * 100
+    df["voted_amount_nay_perc"] = df["voted_amount_nay"] / df["voted_amount_total"] * 100
+    df["turnout_total_perc"] = df["turnout_total_perc"].apply(lambda x: f"{x:.2f} %")
+    df["voted_amount_aye"] = df.apply(lambda x: f"{x['voted_amount_aye']} ({x['voted_amount_aye_perc']:.2f} %)", axis=1)
+    df["voted_amount_nay"] = df.apply(lambda x: f"{x['voted_amount_nay']} ({x['voted_amount_nay_perc']:.2f} %)", axis=1)
+    df = df[["referendum_index", "section", "turnout_total_perc", "voted_amount_aye", "voted_amount_nay"]]
     my_table = dash_table.DataTable(
-        data=dff.to_dict("records"),
-        columns=[{"name": i, "id": i} for i in dff.columns],
+        data=df.to_dict("records"),
+        columns=[{"name": i, "id": i} for i in df.columns],
         sort_action="native",
         style_data_conditional=(
             [
@@ -407,7 +412,9 @@ def create_live_data_table(data):
                     "color": "#e6007a",
                 }
             ]
-            + data_perc_bars(dff, "turnout_aye_perc")
+            # + data_perc_bars(dff, "voted_amount_aye")
+            # + data_perc_bars(dff, "voted_amount_nay")
+
         ),
         style_cell={
             "width": "100px",
@@ -418,7 +425,7 @@ def create_live_data_table(data):
             "fontSize": 12,
             "fontFamily": "Unbounded Blond",
         },
-        style_header={"backgroundColor": "#161a28", "color": "white"},
+        style_header={"backgroundColor": "#161a28", "color": "darkgray"},
         style_data={"backgroundColor": "#161a28", "color": "white"},
         #   style_table={"height": "200px", "overflowY": "auto"},
         #    css=[
@@ -552,6 +559,7 @@ def update_bar_chart(selected_toggle_value, referenda_data, selected_ids):
                 name="Aye Votes",
                 x=df_referenda["referendum_index"],
                 y=df_referenda["voted_amount_aye"],
+                marker_color="#ffffff",
                 fill="tozeroy",
                 customdata=df_referenda["voted_amount_total"],
                 stackgroup="one",  # define stack group
@@ -566,6 +574,7 @@ def update_bar_chart(selected_toggle_value, referenda_data, selected_ids):
                 x=df_referenda["referendum_index"],
                 y=df_referenda["voted_amount_nay"],
                 customdata=df_referenda["voted_amount_total"],
+                marker_color="#e6007a",
                 fill="tonexty",
                 stackgroup="one",  # define stack group
                 hovertemplate="<b>Nay Votes</b><br><br>"
@@ -581,7 +590,7 @@ def update_bar_chart(selected_toggle_value, referenda_data, selected_ids):
                 name="Aye Votes",
                 x=df_referenda["referendum_index"],
                 y=df_referenda["turnout_aye_perc"],
-                marker_color="#3D9970",
+                marker_color="#ffffff",
                 customdata=df_referenda["turnout_total_perc"],
                 hovertemplate="<b>Aye Votes</b><br><br>"
                 + "Referendum id: %{x:.1f}<br>"
