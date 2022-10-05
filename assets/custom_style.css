@@ -554,8 +554,8 @@ body {
   color: #a94442;
 }
 
-#stop-button > div > button {
-  color: white !important;
+.click-button {
+  color: #a94442 !important;
   background-color: #1d202d !important;
   border: 1px solid #4B5460 !important;
   border-radius: 4px;
