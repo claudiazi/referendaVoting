@@ -6,7 +6,7 @@ import pandas as pd
 from dash import dcc
 from dash import html
 from dash.dependencies import Input, Output
-
+import datetime
 from app import app
 from tabs import tab_1, tab_2, tab_3
 from utils.data_preparation import (
@@ -14,6 +14,7 @@ from utils.data_preparation import (
     preprocessing_votes,
 )
 import requests
+from substrateinterface import SubstrateInterface
 
 
 def build_banner():
@@ -26,66 +27,82 @@ def build_banner():
     )
 
 
-
-
 def build_tabs():
     return dcc.Tabs(
-                id="app-tabs",
+        id="app-tabs",
+        value="tab1",
+        className="custom-tabs",
+        children=[
+            dcc.Tab(
+                id="Main-tab",
+                label="Main Dashboard",
                 value="tab1",
-                className="custom-tabs",
-                children=[
-                    dcc.Tab(
-                        id="Main-tab",
-                        label="Main Dashboard",
-                        value="tab1",
-                        className="custom-tab",
-                        selected_className="custom-tab--selected",
-                        disabled_style={
-                            "backgroundColor": "#2d3038",
-                            "color": "#95969A",
-                            "borderColor": "#23262E",
-                            "display": "flex",
-                            "flex-direction": "column",
-                            "alignItems": "center",
-                            "justifyContent": "center",
-                        },
-                        disabled=False,
-                    ),
-                    dcc.Tab(
-                        id="Referendum-tab",
-                        label="Single Referendum View",
-                        value="tab2",
-                        className="custom-tab",
-                        selected_className="custom-tab--selected",
-                        disabled_style={
-                            "backgroundColor": "#2d3038",
-                            "color": "#95969A",
-                            "borderColor": "#23262E",
-                            "display": "flex",
-                            "flex-direction": "column",
-                            "alignItems": "center",
-                            "justifyContent": "center",
-                        },
-                        disabled=False,
-                    ),
-                    dcc.Tab(
-                        id="Single-account-tab",
-                        label="Single Account View",
-                        value="tab3",
-                        className="custom-tab",
-                        selected_className="custom-tab--selected",
-                        disabled_style={
-                            "backgroundColor": "#2d3038",
-                            "color": "#95969A",
-                            "borderColor": "#23262E",
-                            "display": "flex",
-                            "flex-direction": "column",
-                            "alignItems": "center",
-                            "justifyContent": "center",
-                        },
-                        disabled=False,
-                    ),
-                ])
+                className="custom-tab",
+                selected_className="custom-tab--selected",
+                disabled_style={
+                    "backgroundColor": "#2d3038",
+                    "color": "#95969A",
+                    "borderColor": "#23262E",
+                    "display": "flex",
+                    "flex-direction": "column",
+                    "alignItems": "center",
+                    "justifyContent": "center",
+                },
+                disabled=False,
+            ),
+            dcc.Tab(
+                id="Referendum-tab",
+                label="Single Referendum View",
+                value="tab2",
+                className="custom-tab",
+                selected_className="custom-tab--selected",
+                disabled_style={
+                    "backgroundColor": "#2d3038",
+                    "color": "#95969A",
+                    "borderColor": "#23262E",
+                    "display": "flex",
+                    "flex-direction": "column",
+                    "alignItems": "center",
+                    "justifyContent": "center",
+                },
+                disabled=False,
+            ),
+            dcc.Tab(
+                id="Single-account-tab",
+                label="Single Account View",
+                value="tab3",
+                className="custom-tab",
+                selected_className="custom-tab--selected",
+                disabled_style={
+                    "backgroundColor": "#2d3038",
+                    "color": "#95969A",
+                    "borderColor": "#23262E",
+                    "display": "flex",
+                    "flex-direction": "column",
+                    "alignItems": "center",
+                    "justifyContent": "center",
+                },
+                disabled=False,
+            ),
+        ],
+    )
+
+
+def load_current_block():
+    substrate = SubstrateInterface(
+        url="wss://kusama-rpc.polkadot.io", ss58_format=2, type_registry_preset="kusama"
+    )
+    current_block = substrate.get_block()["header"]["number"]
+    # query = f"""query MyQuery {{
+    #                  squidStatus {{
+    #                     height
+    #                  }}
+    #             }}"""
+    # current_block = requests.post(subsquid_endpoint, json={"query": query}).text
+    return current_block
+
+
+current_block = load_current_block()
 
 subsquid_endpoint = "https://squid.subsquid.io/referenda-dashboard/v/0/graphql"
 
@@ -144,6 +161,8 @@ def load_referenda_stats():
                         executed_at
                         cancelled_at
                         ended_at
+                        ends_at
+                        delay
                         count_aye
                         count_nay
                         count_total
@@ -183,25 +202,47 @@ def load_referenda_stats():
     referenda_data = json.loads(referenda_data)
     df = pd.DataFrame.from_dict(referenda_data["data"]["referendaStats"])
     print(f"finish loading referenda_stats {time.time() - start_time}")
+    df["ends_at"] = df.apply(
+        lambda x: datetime.datetime.now()
+        + datetime.timedelta(seconds=(x["ends_at"] - current_block) * 6)
+        if not x["ended_at"]
+        else None,
+        axis=1,
+    )
+    df["executes_at"] = df.apply(
+        lambda x: x["ends_at"] + datetime.timedelta(seconds=x["delay"] * 6)
+        if not x["ended_at"]
+        else None,
+        axis=1,
+    )
     df_closed = df[df["ended_at"].notnull()].sort_values("referendum_index")
     df_ongoing = df[df["ended_at"].isnull()].sort_values("referendum_index")
-    return df.to_dict("record"), df_closed.to_dict("record"), df_ongoing.to_dict("record")
+    return (
+        df.to_dict("record"),
+        df_closed.to_dict("record"),
+        df_ongoing.to_dict("record"),
+    )
 
 
 @app.callback(
-    [Output("full-referenda-data", "data"), Output("closed-referenda-data", "data"), Output("ongoing-referenda-data", "data")],
+    [
+        Output("full-referenda-data", "data"),
+        Output("closed-referenda-data", "data"),
+        Output("ongoing-referenda-data", "data"),
+    ],
     [Input("interval-component", "n_intervals")],
 )
 def update_historical_data(n_intervals):
     if n_intervals >= 0:
-        full_referenda_data, closed_referenda_data, ongoing_referenda_data = load_referenda_stats()
+        (
+            full_referenda_data,
+            closed_referenda_data,
+            ongoing_referenda_data,
+        ) = load_referenda_stats()
         return full_referenda_data, closed_referenda_data, ongoing_referenda_data
 
 
-@app.callback(
-    Output("app-content", "children"),
-    Input("app-tabs", "value")
-)
+@app.callback(Output("app-content", "children"), Input("app-tabs", "value"))
 def render_tab_content(tab_switch):
     if tab_switch == "tab1":
         return tab_1.layout
