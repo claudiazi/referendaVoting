@@ -43,32 +43,53 @@ def load_specific_referendum_stats(referendum_index):
 def build_tab_2():
     return [
         html.Div(
-            className="section-banner",
             children=[
                 html.Div(
-                    className="twelve columns",
+                    className="twelve columns section-banner",
                     children=[
-                        html.P(
-                            "Type in the Referendum index: ",
-                            style={"display": "inline-block"},
+                        html.Div(
+                            className="twelve columns",
+                            children=[
+                                dcc.Input(
+                                    id="referendum_input",
+                                    placeholder="Type in Referendum Index",
+                                    style={
+                                        "width": "70%",
+                                        "float": "middle",
+                                    },
+                                ),
+                            ],
+                            style={
+                                "display": "flex",
+                                "padding": 5,
+                                "justifyContent": "center",
+                            },
                         ),
-                        dcc.Input(id="referendum_input", placeholder="number"),
-                    ],
-                ),
-                html.Div(
-                    className="twelve columns",
-                    id="referendum_input_warning",
-                    children=[],
-                ),
-                html.Div(
-                    className="twelve columns",
-                    children=[
-                        html.Button(
-                            "Confirm",
-                            id="referendum-trigger-btn",
-                            n_clicks=0,
-                            style={"display": "inline-block", "float": "middle"},
-                        )
+                        html.Div(
+                            className="twelve columns",
+                            id="referendum_input_warning",
+                            children=[],
+                        ),
+                        html.Div(
+                            className="twelve columns",
+                            children=[
+                                html.Button(
+                                    "Confirm",
+                                    id="referendum-trigger-btn",
+                                    className="click-button",
+                                    n_clicks=0,
+                                    style={
+                                        "display": "inline-block",
+                                        "float": "middle",
+                                    },
+                                )
+                            ],
+                            style={
+                                "display": "flex",
+                                "padding": 5,
+                                "justifyContent": "center",
+                            },
+                        ),
                     ],
                 ),
                 html.Div(className="twelve columns", id="tab2_charts", children=[]),
@@ -182,6 +203,7 @@ def update_specific_referendum_data(referenda_data, n_clicks, referendum_input):
     warning = None
     df_specific_referendum = pd.DataFrame()
     df_referenda = pd.DataFrame(referenda_data)
+    df_specific_referenda_stats = pd.DataFrame()
     if referendum_input:
         try:
             df_specific_referendum = load_specific_referendum_stats(referendum_input)
@@ -224,6 +246,7 @@ def update_timeline(referenda_data, children_content):
     fig_first_graph = None
     if referenda_data:
         df_referenda = pd.DataFrame(referenda_data)
+        print(df_referenda.columns)
         df_timeline = df_referenda[
             [
                 "referendum_index",
@@ -232,9 +255,12 @@ def update_timeline(referenda_data, children_content):
                 "executed_at",
                 "passed_at",
                 "not_passed_at",
+                "ends_at",
+                "executes_at",
             ]
         ]
-        df_timeline["now"] = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
+        now = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
+        df_timeline["now"] = now
         df_timeline["now"] = df_timeline.apply(
             lambda row: row["now"]
             if (
@@ -253,6 +279,8 @@ def update_timeline(referenda_data, children_content):
             "passed_at": "#fc913a",
             "not_passed_at": "#ff4e50",
             "now": "#00d7ff",
+            "ends_at": "#fc913a",
+            "executes_at": "#f9d423",
         }
         df_timeline = df_timeline.set_index(("referendum_index"))
         df_timeline = df_timeline.stack().reset_index()
@@ -266,6 +294,8 @@ def update_timeline(referenda_data, children_content):
             "passed_at",
             "not_passed_at",
             "now",
+            "executes_at",
+            "ends_at",
         ]:
             df = df_timeline[df_timeline["timeline"] == timeline]
             first_graph_data.append(
@@ -295,18 +325,44 @@ def update_timeline(referenda_data, children_content):
             height=200,
         )
         fig_first_graph = go.Figure(data=first_graph_data, layout=first_graph_layout)
-        fig_first_graph.add_shape(
-            type="line",
-            x0=df_timeline["timestamp"].min(),
-            y0=0,
-            x1=df_timeline["timestamp"].max(),
-            y1=0,
-            line=dict(
-                color="#e6007a",
-                width=4,
-                dash="dot",
-            ),
-        )
+        if "now" in df_timeline["timeline"].to_list():
+            fig_first_graph.add_shape(
+                type="line",
+                x0=now,
+                y0=0,
+                x1=df_timeline["timestamp"].max(),
+                y1=0,
+                line=dict(
+                    color="#ffb3e0",
+                    width=4,
+                    dash="dot",
+                ),
+            )
+            fig_first_graph.add_shape(
+                type="line",
+                x0=df_timeline["timestamp"].min(),
+                y0=0,
+                x1=now,
+                y1=0,
+                line=dict(
+                    color="#e6007a",
+                    width=4,
+                    dash="dot",
+                ),
+            )
+        else:
+            fig_first_graph.add_shape(
+                type="line",
+                x0=df_timeline["timestamp"].min(),
+                y0=0,
+                x1=df_timeline["timestamp"].max(),
+                y1=0,
+                line=dict(
+                    color="#e6007a",
+                    width=4,
+                    dash="dot",
+                ),
+            )
         fig_first_graph.update_layout(
             yaxis_range=[
                 df_timeline["timestamp"].min(),

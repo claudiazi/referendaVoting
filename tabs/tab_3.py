@@ -46,38 +46,59 @@ def load_specific_account_stats(voter):
 def build_tab_3():
     return [
         html.Div(
-            className="section-banner",
             children=[
                 html.Div(
-                    className="twelve columns",
+                    className="twelve columns section-banner",
                     children=[
-                        html.P(
-                            "Type in the Address: ",
-                            style={"display": "inline-block"},
+                        html.Div(
+                            className="twelve columns",
+                            children=[
+                                dcc.Input(
+                                    id="account_input",
+                                    placeholder="Type in Account Address",
+                                    style={
+                                        "width": "70%",
+                                        "float": "middle",
+                                    },
+                                ),
+                            ],
+                            style={
+                                "display": "flex",
+                                "padding": 5,
+                                "justifyContent": "center",
+                            },
                         ),
-                        dcc.Input(id="account_input", placeholder="number"),
+                        html.Div(
+                            className="twelve columns",
+                            id="account_input_warning",
+                            children=[],
+                        ),
+                        html.Div(
+                            className="twelve columns",
+                            children=[
+                                html.Button(
+                                    "Confirm",
+                                    id="account-trigger-btn",
+                                    className="click-button",
+                                    n_clicks=0,
+                                    style={
+                                        "display": "inline-block",
+                                        "float": "middle",
+                                    },
+                                )
+                            ],
+                            style={
+                                "display": "flex",
+                                "padding": 5,
+                                "justifyContent": "center",
+                            },
+                        ),
                     ],
-                ),
-                html.Div(
-                    className="twelve columns",
-                    id="account_input_warning",
-                    children=[],
-                ),
-                html.Div(
-                    className="twelve columns",
-                    children=[
-                        html.Button(
-                            "Confirm",
-                            id="referendum-trigger-btn",
-                            n_clicks=0,
-                            style={"display": "inline-block", "float": "middle"},
-                        )
-                    ],
-                ),
-                html.Div(className="twelve columns", id="tab3_charts", children=[]),
-                dcc.Store(id="specific-account-data", data=[], storage_type="memory"),
-            ],
-        )
+                )
+            ]
+        ),
+        html.Div(className="twelve columns", id="tab3_charts", children=[]),
+        dcc.Store(id="specific-account-data", data=[], storage_type="memory"),
     ]
 
 
@@ -172,7 +193,7 @@ layout = build_tab_3()
         Output("account_input_warning", "children"),
     ],
     [
-        Input("referendum-trigger-btn", "n_clicks"),
+        Input("account-trigger-btn", "n_clicks"),
         Input("account_input", "value"),
     ],
 )
@@ -196,7 +217,7 @@ def update_specific_account_data(n_clicks, account_input):
 @app.callback(
     output=Output("tab3_charts", "children"),
     inputs=[
-        Input("referendum-trigger-btn", "n_clicks"),
+        Input("account-trigger-btn", "n_clicks"),
         Input("account_input_warning", "children"),
     ],
 )

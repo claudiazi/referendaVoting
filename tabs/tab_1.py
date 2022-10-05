@@ -284,7 +284,7 @@ def build_tab_1():
                                 html.Button(
                                     "Clear Selection",
                                     id="clear-radio",
-                                    className="reset-button",
+                                    className="click-button",
                                 ),
                             ],
                             type="default",
