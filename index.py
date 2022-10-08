@@ -104,7 +104,7 @@ def load_current_block():
 
 current_block = load_current_block()
 
-subsquid_endpoint = "https://squid.subsquid.io/referenda-dashboard/v/0/graphql"
+subsquid_endpoint = "https://squid.subsquid.io/referenda-dashboard/v/1/graphql"
 
 server = app.server
 app.layout = html.Div(
