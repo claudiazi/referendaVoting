@@ -9,3 +9,4 @@ dash_bootstrap_components
 substrate-interface
 pandasql
 Flask-Caching
+gunicorn
