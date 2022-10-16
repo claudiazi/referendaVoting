@@ -166,9 +166,13 @@ def load_referenda_stats():
                         count_aye
                         count_nay
                         count_total
+                        count_direct
+                        count_delegated
                         voted_amount_aye
                         voted_amount_nay
                         voted_amount_total
+                        voted_amount_direct
+                        voted_amount_delegated
                         total_issuance
                         turnout_aye_perc
                         turnout_nay_perc
@@ -194,6 +198,12 @@ def load_referenda_stats():
                         proposer
                         method
                         section
+                        count_quiz_attended_wallets
+                        count_fully_correct
+                        quiz_fully_correct_perc
+                        count_1_question_correct_perc
+                        count_2_question_correct_perc
+                        count_3_question_correct_perc
                      }}
                 }}"""
     print("start to load")
