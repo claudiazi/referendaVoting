@@ -137,11 +137,6 @@ app.layout = html.Div(
             storage_type="memory",
         ),
         dcc.Store(
-            id="closed-referenda-data",
-            data=[],
-            storage_type="memory",
-        ),
-        dcc.Store(
             id="ongoing-referenda-data",
             data=[],
             storage_type="memory",
@@ -225,11 +220,10 @@ def load_referenda_stats():
         else None,
         axis=1,
     )
-    df_closed = df[df["ended_at"].notnull()].sort_values("referendum_index")
+    df = df.sort_values("referendum_index")
     df_ongoing = df[df["ended_at"].isnull()].sort_values("referendum_index")
     return (
         df.to_dict("record"),
-        df_closed.to_dict("record"),
         df_ongoing.to_dict("record"),
     )
 
@@ -237,7 +231,6 @@ def load_referenda_stats():
 @app.callback(
     [
         Output("full-referenda-data", "data"),
-        Output("closed-referenda-data", "data"),
         Output("ongoing-referenda-data", "data"),
     ],
     [Input("interval-component", "n_intervals")],
@@ -246,10 +239,9 @@ def update_historical_data(n_intervals):
     if n_intervals >= 0:
         (
             full_referenda_data,
-            closed_referenda_data,
             ongoing_referenda_data,
         ) = load_referenda_stats()
-        return full_referenda_data, closed_referenda_data, ongoing_referenda_data
+        return full_referenda_data, ongoing_referenda_data
 
 
 @app.callback(Output("app-content", "children"), Input("app-tabs", "value"))
