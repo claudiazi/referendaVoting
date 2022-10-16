@@ -12,6 +12,7 @@ import plotly.graph_objs as go
 import dash_bootstrap_components as dbc
 import datetime
 import plotly.express as px
+from dash import dash_table
 
 subsquid_endpoint = "https://squid.subsquid.io/referenda-dashboard/v/0/graphql"
 
@@ -23,6 +24,7 @@ def load_specific_referendum_stats(referendum_index):
                     cum_voted_amount_with_conviction_aye
                     cum_voted_amount_with_conviction_nay
                     decision
+                    delegated_to
                     is_new_account
                     referendum_index
                     timestamp
@@ -179,6 +181,20 @@ def build_charts():
                         ),
                     ],
                 ),
+            ],
+        ),
+        html.Div(className="twelve columns", children=[html.Br()]),
+        html.Div(className="section-banner", children="Top 5 Delegated Accounts"),
+        html.Div(className="twelve columns", children=[html.Br()]),
+        html.Div(
+            className="twelve columns",
+            children=[
+                dcc.Loading(
+                    html.Div(
+                        id="top-5-delegated-table",
+                        children=[],
+                    )
+                )
             ],
         ),
     ]
@@ -383,7 +399,7 @@ def update_card1(referenda_data):
         df_referenda = pd.DataFrame(referenda_data)
         return [
             html.Div(
-                className="four columns graph-block",
+                className="three columns graph-block",
                 id="card1",
                 children=[
                     dbc.Card(
@@ -402,7 +418,7 @@ def update_card1(referenda_data):
                 ],
             ),
             html.Div(
-                className="four columns graph-block",
+                className="three columns graph-block",
                 id="card2",
                 children=[
                     dbc.Card(
@@ -421,7 +437,28 @@ def update_card1(referenda_data):
                 ],
             ),
             html.Div(
-                className="four columns graph-block",
+                className="three columns graph-block",
+                id="card2",
+                children=[
+                    dbc.Card(
+                        [
+                            dbc.CardBody(
+                                [
+                                    html.H4(
+                                        "Passing Threshold", className="card-title"
+                                    ),
+                                    html.P(
+                                        df_referenda["threshold_type"],
+                                        className="card-value",
+                                    ),
+                                ]
+                            )
+                        ]
+                    ),
+                ],
+            ),
+            html.Div(
+                className="three columns graph-block",
                 id="card3",
                 children=[
                     dbc.Card(
@@ -549,6 +586,7 @@ def cum_voted_amount_chart(referendum_data):
                 x=df_referenda["timestamp"],
                 y=df_referenda["cum_voted_amount_with_conviction_aye"],
                 mode="lines",
+                marker_color="#ffffff",
                 # hovertemplate="<b>Aye Votes</b><br><br>"
                 # + "Referendum id: %{x:.0f}<br>"
                 # + "Aye amount: %{y:.0f}<br>"
@@ -560,6 +598,7 @@ def cum_voted_amount_chart(referendum_data):
                 x=df_referenda["timestamp"],
                 y=df_referenda["cum_voted_amount_with_conviction_nay"],
                 mode="lines",
+                marker_color="#e6007a",
                 # hovertemplate="<b>Nay Votes</b><br><br>"
                 # + "Referendum id: %{x:.0f}<br>"
                 # + "Nay Amount: %{y:.0f}<br>"
@@ -598,6 +637,7 @@ def cum_voted_amount_chart(referendum_data):
                 name="Aye Votes",
                 x=df_aye["voted_amount_with_conviction"],
                 boxpoints=False,
+                marker_color="#ffffff",
                 # hovertemplate="<b>Aye Votes</b><br><br>"
                 # + "Referendum id: %{x:.0f}<br>"
                 # + "Aye amount: %{y:.0f}<br>"
@@ -608,6 +648,7 @@ def cum_voted_amount_chart(referendum_data):
                 name="Nay Votes",
                 x=df_nay["voted_amount_with_conviction"],
                 boxpoints=False,
+                marker_color="#e6007a",
                 # hovertemplate="<b>Nay Votes</b><br><br>"
                 # + "Referendum id: %{x:.0f}<br>"
                 # + "Nay Amount: %{y:.0f}<br>"
@@ -630,3 +671,56 @@ def cum_voted_amount_chart(referendum_data):
         fig_thrid_graph.update_traces(opacity=0.75)
         return fig_thrid_graph
     return None
+
+
+@app.callback(
+    Output("top-5-delegated-table", "children"),
+    inputs=[Input("specific-referendum-data", "data")],
+)
+def create_live_data_table(referendum_data_data):
+    df = pd.DataFrame(referendum_data_data)
+    df = (
+        df.groupby("delegated_to")["voted_amount_with_conviction"]
+        .sum()
+        .sort_values(ascending=False)
+        .head()
+        .reset_index()
+    )
+    df["voted_amount_with_conviction"] = df["voted_amount_with_conviction"].apply(lambda x: round(x, 2))
+    my_table = dash_table.DataTable(
+        data=df.to_dict("records"),
+        columns=[{"name": i, "id": i} for i in df.columns],
+        sort_action="native",
+        style_data_conditional=(
+            [
+                {
+                    "if": {
+                        "column_id": "delegated_to",
+                    },
+                    "fontWeight": "bold",
+                    "color": "#e6007a",
+                }
+            ]
+            # + data_perc_bars(dff, "voted_amount_aye")
+            # + data_perc_bars(dff, "voted_amount_nay")
+        ),
+        style_cell={
+            "width": "100px",
+            "minWidth": "100px",
+            "maxWidth": "100px",
+            "overflow": "hidden",
+            "textOverflow": "ellipsis",
+            "fontSize": 12,
+            "fontFamily": "Unbounded Blond",
+        },
+        style_header={"backgroundColor": "#161a28", "color": "darkgray"},
+        style_data={"backgroundColor": "#161a28", "color": "white"},
+        #   style_table={"height": "200px", "overflowY": "auto"},
+        #    css=[
+        #        {"selector": ".dash-spreadsheet tr th", "rule": "height: 30px;"},
+        #        # set height of header
+        #        {"selector": ".dash-spreadsheet tr td", "rule": "height: 25px;"},
+        #        # set height of body rows
+        #    ]
+    )
+    return my_table
