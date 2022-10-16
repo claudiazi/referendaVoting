@@ -31,6 +31,9 @@ def load_specific_account_stats(voter):
                     voter
                     voting_result_group
                     voting_time_group
+                    questions_count
+                    correct_answers_count
+                    quiz_fully_correct
                   }}
                 }}"""
     print("start to load specific account stats")
@@ -370,6 +373,7 @@ def voter_amount_barchart(account_data, selected_votes_split):
                     name="Aye Votes",
                     x=df_aye["referendum_index"],
                     y=df_aye["voted_amount_with_conviction"],
+                    marker_color="#ffffff",
                     # hovertemplate="<b>Aye Votes</b><br><br>"
                     #               + "Referendum id: %{x:.1f}<br>"
                     #               + "Turnout perc - aye: %{y:.1f}<br>"
@@ -381,6 +385,7 @@ def voter_amount_barchart(account_data, selected_votes_split):
                     name="Nay Votes",
                     x=df_nay["referendum_index"],
                     y=df_nay["voted_amount_with_conviction"],
+                    marker_color="#e6007a",
                     # hovertemplate="<b>Nay Votes</b><br><br>"
                     #               + "Referendum id: %{x:.2f}<br>"
                     #               + "Turnout perc - nay: %{y:.2f}<br>"
@@ -398,6 +403,7 @@ def voter_amount_barchart(account_data, selected_votes_split):
                     name="Aligned with Final Result",
                     x=df_aligned["referendum_index"],
                     y=df_aligned["voted_amount_with_conviction"],
+                    marker_color="#ffffff",
                     # hovertemplate="<b>Aye Votes</b><br><br>"
                     #               + "Referendum id: %{x:.1f}<br>"
                     #               + "Turnout perc - aye: %{y:.1f}<br>"
@@ -408,6 +414,7 @@ def voter_amount_barchart(account_data, selected_votes_split):
                     name="Not Aligned with Final Result",
                     x=df_not_aligned["referendum_index"],
                     y=df_not_aligned["voted_amount_with_conviction"],
+                    marker_color="#e6007a",
                     # hovertemplate="<b>Nay Votes</b><br><br>"
                     #               + "Referendum id: %{x:.2f}<br>"
                     #               + "Turnout perc - nay: %{y:.2f}<br>"
