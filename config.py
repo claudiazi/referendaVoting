@@ -12,7 +12,30 @@ voting_group_perc_dict = {
     "count_3_4_4_4_vote_duration_perc": "3/4 - 4/4 vote duration",
 }
 
-voting_group_colors = ["gold", "mediumturquoise", "darkorange", "lightgreen"]
+voting_group_colors = ["#ffffff", "#ffb3e0", "#ff33ad", "#e6007a"]
+
+color_scale = [
+    "#ffffff",
+    "#ffe6f3",
+    "#ffb3e0",
+    "#ff84c5",
+    "#ff80cc",
+    "#ff66c2",
+    "#ff4db8",
+    "#ff33ad",
+    "#ff1aa3",
+    "#ff2297",
+    "#e6007a",
+    "#cc007a",
+    "#b3006b",
+    "#ff0e8e",
+    "#fa0084",
+    "#ff2297",
+    "#ff49aa",
+    "#ab005b",
+    "#840046",
+    "#70003c",
+]
 
 referendum_columns = [
     "referendum_index",
