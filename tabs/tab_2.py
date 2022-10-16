@@ -13,7 +13,7 @@ import dash_bootstrap_components as dbc
 import datetime
 import plotly.express as px
 
-subsquid_endpoint = "https://squid.subsquid.io/referenda-dashboard/v/1/graphql"
+subsquid_endpoint = "https://squid.subsquid.io/referenda-dashboard/v/0/graphql"
 
 
 def load_specific_referendum_stats(referendum_index):

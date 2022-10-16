@@ -167,7 +167,7 @@ def build_tab_1():
                             children=[
                                 daq.ToggleSwitch(
                                     id="conviction_selection",
-                                    label=["Median", "Mean"],
+                                    label=["Mean", "Median"],
                                     value=False,
                                 )
                             ],
@@ -593,9 +593,9 @@ def update_bar_chart(selected_toggle_value, referenda_data, selected_ids):
                 marker_color="#ffffff",
                 customdata=df_referenda["turnout_total_perc"],
                 hovertemplate="<b>Aye Votes</b><br><br>"
-                + "Referendum id: %{x:.1f}<br>"
-                + "Turnout perc - aye: %{y:.1f}<br>"
-                + "Turnout perc: %{customdata:.1f}<br>"
+                + "Referendum id: %{x:.0f}<br>"
+                + "Turnout perc - aye: %{y:.2f}<br>"
+                + "Turnout perc: %{customdata:.2f}<br>"
                 + "<extra></extra>",
             ),
             go.Bar(
@@ -605,7 +605,7 @@ def update_bar_chart(selected_toggle_value, referenda_data, selected_ids):
                 customdata=df_referenda["turnout_total_perc"],
                 marker_color="#e6007a",
                 hovertemplate="<b>Nay Votes</b><br><br>"
-                + "Referendum id: %{x:.2f}<br>"
+                + "Referendum id: %{x:.0f}<br>"
                 + "Turnout perc - nay: %{y:.2f}<br>"
                 + "Turnout perc: %{customdata:.2f}<br>"
                 + "<extra></extra>",
