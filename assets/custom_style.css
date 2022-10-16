@@ -554,21 +554,6 @@ body {
   color: #a94442;
 }
 
-.click-button {
-  color: #a94442 !important;
-  background-color: #1d202d !important;
-  border: 1px solid #4B5460 !important;
-  border-radius: 4px;
-  height: 40px;
-  line-height: 40px;
-}
-
-#stop-button > div > button:hover {
-  color: #91dfd2 !important;
-  border-color: white !important;
-  background-color: #1d202d !important;
-}
-
 #card-1 P, #card-2 P {
   margin: 2rem;
   color: inherit;
@@ -578,31 +563,6 @@ body {
 
 #card-2 .scale, #card-2 .needle, #card-2 .needle-knob {
   display: none !important;
-}
-
-/* Tab 2 metric row
-–––––––––––––––––––––––––––––––––––––––––––––––––– */
-.metric-row-button {
-  border: none;
-  padding: 0px 0px;
-  color: #95969A;
-  font-size: 1rem;
-  letter-spacing: 0.02rem;
-}
-
-.metric-row-button:hover {
-  border: none;
-  color: white !important;
-}
-
-#metric-div {
-  padding: 1rem 2rem 1rem 1rem;
-}
-
-#metric-rows {
-  overflow-y: scroll;
-  width: 100%;
-  height: 30rem;
 }
 
 /*
@@ -865,4 +825,14 @@ body {
     padding-left: 2rem;
       padding-right: 2rem;
   padding-bottom: 1.5rem;
+}
+
+
+.click-button {
+  color: #a94442 !important;
+  background-color: #1d202d !important;
+  border: 1px solid #4B5460 !important;
+  border-radius: 4px;
+  height: 40px;
+  line-height: 40px;
 }
