@@ -128,6 +128,22 @@ app.layout = html.Div(
     ],
 )
 
+def load_current_block():
+    # substrate = SubstrateInterface(
+    #     url="wss://kusama-rpc.polkadot.io", ss58_format=2, type_registry_preset="kusama"
+    # )
+    # current_block = substrate.get_block()["header"]["number"]
+    query = f"""query MyQuery {{
+                     squidStatus {{
+                        height
+                     }}
+                }}"""
+    current_block = requests.post(subsquid_endpoint, json={"query": query}).text
+    return json.loads(current_block)["data"]["squidStatus"]["height"]
+
+
+current_block = load_current_block()
+
 
 def load_referenda_stats():
     query = f"""query MyQuery {{
