@@ -183,6 +183,12 @@ def load_referenda_stats():
                         count_1_question_correct_perc
                         count_2_question_correct_perc
                         count_3_question_correct_perc
+                        count_validator
+                        count_coucillor
+                        count_normal
+                        voted_amount_validator
+                        voted_amount_coucillor
+                        voted_amount_normal
                      }}
                 }}"""
     print("start to load")
