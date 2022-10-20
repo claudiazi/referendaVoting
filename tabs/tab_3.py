@@ -34,6 +34,9 @@ def load_specific_account_stats(voter):
                     questions_count
                     correct_answers_count
                     quiz_fully_correct
+                    vote_type
+                    delegated_to
+                    type   
                   }}
                 }}"""
     print("start to load specific account stats")
