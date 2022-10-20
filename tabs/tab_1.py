@@ -9,7 +9,12 @@ from dash import html
 from dash.dependencies import Input, Output
 
 from app import app
-from config import voting_group_dict, voting_group_perc_dict, voting_group_colors, color_scale
+from config import (
+    voting_group_dict,
+    voting_group_perc_dict,
+    voting_group_colors,
+    color_scale,
+)
 from utils.plotting import data_perc_bars, blank_figure
 
 
@@ -30,7 +35,7 @@ def build_tab_1():
             ],
         ),
         html.Div(className="twelve columns", children=[html.Br()]),
-        html.Div(className="section-banner", children="Past Referenda"),
+        html.Div(className="section-banner", children="All Referenda"),
         html.Div(className="twelve columns", children=[html.Br()]),
         html.Div(
             children=[
