@@ -199,6 +199,7 @@ def build_tab_1():
                 ),
             ],
         ),
+        html.Div(className="twelve columns", children=[html.Br()]),
         html.Div(
             className="twelve columns",
             children=[
@@ -240,7 +241,18 @@ def build_tab_1():
                     className="six columns graph-block",
                     children=[
                         html.Div(
-                            id="vi-chart",
+                            className="twelve columns",
+                            children=[
+                                daq.ToggleSwitch(
+                                    id="voter_type_chart_selection",
+                                    className="toggle_switch",
+                                    label=["Votes Split", "Voted Amount Split"],
+                                    value=False,
+                                )
+                            ],
+                        ),
+                        html.Div(
+                            id="v-chart",
                             className="twelve columns",
                             children=[
                                 dcc.Loading(
@@ -248,13 +260,13 @@ def build_tab_1():
                                     children=[
                                         html.Div(
                                             dcc.Graph(
-                                                id="threshold_piechart",
+                                                id="voter_type_barchart",
                                                 figure=blank_figure(),
                                             )
                                         )
                                     ],
                                     type="default",
-                                )
+                                ),
                             ],
                         ),
                     ],
@@ -405,6 +417,35 @@ def build_tab_1():
                         ),
                     ],
                 ),
+                html.Div(
+                    className="six columns graph-block",
+                    children=[
+                        html.Div(
+                            id="vi-chart",
+                            className="twelve columns",
+                            children=[
+                                dcc.Loading(
+                                    id="loading-icon",
+                                    children=[
+                                        html.Div(
+                                            dcc.Graph(
+                                                id="threshold_piechart",
+                                                figure=blank_figure(),
+                                            )
+                                        )
+                                    ],
+                                    type="default",
+                                )
+                            ],
+                        ),
+                    ],
+                ),
+            ],
+        ),
+        html.Div(className="twelve columns", children=[html.Br()]),
+        html.Div(
+            className="twelve columns",
+            children=[
                 html.Div(
                     className="six columns graph-block",
                     children=[
@@ -933,7 +974,121 @@ def update_delegation_chart(selected_toggle_value, referenda_data, selected_ids)
         yaxis_name = "Voted Amount"
 
     v_graph_layout = go.Layout(
-        title="<b>Turnout</b>",
+        title="<b>Delegated vs Direct</b>",
+        paper_bgcolor="#161a28",
+        plot_bgcolor="#161a28",
+        barmode="stack",
+        xaxis=dict(title="Referendum ID", linecolor="#BCCCDC"),
+        yaxis=dict(title=yaxis_name, linecolor="#021C1E"),
+        legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.8),
+        template="plotly_dark",
+        hovermode="x",
+    )
+    fig_v_graph = go.Figure(data=v_graph_data, layout=v_graph_layout)
+    return fig_v_graph
+
+
+@app.callback(
+    output=Output("voter_type_barchart", "figure"),
+    inputs=[Input("voter_type_chart_selection", "value")],
+    state=[Input("full-referenda-data", "data"), Input("selected-ids", "value")],
+)
+def update_voter_type_chart(selected_toggle_value, referenda_data, selected_ids):
+    df_referenda = pd.DataFrame(referenda_data)
+    if selected_ids:
+        df_referenda = df_referenda[
+            (df_referenda["referendum_index"] >= selected_ids[0])
+            & (df_referenda["referendum_index"] <= selected_ids[1])
+        ]
+    if selected_toggle_value == False:
+        v_graph_data = [
+            go.Bar(
+                name="Validator Votes",
+                x=df_referenda["referendum_index"],
+                y=df_referenda["count_validator"],
+                marker_color="#e6007a",
+                customdata=df_referenda["count_total"],
+                hovertemplate="<b>Validator Votes</b><br><br>"
+                + "Referendum: %{x:.0f}<br>"
+                + "Count validator votes: %{y:.0f}<br>"
+                + "Count total: %{customdata:.0f}<br>"
+                + "<extra></extra>",
+                opacity=0.8,
+            ),
+            go.Bar(
+                name="Councillor Votes",
+                x=df_referenda["referendum_index"],
+                y=df_referenda["count_coucillor"],
+                customdata=df_referenda["count_total"],
+                marker_color="#ffb3e0",
+                hovertemplate="<b>Councillor Votes</b><br><br>"
+                + "Referendum: %{x:.0f}<br>"
+                + "Count councillor votes: %{y:.0f}<br>"
+                + "Count total: %{customdata:.0f}<br>"
+                + "<extra></extra>",
+                opacity=0.8,
+            ),
+            go.Bar(
+                name="Normal Votes",
+                x=df_referenda["referendum_index"],
+                y=df_referenda["count_normal"],
+                customdata=df_referenda["count_total"],
+                marker_color="#ffffff",
+                hovertemplate="<b>Normal Votes</b><br><br>"
+                + "Referendum: %{x:.0f}<br>"
+                + "Count normal votes: %{y:.0f}<br>"
+                + "Count total: %{customdata:.0f}<br>"
+                + "<extra></extra>",
+                opacity=0.8,
+            ),
+        ]
+        yaxis_name = "Vote Count"
+    else:
+        v_graph_data = [
+            go.Bar(
+                name="Validator Votes",
+                x=df_referenda["referendum_index"],
+                y=df_referenda["voted_amount_validator"],
+                marker_color="#e6007a",
+                customdata=df_referenda["voted_amount_total"],
+                hovertemplate="<b>Validator Votes</b><br><br>"
+                + "Referendum: %{x:.0f}<br>"
+                + "Voted amount - validator: %{y:.0f}<br>"
+                + "Voted amount - total: %{customdata:.0f}<br>"
+                + "<extra></extra>",
+                opacity=0.8,
+            ),
+            go.Bar(
+                name="Councillor Votes",
+                x=df_referenda["referendum_index"],
+                y=df_referenda["voted_amount_coucillor"],
+                customdata=df_referenda["voted_amount_total"],
+                marker_color="#ffb3e0",
+                hovertemplate="<b>Councillor Votes</b><br><br>"
+                + "Referendum: %{x:.0f}<br>"
+                + "Voted amount - councillor: %{y:.0f}<br>"
+                + "Voted amount - total: %{customdata:.0f}<br>"
+                + "<extra></extra>",
+                opacity=0.8,
+            ),
+            go.Bar(
+                name="Normal Votes",
+                x=df_referenda["referendum_index"],
+                y=df_referenda["voted_amount_normal"],
+                customdata=df_referenda["voted_amount_total"],
+                marker_color="#ffffff",
+                hovertemplate="<b>Normal Votes</b><br><br>"
+                + "Referendum: %{x:.0f}<br>"
+                + "Voted amount - normal: %{y:.0f}<br>"
+                + "Voted amount - total: %{customdata:.0f}<br>"
+                + "<extra></extra>",
+                opacity=0.8,
+            ),
+        ]
+        yaxis_name = "Voted Amount"
+
+    v_graph_layout = go.Layout(
+        title="<b>Voter Type</b>",
         paper_bgcolor="#161a28",
         plot_bgcolor="#161a28",
         barmode="stack",
