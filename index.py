@@ -88,22 +88,6 @@ def build_tabs():
     )
 
 
-def load_current_block():
-    substrate = SubstrateInterface(
-        url="wss://kusama-rpc.polkadot.io", ss58_format=2, type_registry_preset="kusama"
-    )
-    current_block = substrate.get_block()["header"]["number"]
-    # query = f"""query MyQuery {{
-    #                  squidStatus {{
-    #                     height
-    #                  }}
-    #             }}"""
-    # current_block = requests.post(subsquid_endpoint, json={"query": query}).text
-    return current_block
-
-
-current_block = load_current_block()
-
 subsquid_endpoint = "https://squid.subsquid.io/referenda-dashboard/v/0/graphql"
 
 server = app.server
@@ -143,6 +127,22 @@ app.layout = html.Div(
         ),
     ],
 )
+
+def load_current_block():
+    # substrate = SubstrateInterface(
+    #     url="wss://kusama-rpc.polkadot.io", ss58_format=2, type_registry_preset="kusama"
+    # )
+    # current_block = substrate.get_block()["header"]["number"]
+    query = f"""query MyQuery {{
+                     squidStatus {{
+                        height
+                     }}
+                }}"""
+    current_block = requests.post(subsquid_endpoint, json={"query": query}).text
+    return json.loads(current_block)["data"]["squidStatus"]["height"]
+
+
+current_block = load_current_block()
 
 
 def load_referenda_stats():
@@ -199,6 +199,12 @@ def load_referenda_stats():
                         count_1_question_correct_perc
                         count_2_question_correct_perc
                         count_3_question_correct_perc
+                        count_validator
+                        count_councillor
+                        count_normal
+                        voted_amount_validator
+                        voted_amount_councillor
+                        voted_amount_normal
                      }}
                 }}"""
     print("start to load")

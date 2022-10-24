@@ -21,12 +21,12 @@ subsquid_endpoint = "https://squid.subsquid.io/referenda-dashboard/v/0/graphql"
 def load_specific_account_stats(voter):
     query = f"""query MyQuery {{
                   accountStats(address: "{voter}") {{
+                    referendum_index
                     balance_value
                     conviction
                     decision
                     first_referendum_index
                     first_voting_timestamp
-                    referendum_index
                     voted_amount_with_conviction
                     voter
                     voting_result_group
@@ -34,6 +34,9 @@ def load_specific_account_stats(voter):
                     questions_count
                     correct_answers_count
                     quiz_fully_correct
+                    voter_type
+                    delegated_to
+                    type   
                   }}
                 }}"""
     print("start to load specific account stats")
@@ -107,9 +110,15 @@ def build_tab_3():
 
 def build_charts():
     return [
+        html.Div(className="twelve columns", children=[html.Br()]),
         html.Div(
             className="twelve columns",
             id="tab3_card_row_1",
+            children=[],
+        ),
+        html.Div(
+            className="twelve columns",
+            id="tab3_card_row_2",
             children=[],
         ),
         html.Div(className="twelve columns", children=[html.Br()]),
@@ -293,6 +302,60 @@ def update_card1(account_data):
                                     html.H4("Avg. Voted KSM", className="card-title"),
                                     html.P(
                                         f"{df_account['voted_amount_with_conviction'].mean():.2f}",
+                                        className="card-value",
+                                    ),
+                                    html.P(""),
+                                ]
+                            )
+                        ]
+                    ),
+                ],
+            ),
+        ]
+
+    return None
+
+@app.callback(
+    output=Output("tab3_card_row_2", "children"),
+    inputs=[
+        Input("specific-account-data", "data"),
+    ],
+)
+def update_card2(account_data):
+    if account_data:
+        df_account = pd.DataFrame(account_data)
+        df_quizzes = df_account[df_account.correct_answers_count.notnull()]
+        return [
+            html.Div(
+                className="four columns graph-block",
+                id="card1",
+                children=[
+                    dbc.Card(
+                        [
+                            dbc.CardBody(
+                                [
+                                    html.H4("# of Quizzes Taken", className="card-title"),
+                                    html.P(
+                                        f"{df_quizzes['referendum_index'].count()}",
+                                        className="card-value",
+                                    ),
+                                ]
+                            )
+                        ]
+                    ),
+                ],
+            ),
+            html.Div(
+                className="four columns graph-block",
+                id="card2",
+                children=[
+                    dbc.Card(
+                        [
+                            dbc.CardBody(
+                                [
+                                    html.H4("# of Quizzes Fully Correct", className="card-title"),
+                                    html.P(
+                                        f"{df_quizzes['quiz_fully_correct'].sum()}",
                                         className="card-value",
                                     ),
                                     html.P(""),

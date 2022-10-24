@@ -24,12 +24,12 @@ def load_specific_referendum_stats(referendum_index):
                     cum_voted_amount_with_conviction_aye
                     cum_voted_amount_with_conviction_nay
                     decision
-                    delegated_to
                     is_new_account
                     referendum_index
                     timestamp
                     voted_amount_with_conviction
                     voter
+                    delegated_to
                    }}
                 }}"""
     print("start to load specific referedum stats")
@@ -126,12 +126,85 @@ def build_charts():
         html.Div(
             className="twelve columns graph-block", children=[html.P("PA Description")]
         ),
+        html.Div(className="twelve columns", children=[html.Br()]),
         html.Div(
             className="twelve columns",
             id="tab_2_card_row_2",
             children=[],
         ),
         html.Div(className="twelve columns", children=[html.Br()]),
+        html.Div(
+            className="twelve columns",
+            children=[
+                html.Div(
+                    className="four columns graph-block",
+                    children=[
+                        html.Div(
+                            id="iii-chart",
+                            className="twelve columns",
+                            children=[
+                                dcc.Loading(
+                                    id="loading-icon",
+                                    children=[
+                                        html.Div(
+                                            dcc.Graph(
+                                                id="aye_nay_chart",
+                                                figure=blank_figure(),
+                                            )
+                                        )
+                                    ],
+                                    type="default",
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+                html.Div(
+                    className="four columns graph-block",
+                    children=[
+                        html.Div(
+                            className="twelve columns",
+                            children=[
+                                dcc.Loading(
+                                    id="loading-icon",
+                                    children=[
+                                        html.Div(
+                                            dcc.Graph(
+                                                id="delegation_chart",
+                                                figure=blank_figure(),
+                                            )
+                                        )
+                                    ],
+                                    type="default",
+                                )
+                            ],
+                        ),
+                    ],
+                ),
+                html.Div(
+                    className="four columns graph-block",
+                    children=[
+                        html.Div(
+                            className="twelve columns",
+                            children=[
+                                dcc.Loading(
+                                    id="loading-icon",
+                                    children=[
+                                        html.Div(
+                                            dcc.Graph(
+                                                id="voter_type_chart",
+                                                figure=blank_figure(),
+                                            )
+                                        )
+                                    ],
+                                    type="default",
+                                )
+                            ],
+                        ),
+                    ],
+                ),
+            ],
+        ),
         html.Div(className="twelve columns", children=[html.Br()]),
         html.Div(
             className="twelve columns",
@@ -196,6 +269,36 @@ def build_charts():
                     )
                 )
             ],
+        ),
+        html.Div(className="twelve columns", children=[html.Br()]),
+        html.Div(className="section-banner", children="Quiz taken status"),
+        html.Div(className="twelve columns", children=[html.Br()]),
+        html.Div(
+            children=[
+                html.Div(
+                    id="section-piechart",
+                    className="six columns graph-block",
+                    children=[
+                        dcc.Loading(
+                            id="loading-icon",
+                            children=[
+                                html.Div(
+                                    dcc.Graph(
+                                        id="quiz_correctness_piechart",
+                                        figure=blank_figure(),
+                                    )
+                                )
+                            ],
+                            type="default",
+                        )
+                    ],
+                ),
+                html.Div(
+                    id="section-piechart",
+                    className="six columns",
+                    children=[],
+                ),
+            ]
         ),
     ]
 
@@ -627,7 +730,7 @@ def cum_voted_amount_chart(referendum_data):
     output=Output("distribution_voted_amount_scatterchart", "figure"),
     inputs=[Input("specific-referendum-data", "data")],
 )
-def cum_voted_amount_chart(referendum_data):
+def voted_amount_distribution_chart(referendum_data):
     if referendum_data:
         df_referenda = pd.DataFrame(referendum_data)
         df_aye = df_referenda[df_referenda["decision"] == "aye"]
@@ -674,10 +777,354 @@ def cum_voted_amount_chart(referendum_data):
 
 
 @app.callback(
+    output=Output("aye_nay_chart", "figure"),
+    inputs=[Input("specific-referenda-stats", "data")],
+)
+def aye_nay_chart(referendum_data):
+    if referendum_data:
+        df_referenda = pd.DataFrame(referendum_data)
+        df_referenda["voted_amount_aye_perc"] = round(
+            df_referenda["voted_amount_aye"] / df_referenda["voted_amount_total"] * 100,
+            2,
+        )
+        df_referenda["voted_amount_nay_perc"] = round(
+            df_referenda["voted_amount_nay"] / df_referenda["voted_amount_total"] * 100,
+            2,
+        )
+        third_graph_data = [
+            go.Bar(
+                name="Aye Votes",
+                x=df_referenda["voted_amount_aye_perc"],
+                y=["referendum_index"],
+                textposition="auto",
+                orientation="h",
+                marker_color="#ffffff",
+                texttemplate="<b>%{x} %</b>",
+                # hovertemplate="<b>Aye Votes</b><br><br>"
+                # + "Referendum id: %{x:.0f}<br>"
+                # + "Aye amount: %{y:.0f}<br>"
+                # + "Turnout: %{customdata:.0f}<br>"
+                # + "<extra></extra>",
+            ),
+            go.Bar(
+                name="Aye Votes",
+                x=df_referenda["voted_amount_nay_perc"],
+                y=["referendum_index"],
+                textposition="auto",
+                orientation="h",
+                marker_color="#e6007a",
+                texttemplate="<b>%{x} %</b>",
+                textangle=0,
+                textfont_color="white",
+                # hovertemplate="<b>Aye Votes</b><br><br>"
+                # + "Referendum id: %{x:.0f}<br>"
+                # + "Aye amount: %{y:.0f}<br>"
+                # + "Turnout: %{customdata:.0f}<br>"
+                # + "<extra></extra>",
+            ),
+        ]
+        annotations = []
+        space = 0
+        for x, category in zip(
+            [
+                df_referenda["voted_amount_aye_perc"].values[0],
+                df_referenda["voted_amount_nay_perc"].values[0],
+            ],
+            ["Aye", "Nay"],
+        ):
+            annotations.append(
+                dict(
+                    xref="x",
+                    yref="paper",
+                    x=space + x / 2,
+                    y=-0.2,
+                    xanchor="center",
+                    text=f"{category}",
+                    showarrow=False,
+                    align="right",
+                )
+            )
+            space += x
+
+        third_graph_layout = go.Layout(
+            paper_bgcolor="#161a28",
+            plot_bgcolor="#161a28",
+            barmode="stack",
+            xaxis=dict(
+                showgrid=False,
+                showline=False,
+                showticklabels=False,
+                zeroline=False,
+            ),
+            yaxis=dict(
+                showgrid=False,
+                showline=False,
+                showticklabels=False,
+                zeroline=False,
+            ),
+            template="plotly_dark",
+            hovermode="y",
+            showlegend=False,
+            height=120,
+            margin=dict(l=0, r=0, t=20, b=30, pad=4),
+        )
+        fig_thrid_graph = go.Figure(data=third_graph_data, layout=third_graph_layout)
+        fig_thrid_graph.update_traces(opacity=0.75)
+        fig_thrid_graph.update_layout(annotations=annotations)
+        return fig_thrid_graph
+    return None
+
+
+@app.callback(
+    output=Output("delegation_chart", "figure"),
+    inputs=[Input("specific-referenda-stats", "data")],
+)
+def aye_nay_chart(referendum_data):
+    if referendum_data:
+        df_referenda = pd.DataFrame(referendum_data)
+        df_referenda["voted_amount_direct_perc"] = round(
+            df_referenda["voted_amount_direct"]
+            / (
+                df_referenda["voted_amount_delegated"]
+                + df_referenda["voted_amount_direct"]
+            )
+            * 100,
+            2,
+        )
+        df_referenda["voted_amount_delegated_perc"] = round(
+            df_referenda["voted_amount_delegated"]
+            / (
+                df_referenda["voted_amount_delegated"]
+                + df_referenda["voted_amount_direct"]
+            )
+            * 100,
+            2,
+        )
+        third_graph_data = [
+            go.Bar(
+                name="Direct Votes",
+                x=df_referenda["voted_amount_direct_perc"],
+                y=["referendum_index"],
+                textposition="inside",
+                orientation="h",
+                marker_color="#ffffff",
+                texttemplate="<b>%{x} %</b>",
+                # hovertemplate="<b>Aye Votes</b><br><br>"
+                # + "Referendum id: %{x:.0f}<br>"
+                # + "Aye amount: %{y:.0f}<br>"
+                # + "Turnout: %{customdata:.0f}<br>"
+                # + "<extra></extra>",
+            ),
+            go.Bar(
+                name="Delegated Votes",
+                x=df_referenda["voted_amount_delegated_perc"],
+                y=["referendum_index"],
+                textposition="inside",
+                orientation="h",
+                marker_color="#e6007a",
+                texttemplate="<b>%{x} %</b>",
+                textangle=0,
+                # hovertemplate="<b>Aye Votes</b><br><br>"
+                # + "Referendum id: %{x:.0f}<br>"
+                # + "Aye amount: %{y:.0f}<br>"
+                # + "Turnout: %{customdata:.0f}<br>"
+                # + "<extra></extra>",
+            ),
+        ]
+        annotations = []
+        space = 0
+        for x, category in zip(
+            [
+                df_referenda["voted_amount_direct_perc"].values[0],
+                df_referenda["voted_amount_delegated_perc"].values[0],
+            ],
+            ["Direct", "Delegated"],
+        ):
+            annotations.append(
+                dict(
+                    xref="x",
+                    yref="paper",
+                    x=space + x / 2,
+                    y=-0.2,
+                    xanchor="center",
+                    text=f"{category}",
+                    showarrow=False,
+                    align="right",
+                )
+            )
+            space += x
+
+        third_graph_layout = go.Layout(
+            paper_bgcolor="#161a28",
+            plot_bgcolor="#161a28",
+            barmode="stack",
+            xaxis=dict(
+                showgrid=False,
+                showline=False,
+                showticklabels=False,
+                zeroline=False,
+            ),
+            yaxis=dict(
+                showgrid=False,
+                showline=False,
+                showticklabels=False,
+                zeroline=False,
+            ),
+            template="plotly_dark",
+            hovermode="y",
+            showlegend=False,
+            height=120,
+            margin=dict(l=0, r=0, t=20, b=30, pad=4),
+        )
+        fig_thrid_graph = go.Figure(data=third_graph_data, layout=third_graph_layout)
+        fig_thrid_graph.update_traces(opacity=0.75)
+        fig_thrid_graph.update_layout(annotations=annotations)
+        return fig_thrid_graph
+    return None
+
+@app.callback(
+    output=Output("voter_type_chart", "figure"),
+    inputs=[Input("specific-referenda-stats", "data")],
+)
+def aye_nay_chart(referendum_data):
+    if referendum_data:
+        df_referenda = pd.DataFrame(referendum_data)
+        df_referenda["voted_amount_validator_perc"] = round(
+            df_referenda["voted_amount_validator"]
+            / (
+                df_referenda["voted_amount_validator"]
+                + df_referenda["voted_amount_normal"]
+                + df_referenda["voted_amount_councillor"]
+            )
+            * 100,
+            2,
+        )
+        df_referenda["voted_amount_normal_perc"] = round(
+            df_referenda["voted_amount_normal"]
+            / (
+                df_referenda["voted_amount_validator"]
+                + df_referenda["voted_amount_normal"]
+                + df_referenda["voted_amount_councillor"]
+            )
+            * 100,
+            2,
+        )
+        df_referenda["voted_amount_councillor_perc"] = round(
+            df_referenda["voted_amount_councillor"]
+            / (
+                df_referenda["voted_amount_validator"]
+                + df_referenda["voted_amount_normal"]
+                + df_referenda["voted_amount_councillor"]
+            )
+            * 100,
+            2,
+        )
+        third_graph_data = [
+            go.Bar(
+                name="Validator Votes",
+                x=df_referenda["voted_amount_validator_perc"],
+                y=["referendum_index"],
+                textposition="inside",
+                orientation="h",
+                marker_color="#e6007a",
+                texttemplate="<b>%{x} %</b>",
+                # hovertemplate="<b>Aye Votes</b><br><br>"
+                # + "Referendum id: %{x:.0f}<br>"
+                # + "Aye amount: %{y:.0f}<br>"
+                # + "Turnout: %{customdata:.0f}<br>"
+                # + "<extra></extra>",
+            ),
+            go.Bar(
+                name="Normal Votes",
+                x=df_referenda["voted_amount_normal_perc"],
+                y=["referendum_index"],
+                textposition="inside",
+                orientation="h",
+                marker_color="#ffffff",
+                texttemplate="<b>%{x} %</b>",
+                textangle=0,
+                # hovertemplate="<b>Aye Votes</b><br><br>"
+                # + "Referendum id: %{x:.0f}<br>"
+                # + "Aye amount: %{y:.0f}<br>"
+                # + "Turnout: %{customdata:.0f}<br>"
+                # + "<extra></extra>",
+            ),
+            go.Bar(
+                name="Councillor Votes",
+                x=df_referenda["voted_amount_councillor_perc"],
+                y=["referendum_index"],
+                textposition="inside",
+                orientation="h",
+                marker_color="#ffb3e0",
+                texttemplate="<b>%{x} %</b>",
+                textangle=0,
+                # hovertemplate="<b>Aye Votes</b><br><br>"
+                # + "Referendum id: %{x:.0f}<br>"
+                # + "Aye amount: %{y:.0f}<br>"
+                # + "Turnout: %{customdata:.0f}<br>"
+                # + "<extra></extra>",
+            ),
+        ]
+        annotations = []
+        space = 0
+        for x, category in zip(
+            [
+                df_referenda["voted_amount_validator_perc"].values[0],
+                df_referenda["voted_amount_normal_perc"].values[0],
+                df_referenda["voted_amount_councillor_perc"].values[0],
+            ],
+            ["Validator", "Normal", "Councillor"],
+        ):
+            annotations.append(
+                dict(
+                    xref="x",
+                    yref="paper",
+                    x=space + x / 2,
+                    y=-0.2,
+                    xanchor="center",
+                    text=f"{category}",
+                    showarrow=False,
+                    align="right",
+                )
+            )
+            space += x
+
+        third_graph_layout = go.Layout(
+            paper_bgcolor="#161a28",
+            plot_bgcolor="#161a28",
+            barmode="stack",
+            xaxis=dict(
+                showgrid=False,
+                showline=False,
+                showticklabels=False,
+                zeroline=False,
+            ),
+            yaxis=dict(
+                showgrid=False,
+                showline=False,
+                showticklabels=False,
+                zeroline=False,
+            ),
+            template="plotly_dark",
+            hovermode="y",
+            showlegend=False,
+            height=120,
+            margin=dict(l=0, r=0, t=20, b=30, pad=4),
+        )
+        fig_thrid_graph = go.Figure(data=third_graph_data, layout=third_graph_layout)
+        fig_thrid_graph.update_traces(opacity=0.75)
+        fig_thrid_graph.update_layout(annotations=annotations)
+        return fig_thrid_graph
+    return None
+
+
+
+
+@app.callback(
     Output("top-5-delegated-table", "children"),
     inputs=[Input("specific-referendum-data", "data")],
 )
-def create_live_data_table(referendum_data_data):
+def create_top_5_delegtation_table(referendum_data_data):
     df = pd.DataFrame(referendum_data_data)
     df = (
         df.groupby("delegated_to")["voted_amount_with_conviction"]
@@ -686,7 +1133,9 @@ def create_live_data_table(referendum_data_data):
         .head()
         .reset_index()
     )
-    df["voted_amount_with_conviction"] = df["voted_amount_with_conviction"].apply(lambda x: round(x, 2))
+    df["voted_amount_with_conviction"] = df["voted_amount_with_conviction"].apply(
+        lambda x: round(x, 2)
+    )
     my_table = dash_table.DataTable(
         data=df.to_dict("records"),
         columns=[{"name": i, "id": i} for i in df.columns],
