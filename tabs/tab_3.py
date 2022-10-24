@@ -15,18 +15,18 @@ from config import voting_group_dict, voting_group_perc_dict, voting_group_color
 
 import plotly.express as px
 
-subsquid_endpoint = "https://squid.subsquid.io/referenda-dashboard/v/1/graphql"
+subsquid_endpoint = "https://squid.subsquid.io/referenda-dashboard/v/0/graphql"
 
 
 def load_specific_account_stats(voter):
     query = f"""query MyQuery {{
                   accountStats(address: "{voter}") {{
+                    referendum_index
                     balance_value
                     conviction
                     decision
                     first_referendum_index
                     first_voting_timestamp
-                    referendum_index
                     voted_amount_with_conviction
                     voter
                     voting_result_group
@@ -34,7 +34,7 @@ def load_specific_account_stats(voter):
                     questions_count
                     correct_answers_count
                     quiz_fully_correct
-                    vote_type
+                    voter_type
                     delegated_to
                     type   
                   }}
