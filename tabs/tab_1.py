@@ -54,6 +54,19 @@ def build_tab_1():
         ),
         html.Div(className="twelve columns", children=[html.Br()]),
         html.Div(
+            id="cross-filters-labels",
+            children=[],
+            className="twelve columns",
+            style={"display": "inline-block", "align": "center"},
+        ),
+        html.Div(
+            id="cross-filters",
+            children=[],
+            className="twelve columns",
+            style={"display": "inline-block", "align": "center"},
+        ),
+        html.Div(className="twelve columns", children=[html.Br()]),
+        html.Div(
             className="twelve columns",
             children=[
                 html.Div(
@@ -492,8 +505,8 @@ layout = build_tab_1()
     Output("id-rangebar", "children"),
     [Input("full-referenda-data", "data")],
 )
-def create_rangeslider(closed_referenda_data):
-    df = pd.DataFrame(closed_referenda_data)
+def create_rangeslider(full_referenda_data):
+    df = pd.DataFrame(full_referenda_data)
     range_min = df["referendum_index"].min()
     range_max = df["referendum_index"].max()
     return dcc.RangeSlider(
@@ -503,6 +516,67 @@ def create_rangeslider(closed_referenda_data):
         value=[160, range_max],
         tooltip={"placement": "top", "always_visible": True},
     )
+
+
+@app.callback(
+    [Output("cross-filters", "children"), Output("cross-filters-labels", "children")],
+    Input("full-referenda-data", "data"),
+)
+def create_cross_filters(full_referenda_data):
+    df = pd.DataFrame(full_referenda_data)
+    section_list = list(df["section"].unique())
+    section_list.append("All")
+    method_list = list(df["section"].unique())
+    method_list.append("All")
+    proposer_list = list(df["proposer"].unique())
+    proposer_list.append("All")
+    vote_type_list = ["Delegation", "Direct", "All"]
+    voter_type_list = ["Councillor", "Validator", "Normal", "All"]
+    filter_name_list = ["Section", "Method", "Proposer", "Vote type", "Voter type"]
+    filters = [html.Div('Filters', className="two columns")]
+    filter_names = [html.Div(className="two columns", children=html.Div(html.Br()))]
+    for filter, filter_name in zip(
+        [
+            section_list,
+            method_list,
+            proposer_list,
+            vote_type_list,
+            voter_type_list,
+        ],
+        filter_name_list,
+    ):
+        filters.append(
+            html.Div(
+                children=[
+                    dcc.Dropdown(
+                        options=filter,
+                        value="All",
+                        id="crossfilter-section",
+                        searchable=True,
+                        style={
+                            "width": "90%",
+                            "margin": 0,
+                            "padding": 0,
+                            "border": 0,
+                        },
+                        className="two columns",
+                        placeholder=filter_name,
+                    )
+                ]
+            )
+        )
+        filter_names.append(
+            html.Div(
+                filter_name,
+                className="two columns",
+                style={
+                    "margin": 0,
+                    "padding": 0,
+                    "border": 0,
+                },
+            )
+        )
+    return filters, filter_names
 
 
 @app.callback(
@@ -1018,7 +1092,7 @@ def update_voter_type_chart(selected_toggle_value, referenda_data, selected_ids)
             go.Bar(
                 name="Councillor Votes",
                 x=df_referenda["referendum_index"],
-                y=df_referenda["count_coucillor"],
+                y=df_referenda["count_councillor"],
                 customdata=df_referenda["count_total"],
                 marker_color="#ffb3e0",
                 hovertemplate="<b>Councillor Votes</b><br><br>"
@@ -1061,7 +1135,7 @@ def update_voter_type_chart(selected_toggle_value, referenda_data, selected_ids)
             go.Bar(
                 name="Councillor Votes",
                 x=df_referenda["referendum_index"],
-                y=df_referenda["voted_amount_coucillor"],
+                y=df_referenda["voted_amount_councillor"],
                 customdata=df_referenda["voted_amount_total"],
                 marker_color="#ffb3e0",
                 hovertemplate="<b>Councillor Votes</b><br><br>"
