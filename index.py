@@ -88,7 +88,7 @@ def build_tabs():
     )
 
 
-subsquid_endpoint = "https://squid.subsquid.io/referenda-dashboard/v/1/graphql"
+subsquid_endpoint = "https://squid.subsquid.io/referenda-dashboard/v/0/graphql"
 
 server = app.server
 app.layout = html.Div(
@@ -200,10 +200,10 @@ def load_referenda_stats():
                         count_2_question_correct_perc
                         count_3_question_correct_perc
                         count_validator
-                        count_coucillor
+                        count_councillor
                         count_normal
                         voted_amount_validator
-                        voted_amount_coucillor
+                        voted_amount_councillor
                         voted_amount_normal
                      }}
                 }}"""
