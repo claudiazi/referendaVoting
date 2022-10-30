@@ -16,6 +16,29 @@ from config import (
 import requests
 
 
+def filter_referenda(
+    df_referenda: pd.DataFrame,
+    selected_ids,
+    selected_section,
+    selected_method,
+    selected_proposer,
+) -> pd.DataFrame:
+    if selected_ids:
+        df_referenda = df_referenda[
+            (df_referenda["referendum_index"] >= selected_ids[0])
+            & (df_referenda["referendum_index"] <= selected_ids[1])
+        ]
+    if selected_section:
+        if selected_section != "All":
+            df_referenda = df_referenda[df_referenda["section"] == selected_section]
+    if selected_method:
+        if selected_method != "All":
+            df_referenda = df_referenda[df_referenda["method"] == selected_method]
+    if selected_proposer:
+        if selected_proposer != "All":
+            df_referenda = df_referenda[df_referenda["proposer"] == selected_proposer]
+    return df_referenda
+
 
 def preprocessing_referendum(df: pd.DataFrame) -> pd.DataFrame:
     referendum_df = df[referendum_columns]
