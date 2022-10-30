@@ -16,6 +16,7 @@ from config import (
     color_scale,
 )
 from utils.plotting import data_perc_bars, blank_figure
+from utils.data_preparation import filter_referenda
 
 
 def build_tab_1():
@@ -54,17 +55,53 @@ def build_tab_1():
         ),
         html.Div(className="twelve columns", children=[html.Br()]),
         html.Div(
-            id="cross-filters-labels",
-            children=[],
-            className="twelve columns",
-            style={"display": "inline-block", "align": "center"},
-        ),
-        html.Div(
             id="cross-filters",
-            children=[],
+            children=[
+                dcc.Dropdown(
+                    id=f"crossfilter_section",
+                    searchable=True,
+                    style={
+                        "width": "90%",
+                        "margin": 0,
+                        "padding": 0,
+                        "border": 0,
+                    },
+                    className="three columns",
+                ),
+                dcc.Dropdown(
+                    id=f"crossfilter_method",
+                    searchable=True,
+                    style={
+                        "width": "90%",
+                        "margin": 0,
+                        "padding": 0,
+                        "border": 0,
+                    },
+                    className="three columns",
+                ),
+                dcc.Dropdown(
+                    id=f"crossfilter_proposer",
+                    searchable=True,
+                    style={
+                        "width": "90%",
+                        "margin": 0,
+                        "padding": 0,
+                        "border": 0,
+                    },
+                    className="three columns",
+                )
+            ],
             className="twelve columns",
             style={"display": "inline-block", "align": "center"},
         ),
+        html.Div(className="twelve columns", children=[html.Br()]),
+        html.Div(className="twelve columns", children=[
+            html.Div(html.Br(),className='five columns'),
+                html.Button(
+                    "Clear Selection",
+                    id="clear-radio",
+                    className="click-button",
+                ),]),
         html.Div(className="twelve columns", children=[html.Br()]),
         html.Div(
             className="twelve columns",
@@ -372,12 +409,7 @@ def build_tab_1():
                                         id="section_piechart",
                                         figure=blank_figure(),
                                     )
-                                ),
-                                html.Button(
-                                    "Clear Selection",
-                                    id="clear-radio",
-                                    className="click-button",
-                                ),
+                                )
                             ],
                             type="default",
                         )
@@ -519,30 +551,18 @@ def create_rangeslider(full_referenda_data):
 
 
 @app.callback(
-    [Output("cross-filters", "children"), Output("cross-filters-labels", "children")],
+    Output("cross-filters", "children"),
     Input("full-referenda-data", "data"),
 )
 def create_cross_filters(full_referenda_data):
     df = pd.DataFrame(full_referenda_data)
     section_list = list(df["section"].unique())
-    section_list.append("All")
-    method_list = list(df["section"].unique())
-    method_list.append("All")
+    method_list = list(df["method"].unique())
     proposer_list = list(df["proposer"].unique())
-    proposer_list.append("All")
-    vote_type_list = ["Delegation", "Direct", "All"]
-    voter_type_list = ["Councillor", "Validator", "Normal", "All"]
-    filter_name_list = ["Section", "Method", "Proposer", "Vote type", "Voter type"]
-    filters = [html.Div('Filters', className="two columns")]
-    filter_names = [html.Div(className="two columns", children=html.Div(html.Br()))]
+    filter_name_list = ["section", "method", "proposer"]
+    filters = [html.Div("Filters", className="two columns")]
     for filter, filter_name in zip(
-        [
-            section_list,
-            method_list,
-            proposer_list,
-            vote_type_list,
-            voter_type_list,
-        ],
+        [section_list, method_list, proposer_list],
         filter_name_list,
     ):
         filters.append(
@@ -550,8 +570,7 @@ def create_cross_filters(full_referenda_data):
                 children=[
                     dcc.Dropdown(
                         options=filter,
-                        value="All",
-                        id="crossfilter-section",
+                        id=f"crossfilter_{filter_name}",
                         searchable=True,
                         style={
                             "width": "90%",
@@ -559,24 +578,13 @@ def create_cross_filters(full_referenda_data):
                             "padding": 0,
                             "border": 0,
                         },
-                        className="two columns",
+                        className="three columns",
                         placeholder=filter_name,
                     )
                 ]
             )
         )
-        filter_names.append(
-            html.Div(
-                filter_name,
-                className="two columns",
-                style={
-                    "margin": 0,
-                    "padding": 0,
-                    "border": 0,
-                },
-            )
-        )
-    return filters, filter_names
+    return filters
 
 
 @app.callback(
@@ -655,7 +663,9 @@ def create_live_data_table(ongoing_referenda_data):
         Input("interval-component", "n_intervals"),
         Input("selected-ids", "value"),
         Input("votes_counts_chart_selection", "value"),
-        Input("section_piechart", "clickData"),
+        Input("crossfilter_section", "value"),
+        Input("crossfilter_method", "value"),
+        Input("crossfilter_proposer", "value"),
     ],
     state=Input("full-referenda-data", "data"),
 )
@@ -663,18 +673,19 @@ def update_votes_counts_chart(
     n_intervals,
     selected_ids,
     selected_toggle_value,
-    click_selected_section,
+    selected_section,
+    selected_method,
+    selected_proposer,
     referenda_data,
 ):
     df_referenda = pd.DataFrame(referenda_data).sort_values(by="referendum_index")
-    if selected_ids:
-        df_referenda = df_referenda[
-            (df_referenda["referendum_index"] >= selected_ids[0])
-            & (df_referenda["referendum_index"] <= selected_ids[1])
-        ]
-    if click_selected_section:
-        click_selected_section = click_selected_section["points"][0]["label"]
-        df_referenda = df_referenda[df_referenda["section"] == click_selected_section]
+    df_referenda = filter_referenda(
+        df_referenda,
+        selected_ids,
+        selected_section,
+        selected_method,
+        selected_proposer,
+    )
     first_graph_layout = go.Layout(
         title="<b>Vote Count</b>",
         barmode="stack",
@@ -756,16 +767,31 @@ def update_votes_counts_chart(
 # Update second chart
 @app.callback(
     output=Output("turnout_scatterchart", "figure"),
-    inputs=[Input("turn_out_chart_selection", "value")],
-    state=[Input("full-referenda-data", "data"), Input("selected-ids", "value")],
+    inputs=[
+        Input("turn_out_chart_selection", "value"),
+        Input("full-referenda-data", "data"),
+        Input("selected-ids", "value"),
+        Input("crossfilter_section", "value"),
+        Input("crossfilter_method", "value"),
+        Input("crossfilter_proposer", "value"),
+    ],
 )
-def update_bar_chart(selected_toggle_value, referenda_data, selected_ids):
+def update_bar_chart(
+    selected_toggle_value,
+    referenda_data,
+    selected_ids,
+    selected_section,
+    selected_method,
+    selected_proposer,
+):
     df_referenda = pd.DataFrame(referenda_data)
-    if selected_ids:
-        df_referenda = df_referenda[
-            (df_referenda["referendum_index"] >= selected_ids[0])
-            & (df_referenda["referendum_index"] <= selected_ids[1])
-        ]
+    df_referenda = filter_referenda(
+        df_referenda,
+        selected_ids,
+        selected_section,
+        selected_method,
+        selected_proposer,
+    )
     if selected_toggle_value == False:
         second_graph_data = [
             go.Scatter(
@@ -849,15 +875,27 @@ def update_bar_chart(selected_toggle_value, referenda_data, selected_ids):
     state=[
         Input("full-referenda-data", "data"),
         Input("selected-ids", "value"),
+        Input("crossfilter_section", "value"),
+        Input("crossfilter_method", "value"),
+        Input("crossfilter_proposer", "value"),
     ],
 )
-def update_new_accounts_chart(selected_toggle_value, referenda_data, selected_ids):
+def update_new_accounts_chart(
+    selected_toggle_value,
+    referenda_data,
+    selected_ids,
+    selected_section,
+    selected_method,
+    selected_proposer,
+):
     df_referenda = pd.DataFrame(referenda_data)
-    if selected_ids:
-        df_referenda = df_referenda[
-            (df_referenda["referendum_index"] >= selected_ids[0])
-            & (df_referenda["referendum_index"] <= selected_ids[1])
-        ]
+    df_referenda = filter_referenda(
+        df_referenda,
+        selected_ids,
+        selected_section,
+        selected_method,
+        selected_proposer,
+    )
     if selected_toggle_value == False:
         third_graph_data = [
             go.Bar(
@@ -912,17 +950,30 @@ def update_new_accounts_chart(selected_toggle_value, referenda_data, selected_id
 @app.callback(
     output=Output("voted_ksm_scatterchart", "figure"),
     inputs=[Input("conviction_selection", "value")],
-    state=[Input("full-referenda-data", "data"), Input("selected-ids", "value")],
+    state=[
+        Input("full-referenda-data", "data"),
+        Input("selected-ids", "value"),
+        Input("crossfilter_section", "value"),
+        Input("crossfilter_method", "value"),
+        Input("crossfilter_proposer", "value"),
+    ],
 )
 def update_vote_amount_with_conviction_chart(
-    selected_toggle_value, referenda_data, selected_ids
+    selected_toggle_value,
+    referenda_data,
+    selected_ids,
+    selected_section,
+    selected_method,
+    selected_proposer,
 ):
     df_referenda = pd.DataFrame(referenda_data)
-    if selected_ids:
-        df_referenda = df_referenda[
-            (df_referenda["referendum_index"] >= selected_ids[0])
-            & (df_referenda["referendum_index"] <= selected_ids[1])
-        ]
+    df_referenda = filter_referenda(
+        df_referenda,
+        selected_ids,
+        selected_section,
+        selected_method,
+        selected_proposer,
+    )
     if selected_toggle_value == False:
         forth_graph_data = [
             go.Scatter(
@@ -973,15 +1024,30 @@ def update_vote_amount_with_conviction_chart(
 @app.callback(
     output=Output("delegation_barchart", "figure"),
     inputs=[Input("delegated_chart_selection", "value")],
-    state=[Input("full-referenda-data", "data"), Input("selected-ids", "value")],
+    state=[
+        Input("full-referenda-data", "data"),
+        Input("selected-ids", "value"),
+        Input("crossfilter_section", "value"),
+        Input("crossfilter_method", "value"),
+        Input("crossfilter_proposer", "value"),
+    ],
 )
-def update_delegation_chart(selected_toggle_value, referenda_data, selected_ids):
+def update_delegation_chart(
+    selected_toggle_value,
+    referenda_data,
+    selected_ids,
+    selected_section,
+    selected_method,
+    selected_proposer,
+):
     df_referenda = pd.DataFrame(referenda_data)
-    if selected_ids:
-        df_referenda = df_referenda[
-            (df_referenda["referendum_index"] >= selected_ids[0])
-            & (df_referenda["referendum_index"] <= selected_ids[1])
-        ]
+    df_referenda = filter_referenda(
+        df_referenda,
+        selected_ids,
+        selected_section,
+        selected_method,
+        selected_proposer,
+    )
     if selected_toggle_value == False:
         v_graph_data = [
             go.Scatter(
@@ -1065,15 +1131,30 @@ def update_delegation_chart(selected_toggle_value, referenda_data, selected_ids)
 @app.callback(
     output=Output("voter_type_barchart", "figure"),
     inputs=[Input("voter_type_chart_selection", "value")],
-    state=[Input("full-referenda-data", "data"), Input("selected-ids", "value")],
+    state=[
+        Input("full-referenda-data", "data"),
+        Input("selected-ids", "value"),
+        Input("crossfilter_section", "value"),
+        Input("crossfilter_method", "value"),
+        Input("crossfilter_proposer", "value"),
+    ],
 )
-def update_voter_type_chart(selected_toggle_value, referenda_data, selected_ids):
+def update_voter_type_chart(
+    selected_toggle_value,
+    referenda_data,
+    selected_ids,
+    selected_section,
+    selected_method,
+    selected_proposer,
+):
     df_referenda = pd.DataFrame(referenda_data)
-    if selected_ids:
-        df_referenda = df_referenda[
-            (df_referenda["referendum_index"] >= selected_ids[0])
-            & (df_referenda["referendum_index"] <= selected_ids[1])
-        ]
+    df_referenda = filter_referenda(
+        df_referenda,
+        selected_ids,
+        selected_section,
+        selected_method,
+        selected_proposer,
+    )
     if selected_toggle_value == False:
         v_graph_data = [
             go.Bar(
@@ -1180,16 +1261,30 @@ def update_voter_type_chart(selected_toggle_value, referenda_data, selected_ids)
 @app.callback(
     output=Output("voting_time_barchart", "figure"),
     inputs=[Input("voting_time_selection", "value")],
-    state=[Input("full-referenda-data", "data"), Input("selected-ids", "value")],
+    state=[
+        Input("full-referenda-data", "data"),
+        Input("selected-ids", "value"),
+        Input("crossfilter_section", "value"),
+        Input("crossfilter_method", "value"),
+        Input("crossfilter_proposer", "value"),
+    ],
 )
-def update_voting_time_barchart(selected_toggle_value, referenda_data, selected_ids):
+def update_voting_time_barchart(
+    selected_toggle_value,
+    referenda_data,
+    selected_ids,
+    selected_section,
+    selected_method,
+    selected_proposer,
+):
     df_referenda = pd.DataFrame(referenda_data)
-    if selected_ids:
-        df_referenda = df_referenda[
-            (df_referenda["referendum_index"] >= selected_ids[0])
-            & (df_referenda["referendum_index"] <= selected_ids[1])
-        ]
-
+    df_referenda = filter_referenda(
+        df_referenda,
+        selected_ids,
+        selected_section,
+        selected_method,
+        selected_proposer,
+    )
     if selected_toggle_value == False:
         fifth_graph_data = []
         for count, voting_time_group in enumerate(
@@ -1266,19 +1361,31 @@ def update_voting_time_barchart(selected_toggle_value, referenda_data, selected_
     output=Output("vote_timing_distribution", "figure"),
     inputs=[
         Input("voting_time_selection", "value"),
-        Input("section_piechart", "clickData"),
     ],
-    state=[Input("full-referenda-data", "data"), Input("selected-ids", "value")],
+    state=[
+        Input("full-referenda-data", "data"),
+        Input("selected-ids", "value"),
+        Input("crossfilter_section", "value"),
+        Input("crossfilter_method", "value"),
+        Input("crossfilter_proposer", "value"),
+    ],
 )
 def update_vote_timing_distribution(
-    selected_toggle_value, click_selected_section, referenda_data, selected_ids
+    selected_toggle_value,
+    referenda_data,
+    selected_ids,
+    selected_section,
+    selected_method,
+    selected_proposer,
 ):
     df_referenda = pd.DataFrame(referenda_data)
-    if selected_ids:
-        df_referenda = df_referenda[
-            (df_referenda["referendum_index"] >= selected_ids[0])
-            & (df_referenda["referendum_index"] <= selected_ids[1])
-        ]
+    df_referenda = filter_referenda(
+        df_referenda,
+        selected_ids,
+        selected_section,
+        selected_method,
+        selected_proposer,
+    )
     df_voting_group_sum = df_referenda[
         [
             "count_0_4_1_4_vote_duration",
@@ -1319,15 +1426,29 @@ def update_vote_timing_distribution(
 # Update ix chart
 @app.callback(
     Output("section_piechart", "figure"),
-    [Input("full-referenda-data", "data"), Input("selected-ids", "value")],
+    [
+        Input("full-referenda-data", "data"),
+        Input("selected-ids", "value"),
+        Input("crossfilter_section", "value"),
+        Input("crossfilter_method", "value"),
+        Input("crossfilter_proposer", "value"),
+    ],
 )
-def update_pie_chart(referenda_data, selected_ids):
+def update_pie_chart(
+    referenda_data,
+    selected_ids,
+    selected_section,
+    selected_method,
+    selected_proposer,
+):
     df_referenda = pd.DataFrame(referenda_data)
-    if selected_ids:
-        df_referenda = df_referenda[
-            (df_referenda["referendum_index"] >= selected_ids[0])
-            & (df_referenda["referendum_index"] <= selected_ids[1])
-        ]
+    df_referenda = filter_referenda(
+        df_referenda,
+        selected_ids,
+        selected_section,
+        selected_method,
+        selected_proposer,
+    )
     df_section_group_count = df_referenda["section"].value_counts()
     ix_graph_data = [
         go.Pie(
@@ -1362,19 +1483,26 @@ def update_pie_chart(referenda_data, selected_ids):
     [
         Input("full-referenda-data", "data"),
         Input("selected-ids", "value"),
-        Input("section_piechart", "clickData"),
+        Input("crossfilter_section", "value"),
+        Input("crossfilter_method", "value"),
+        Input("crossfilter_proposer", "value"),
     ],
 )
-def update_pie_chart(referenda_data, selected_ids, click_selected_section):
+def update_pie_chart(
+    referenda_data,
+    selected_ids,
+    selected_section,
+    selected_method,
+    selected_proposer,
+):
     df_referenda = pd.DataFrame(referenda_data)
-    if selected_ids:
-        df_referenda = df_referenda[
-            (df_referenda["referendum_index"] >= selected_ids[0])
-            & (df_referenda["referendum_index"] <= selected_ids[1])
-        ]
-    if click_selected_section:
-        click_selected_section = click_selected_section["points"][0]["label"]
-        df_referenda = df_referenda[df_referenda["section"] == click_selected_section]
+    df_referenda = filter_referenda(
+        df_referenda,
+        selected_ids,
+        selected_section,
+        selected_method,
+        selected_proposer,
+    )
     df_method_group_count = df_referenda["method"].value_counts()
     x_graph_data = [
         go.Pie(
@@ -1409,19 +1537,26 @@ def update_pie_chart(referenda_data, selected_ids, click_selected_section):
     [
         Input("full-referenda-data", "data"),
         Input("selected-ids", "value"),
-        Input("section_piechart", "clickData"),
+        Input("crossfilter_section", "value"),
+        Input("crossfilter_method", "value"),
+        Input("crossfilter_proposer", "value"),
     ],
 )
-def update_pie_chart(referenda_data, selected_ids, click_selected_section):
+def update_pie_chart(
+    referenda_data,
+    selected_ids,
+    selected_section,
+    selected_method,
+    selected_proposer,
+):
     df_referenda = pd.DataFrame(referenda_data)
-    if selected_ids:
-        df_referenda = df_referenda[
-            (df_referenda["referendum_index"] >= selected_ids[0])
-            & (df_referenda["referendum_index"] <= selected_ids[1])
-        ]
-    if click_selected_section:
-        click_selected_section = click_selected_section["points"][0]["label"]
-        df_referenda = df_referenda[df_referenda["section"] == click_selected_section]
+    df_referenda = filter_referenda(
+        df_referenda,
+        selected_ids,
+        selected_section,
+        selected_method,
+        selected_proposer,
+    )
     df_proposer_count = df_referenda["proposer"].value_counts()
     xi_graph_data = [
         go.Pie(
@@ -1455,15 +1590,26 @@ def update_pie_chart(referenda_data, selected_ids, click_selected_section):
     [
         Input("full-referenda-data", "data"),
         Input("selected-ids", "value"),
+        Input("crossfilter_section", "value"),
+        Input("crossfilter_method", "value"),
+        Input("crossfilter_proposer", "value"),
     ],
 )
-def update_threshold_piechart(referenda_data, selected_ids):
+def update_threshold_piechart(
+    referenda_data,
+    selected_ids,
+    selected_section,
+    selected_method,
+    selected_proposer,
+):
     df_referenda = pd.DataFrame(referenda_data)
-    if selected_ids:
-        df_referenda = df_referenda[
-            (df_referenda["referendum_index"] >= selected_ids[0])
-            & (df_referenda["referendum_index"] <= selected_ids[1])
-        ]
+    df_referenda = filter_referenda(
+        df_referenda,
+        selected_ids,
+        selected_section,
+        selected_method,
+        selected_proposer,
+    )
     df_threshold_count = df_referenda["threshold_type"].value_counts()
     vi_graph_data = [
         go.Pie(
@@ -1499,15 +1645,27 @@ def update_threshold_piechart(referenda_data, selected_ids):
     state=[
         Input("full-referenda-data", "data"),
         Input("selected-ids", "value"),
+        Input("crossfilter_section", "value"),
+        Input("crossfilter_method", "value"),
+        Input("crossfilter_proposer", "value"),
     ],
 )
-def update_quiz_answer_chart(selected_toggle_value, referenda_data, selected_ids):
+def update_quiz_answer_chart(
+    selected_toggle_value,
+    referenda_data,
+    selected_ids,
+    selected_section,
+    selected_method,
+    selected_proposer,
+):
     df_referenda = pd.DataFrame(referenda_data)
-    if selected_ids:
-        df_referenda = df_referenda[
-            (df_referenda["referendum_index"] >= selected_ids[0])
-            & (df_referenda["referendum_index"] <= selected_ids[1])
-        ]
+    df_referenda = filter_referenda(
+        df_referenda,
+        selected_ids,
+        selected_section,
+        selected_method,
+        selected_proposer,
+    )
     if selected_toggle_value == False:
         xii_graph_data = [
             go.Bar(
@@ -1561,11 +1719,15 @@ def update_quiz_answer_chart(selected_toggle_value, referenda_data, selected_ids
 
 
 @app.callback(
-    Output("section_piechart", "clickData"),
+    [
+        Output("crossfilter_section", "value"),
+        Output("crossfilter_method", "value"),
+        Output("crossfilter_proposer", "value"),
+    ],
     [Input("clear-radio", "n_clicks")],
 )
 def clear_section_selections(*args):
-    return None
+    return None, None, None
 
 
 # # callback function for on_hover
