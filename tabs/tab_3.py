@@ -11,6 +11,7 @@ import dash_daq as daq
 import plotly.graph_objs as go
 import dash_bootstrap_components as dbc
 from config import voting_group_dict, voting_group_perc_dict, voting_group_colors
+from dash import dash_table
 
 
 import plotly.express as px
@@ -78,7 +79,11 @@ def load_delegation_data():
         2,
     )
     df_delegation = df_delegation.rename(
-        {"timestamp": "delegation_started_at", "timestampEnd": "delegation_ended_at", "to": "delegated_to"},
+        {
+            "timestamp": "delegation_started_at",
+            "timestampEnd": "delegation_ended_at",
+            "to": "delegated_to",
+        },
         axis=1,
     )
     df_delegation = df_delegation[
@@ -303,6 +308,51 @@ def build_charts():
                 ),
             ],
         ),
+        html.Div(
+            className="twelve columns",
+            children=[
+                html.Div(
+                    className="six columns graph-block",
+                    children=[
+                        html.Div(
+                            id="v-chart",
+                            className="twelve columns",
+                            children=[
+                                html.Div(
+                                    className="twelve columns",
+                                    children=[
+                                        dcc.Loading(
+                                            id="loading-icon",
+                                            children=[
+                                                html.Div(
+                                                    dcc.Graph(
+                                                        id="voter-type-timeline-chart",
+                                                        figure=blank_figure(),
+                                                    )
+                                                )
+                                            ],
+                                            type="default",
+                                        ),
+                                    ],
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+                html.Div(
+                    className="six columns graph-block",
+                    children=[
+                        html.H6(children='Quiz Correctness'),
+                        dcc.Loading(
+                            html.Div(
+                                id="quiz-correctness-table",
+                                children=[],
+                            )
+                        )
+                    ],
+                ),
+            ],
+        ),
     ]
 
 
@@ -428,6 +478,7 @@ def update_card1(account_data):
 
     return None
 
+
 @app.callback(
     output=Output("tab3_card_row_2", "children"),
     inputs=[
@@ -445,11 +496,21 @@ def update_card2(account_data, delegation_data):
         df_delegate_to = df_delegation.merge(
             df_account, how="inner", left_on="wallet", right_on="voter"
         )
-        active_delegate_to = df_delegate_to[df_delegate_to["delegation_ended_at"].isnull()]["delegated_to_x"].unique()
+        active_delegate_to = df_delegate_to[
+            df_delegate_to["delegation_ended_at"].isnull()
+        ]["delegated_to_x"].unique()
         if not active_delegate_to:
-            active_delegate_to = 'None'
-        count_active_delegated = len(df_delegated[df_delegated["delegation_ended_at"].isnull()]["wallet"].unique())
-        print(df_delegated[df_delegated["delegation_ended_at"].isnull()]["wallet"].unique())
+            active_delegate_to = "None"
+        count_active_delegated = len(
+            df_delegated[df_delegated["delegation_ended_at"].isnull()][
+                "wallet"
+            ].unique()
+        )
+        print(
+            df_delegated[df_delegated["delegation_ended_at"].isnull()][
+                "wallet"
+            ].unique()
+        )
         return [
             html.Div(
                 className="four columns graph-block",
@@ -460,7 +521,8 @@ def update_card2(account_data, delegation_data):
                             dbc.CardBody(
                                 [
                                     html.H4(
-                                        "# of Active delegations", className="card-title"
+                                        "# of Active delegations",
+                                        className="card-title",
                                     ),
                                     html.P(
                                         count_active_delegated,
@@ -498,6 +560,7 @@ def update_card2(account_data, delegation_data):
         ]
 
     return None
+
 
 @app.callback(
     output=Output("tab3_card_row_3", "children"),
@@ -749,14 +812,31 @@ def update_delegate_to_chart(account_data, delegation_data, referenda_data):
         df_delegate_to = df_delegate_to.merge(
             df_referenda, how="inner", on="referendum_index"
         )
-        df_past_delegate_to = df_delegate_to[((df_delegate_to["not_passed_at"] > df_delegate_to["delegation_started_at"]) & (df_delegate_to["not_passed_at"] < df_delegate_to["delegation_ended_at"]))
-                                        | ((df_delegate_to["passed_at"] > df_delegate_to["delegation_started_at"]) & (df_delegate_to["passed_at"] < df_delegate_to["delegation_ended_at"]))
-                                        | (df_delegate_to["delegation_ended_at"].isnull())
-                                        ]
-        df_past_delegate_to = df_past_delegate_to.groupby("referendum_index")[
-            "voted_amount"
-        ].sum().reset_index()
-        df_active_delegate_to = df_delegate_to[(df_delegate_to["delegation_ended_at"].isnull())]
+        df_past_delegate_to = df_delegate_to[
+            (
+                (
+                    df_delegate_to["not_passed_at"]
+                    > df_delegate_to["delegation_started_at"]
+                )
+                & (
+                    df_delegate_to["not_passed_at"]
+                    < df_delegate_to["delegation_ended_at"]
+                )
+            )
+            | (
+                (df_delegate_to["passed_at"] > df_delegate_to["delegation_started_at"])
+                & (df_delegate_to["passed_at"] < df_delegate_to["delegation_ended_at"])
+            )
+            | (df_delegate_to["delegation_ended_at"].isnull())
+        ]
+        df_past_delegate_to = (
+            df_past_delegate_to.groupby("referendum_index")["voted_amount"]
+            .sum()
+            .reset_index()
+        )
+        df_active_delegate_to = df_delegate_to[
+            (df_delegate_to["delegation_ended_at"].isnull())
+        ]
         first_graph_data = [
             go.Bar(
                 name="Past Delegate To",
@@ -819,14 +899,25 @@ def update_delegated_chart(account_data, delegation_data, referenda_data):
         df_delegated = df_delegated.merge(
             df_referenda, how="inner", on="referendum_index"
         )
-        df_past_delegated = df_delegated[((df_delegated["not_passed_at"] > df_delegated["delegation_started_at"]) & (df_delegated["not_passed_at"] < df_delegated["delegation_ended_at"]))
-                                        | ((df_delegated["passed_at"] > df_delegated["delegation_started_at"]) & (df_delegated["passed_at"] < df_delegated["delegation_ended_at"]))
-                                        | (df_delegated["delegation_ended_at"].isnull())
-                                        ]
-        df_past_delegated = df_past_delegated.groupby("referendum_index")[
-            "voted_amount"
-        ].sum().reset_index()
-        df_active_delegated = df_delegated[(df_delegated["delegation_ended_at"].isnull())]
+        df_past_delegated = df_delegated[
+            (
+                (df_delegated["not_passed_at"] > df_delegated["delegation_started_at"])
+                & (df_delegated["not_passed_at"] < df_delegated["delegation_ended_at"])
+            )
+            | (
+                (df_delegated["passed_at"] > df_delegated["delegation_started_at"])
+                & (df_delegated["passed_at"] < df_delegated["delegation_ended_at"])
+            )
+            | (df_delegated["delegation_ended_at"].isnull())
+        ]
+        df_past_delegated = (
+            df_past_delegated.groupby("referendum_index")["voted_amount"]
+            .sum()
+            .reset_index()
+        )
+        df_active_delegated = df_delegated[
+            (df_delegated["delegation_ended_at"].isnull())
+        ]
         first_graph_data = [
             go.Bar(
                 name="Past Delegated",
@@ -868,3 +959,107 @@ def update_delegated_chart(account_data, delegation_data, referenda_data):
         fig_first_graph.update_traces(opacity=0.75)
         return fig_first_graph
     return None
+
+
+@app.callback(
+    output=Output("voter-type-timeline-chart", "figure"),
+    inputs=[
+        Input("specific-account-data", "data"),
+    ],
+)
+def voter_type_barchart(account_data):
+    if account_data:
+        df_account = pd.DataFrame(account_data)
+        print(df_account["voter_type"])
+        df_normal = df_account[df_account["voter_type"]=='normal']
+        df_validator = df_account[df_account["voter_type"]=='validator']
+        df_councillor = df_account[df_account["voter_type"]=='councillor']
+        df_councillor_validator = df_account[df_account["voter_type"]=='validator + councillor']
+        first_graph_data = [
+            go.Scatter(
+                name="Normal Votes",
+                x=df_normal["referendum_index"],
+                y=df_normal["voter_type"],
+                marker_color="#e6007a",
+            ),
+            go.Scatter(
+                name="Validator Votes",
+                x=df_validator["referendum_index"],
+                y=df_validator["voter_type"],
+                marker_color="#e6007a",
+            ),
+            go.Scatter(
+                name="Councillor Votes",
+                x=df_councillor["referendum_index"],
+                y=df_councillor["voter_type"],
+                marker_color="#e6007a",
+            ),
+            go.Scatter(
+                name="Councillor + Validator Votes",
+                x=df_councillor_validator["referendum_index"],
+                y=df_councillor_validator["voter_type"],
+                marker_color="#e6007a",
+            ),
+        ]
+        first_graph_layout = go.Layout(
+            title="<b>Voter Type Timeline</b>",
+            paper_bgcolor="#161a28",
+            plot_bgcolor="#161a28",
+            xaxis=dict(title="Referendum ID", linecolor="#BCCCDC"),
+            yaxis=dict(title="Voter Type", linecolor="#021C1E"),
+            legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.8),
+            template="plotly_dark",
+            hovermode="x",
+        )
+        fig_first_graph = go.Figure(data=first_graph_data, layout=first_graph_layout)
+        fig_first_graph.update_traces(opacity=0.75)
+        return fig_first_graph
+    return None
+
+
+
+@app.callback(
+    Output("quiz-correctness-table", "children"),
+    inputs=[Input("specific-account-data", "data")],
+)
+def create_top_5_delegtation_table(account_data):
+    df = pd.DataFrame(account_data)
+    df = df[df["correct_answers_count"].notnull()]
+    if not df.empty:
+        df["quiz_correctness"] = df.apply(
+            lambda row: f"{row['correct_answers_count']:.0f} / {row['questions_count']:.0f}",
+            axis=1,
+        )
+        df = df[["referendum_index", "quiz_correctness"]]
+        my_table = dash_table.DataTable(
+            data=df.to_dict("records"),
+            columns=[{"name": i, "id": i} for i in df.columns],
+            sort_action="native",
+            style_data_conditional=(
+                [
+                    {
+                        "if": {
+                            "column_id": "referendum_index",
+                        },
+                        "fontWeight": "bold",
+                        "color": "#e6007a",
+                    }
+                ]
+            ),
+            style_cell={
+                "width": "100px",
+                "minWidth": "100px",
+                "maxWidth": "100px",
+                "overflow": "hidden",
+                "textOverflow": "ellipsis",
+                "fontSize": 12,
+                "fontFamily": "Unbounded Blond",
+            },
+            style_header={"backgroundColor": "#161a28", "color": "darkgray"},
+            style_data={"backgroundColor": "#161a28", "color": "white"},
+            page_size=10,
+              style_table={"height": "350px", "overflowY": "auto"},
+        )
+    else:
+        my_table=None
+    return my_table
