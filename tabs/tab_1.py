@@ -1666,13 +1666,26 @@ def update_quiz_answer_chart(
         selected_method,
         selected_proposer,
     )
+    df_referenda = df_referenda[df_referenda["count_quiz_attended_wallets"].notnull()]
     if selected_toggle_value == False:
         xii_graph_data = [
             go.Bar(
+                name="# Quiz Attended",
+                x=df_referenda["referendum_index"],
+                y=df_referenda["count_quiz_attended_wallets"],
+                marker_color="#e6007a",
+                opacity=0.8,
+                hovertemplate="Referendum: %{x:.0f}<br>"
+                              + "# quiz attended: %{y:.0f}<br>"
+                              + "<extra></extra>",
+            ),
+            go.Scatter(
                 name="Fully Correct Answers",
                 x=df_referenda["referendum_index"],
                 y=df_referenda["count_fully_correct"],
-                marker_color="#e6007a",
+                marker_color="#ffffff",
+                opacity=0.8,
+                mode="lines+markers",
                 hovertemplate="Referendum: %{x:.0f}<br>"
                 + "Fully correct wallets: %{y:.0f}<br>"
                 + "<extra></extra>",
@@ -1682,22 +1695,37 @@ def update_quiz_answer_chart(
     else:
         xii_graph_data = [
             go.Scatter(
-                name="% of Total Answers",
+                name="% Attendants of Total Votes",
                 x=df_referenda["referendum_index"],
-                y=df_referenda["count_fully_correct"]
-                / df_referenda["count_quiz_attended_wallets"]
+                y=df_referenda["count_quiz_attended_wallets"]
+                / df_referenda["count_total"]
                 * 100,
-                # mode="lines+markers",
+                mode="lines+markers",
                 line=dict(color="#e6007a"),
+                opacity=0.8,
                 # marker=dict(color="rgb(0, 0, 100)", size=4),
                 hovertemplate="Referendum: %{x:.0f}<br>"
                 + "% of total answers: %{y:.4f}<br>"
                 + "<extra></extra>",
             ),
+            go.Scatter(
+                name="% fully correct of Total Answers",
+                x=df_referenda["referendum_index"],
+                y=df_referenda["count_fully_correct"]
+                  / df_referenda["count_quiz_attended_wallets"]
+                  * 100,
+                mode="lines+markers",
+                line=dict(color="#ffffff"),
+                opacity=0.8,
+                # marker=dict(color="rgb(0, 0, 100)", size=4),
+                hovertemplate="Referendum: %{x:.0f}<br>"
+                              + "% of total answers: %{y:.4f}<br>"
+                              + "<extra></extra>",
+            ),
         ]
         yaxis_name = "% of Total Answers"
     xii_graph_layout = go.Layout(
-        title="<b>Fully Correct Answers</b>",
+        title="<b>Quiz attendants</b>",
         paper_bgcolor="#161a28",
         plot_bgcolor="#161a28",
         barmode="stack",
@@ -1710,7 +1738,7 @@ def update_quiz_answer_chart(
         #     overlaying="y",
         #     side="right",
         # ),
-        legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01),
+        legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.8),
         template="plotly_dark",
     )
 
