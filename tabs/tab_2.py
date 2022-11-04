@@ -16,6 +16,22 @@ from dash import dash_table
 
 subsquid_endpoint = "https://squid.subsquid.io/referenda-dashboard/v/0/graphql"
 
+polkassembly_graphql_endpoint = "https://kusama.polkassembly.io/v1/graphql"
+
+def load_pa_description(referendum_index):
+    query = f"""query MyQuery {{
+          posts(where: {{onchain_link: {{onchain_referendum_id: {{_eq: {referendum_index}}}}}}}) {{
+            content
+            created_at
+            title
+            onchain_link {{
+                onchain_referendum_id
+            }}
+          }}
+        }}
+        """
+    pa_data = requests.post(polkassembly_graphql_endpoint, json={"query": query}).text
+    pa_data = json.loads(pa_data)
 
 def load_specific_referendum_stats(referendum_index):
     query = f"""query MyQuery  {{
@@ -326,6 +342,7 @@ def update_specific_referendum_data(referenda_data, n_clicks, referendum_input):
     if referendum_input:
         try:
             df_specific_referendum = load_specific_referendum_stats(referendum_input)
+            load_pa_description(referendum_input)
             df_specific_referenda_stats = df_referenda[
                 df_referenda["referendum_index"] == int(referendum_input)
             ]
