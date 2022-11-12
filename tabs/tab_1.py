@@ -44,7 +44,7 @@ def build_tab_1():
                 # rangebar
                 html.Div(
                     id="id-rangebar",
-                    className="ten columns",
+                    className="twelve columns",
                     children=[
                         "Loading",
                         dcc.RangeSlider(id="selected-ids", min=0, max=20, marks=None),

@@ -836,3 +836,7 @@ body {
   height: 40px;
   line-height: 40px;
 }
+
+.card {
+    text-align: left;
+}

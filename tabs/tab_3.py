@@ -192,7 +192,7 @@ def build_charts():
                             id="first-chart",
                             className="twelve columns",
                             children=[
-                                html.Div(
+                                    html.Div(
                                     className="twelve columns",
                                     children=[
                                         html.Div(
@@ -502,11 +502,6 @@ def update_card2(account_data, delegation_data):
         if not active_delegate_to:
             active_delegate_to = "None"
         count_active_delegated = len(
-            df_delegated[df_delegated["delegation_ended_at"].isnull()][
-                "wallet"
-            ].unique()
-        )
-        print(
             df_delegated[df_delegated["delegation_ended_at"].isnull()][
                 "wallet"
             ].unique()
@@ -970,7 +965,6 @@ def update_delegated_chart(account_data, delegation_data, referenda_data):
 def voter_type_barchart(account_data):
     if account_data:
         df_account = pd.DataFrame(account_data)
-        print(df_account["voter_type"])
         df_normal = df_account[df_account["voter_type"]=='normal']
         df_validator = df_account[df_account["voter_type"]=='validator']
         df_councillor = df_account[df_account["voter_type"]=='councillor']

@@ -18,6 +18,7 @@ subsquid_endpoint = "https://squid.subsquid.io/referenda-dashboard/v/0/graphql"
 
 polkassembly_graphql_endpoint = "https://kusama.polkassembly.io/v1/graphql"
 
+
 def load_pa_description(referendum_index):
     query = f"""query MyQuery {{
           posts(where: {{onchain_link: {{onchain_referendum_id: {{_eq: {referendum_index}}}}}}}) {{
@@ -30,8 +31,14 @@ def load_pa_description(referendum_index):
           }}
         }}
         """
+    print("start to load specific referedum pa description")
+    start_time = time.time()
     pa_data = requests.post(polkassembly_graphql_endpoint, json={"query": query}).text
     pa_data = json.loads(pa_data)
+    df_pa_description = pd.DataFrame.from_dict(pa_data["data"]["posts"])
+    print(f"finish loading referedum pa description {time.time() - start_time}")
+    return df_pa_description
+
 
 def load_specific_referendum_stats(referendum_index):
     query = f"""query MyQuery  {{
@@ -117,6 +124,7 @@ def build_tab_2():
                 dcc.Store(
                     id="specific-referenda-stats", data=[], storage_type="memory"
                 ),
+                dcc.Store(id="specific-referendum-pa", data=[], storage_type="memory"),
             ],
         )
     ]
@@ -126,11 +134,11 @@ def build_charts():
     return [
         html.Div(
             className="twelve columns gragh-block",
-            children=[
+            children=[ dcc.Loading(
                 dcc.Graph(
                     id="referendum_timeline",
                     figure=blank_figure(),
-                )
+                ))
             ],
         ),
         html.Div(
@@ -140,7 +148,7 @@ def build_charts():
         ),
         html.Div(className="twelve columns", children=[html.Br()]),
         html.Div(
-            className="twelve columns graph-block", children=[html.P("PA Description")]
+            className="twelve columns graph-block", children=[], id="pa-description"
         ),
         html.Div(className="twelve columns", children=[html.Br()]),
         html.Div(
@@ -326,6 +334,7 @@ layout = build_tab_2()
     [
         Output("specific-referendum-data", "data"),
         Output("specific-referenda-stats", "data"),
+        Output("specific-referendum-pa", "data"),
         Output("referendum_input_warning", "children"),
     ],
     [
@@ -339,13 +348,14 @@ def update_specific_referendum_data(referenda_data, n_clicks, referendum_input):
     df_specific_referendum = pd.DataFrame()
     df_referenda = pd.DataFrame(referenda_data)
     df_specific_referenda_stats = pd.DataFrame()
+    df_specific_referendum_pa = pd.DataFrame()
     if referendum_input:
         try:
             df_specific_referendum = load_specific_referendum_stats(referendum_input)
-            load_pa_description(referendum_input)
             df_specific_referenda_stats = df_referenda[
                 df_referenda["referendum_index"] == int(referendum_input)
             ]
+            df_specific_referendum_pa = load_pa_description(referendum_input)
         except:
             warning = html.P(className="alert alert-danger", children=["Invalid input"])
         if df_specific_referendum.empty:
@@ -353,9 +363,10 @@ def update_specific_referendum_data(referenda_data, n_clicks, referendum_input):
         return (
             df_specific_referendum.to_dict("record"),
             df_specific_referenda_stats.to_dict("record"),
+            df_specific_referendum_pa.to_dict("record"),
             [warning],
         )
-    return None, None, html.P()
+    return None, None, None, html.P()
 
 
 @app.callback(
@@ -692,6 +703,58 @@ def update_card2(referenda_data):
 
     return None
 
+@app.callback(
+    output=Output("pa-description", "children"),
+    inputs=[
+        Input("specific-referendum-pa", "data"),
+    ],
+)
+def update_pa_description(referendum_pa_data):
+    if referendum_pa_data:
+        df_referendum_pa = pd.DataFrame(referendum_pa_data)
+        return [
+            dbc.Card(
+                className="twelve columns",
+                    children=[
+                    dbc.CardBody(
+                        [
+                            html.H4("PA Description", className="card-title"),
+                            html.Strong(df_referendum_pa["title"].values[0], className="card-text"),
+                        ]
+                    ),
+                ],
+            ),
+            html.Div(
+                [
+                    dbc.Collapse(
+                        dbc.Card(
+                            dbc.CardBody(df_referendum_pa["content"].values[0])),
+                        id="collapse",
+                        is_open=False,
+                    ),
+                    dbc.Button(
+                        "Read more",
+                        id="collapse-button",
+                        className="mb-3 click-button",
+                        n_clicks=0,
+                    ),
+
+                ]
+            ),
+        ]
+
+    return None
+
+
+@app.callback(
+    output=Output("collapse", "is_open"),
+    inputs=[Input("collapse-button", "n_clicks"), Input("collapse", "is_open")],
+)
+def toggle_collapse(n, is_open):
+    if n:
+        return not is_open
+    return is_open
+
 
 @app.callback(
     output=Output("cum_voted_amount_chart", "figure"),
@@ -999,6 +1062,7 @@ def aye_nay_chart(referendum_data):
         return fig_thrid_graph
     return None
 
+
 @app.callback(
     output=Output("voter_type_chart", "figure"),
     inputs=[Input("specific-referenda-stats", "data")],
@@ -1135,8 +1199,6 @@ def aye_nay_chart(referendum_data):
     return None
 
 
-
-
 @app.callback(
     Output("top-5-delegated-table", "children"),
     inputs=[Input("specific-referendum-data", "data")],
@@ -1190,3 +1252,42 @@ def create_top_5_delegtation_table(referendum_data_data):
         #    ]
     )
     return my_table
+
+
+# Update x chart
+# @app.callback(
+#     Output("quiz_correctness_piechart", "figure"),
+#     [
+#         Input("specific-referenda-stats", "data"),
+#     ],
+# )
+# def update_pie_chart(
+#     referenda_data
+# ):
+#     df_referenda = pd.DataFrame(referenda_data)
+#     df_referenda['count_1_question_correct_perc'] = df_referenda['count_1_question_correct_perc'] /
+#     x_graph_data = [
+#         go.Pie(
+#             labels=df_method_group_count.index,
+#             values=df_method_group_count.values,
+#             marker=dict(colors=color_scale),
+#             textposition="inside",
+#             opacity=0.8,
+#             # hovertemplate="Referendum id: %{x:.0f}<br>"
+#             # + "Group count: %{y:.0f}<br>"
+#             # + "Total: %{customdata:.0f}<br>"
+#             # + "<extra></extra>",
+#         )
+#     ]
+#     x_graph_layout = go.Layout(
+#         title="<b>Method</b>",
+#         paper_bgcolor="#161a28",
+#         plot_bgcolor="#161a28",
+#         legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.8),
+#         template="plotly_dark",
+#         hovermode="x",
+#         autosize=True,
+#         clickmode="event+select",
+#     )
+#     fig_x_graph = go.Figure(data=x_graph_data, layout=x_graph_layout)
+#     return fig_x_graph
