@@ -15,8 +15,8 @@ from config import (
     voting_group_colors,
     color_scale,
 )
-from utils.plotting import data_perc_bars, blank_figure
 from utils.data_preparation import filter_referenda
+from utils.plotting import blank_figure
 
 
 def build_tab_1():
