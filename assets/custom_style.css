@@ -791,11 +791,11 @@ body {
 .card .card-title {
   text-align: left;
   font-weight: lighter;
-  font-size: 2.5rem;
+  font-size: 20px;
 }
 
 .card .card-value {
-  font-size: 1.5rem;
+  font-size: 15px;
 }
 
 .card .card-target {
@@ -839,4 +839,8 @@ body {
 
 .card {
     text-align: left;
+}
+
+.small_card_body {
+  font-size:12px !important;
 }
