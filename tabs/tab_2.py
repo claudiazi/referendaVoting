@@ -340,35 +340,35 @@ def build_charts():
                     ],
                 ),
                 html.Div(className="twelve columns", children=[html.Br()]),
-                html.Div(className="section-banner", children="Quiz taken status"),
-                html.Div(className="twelve columns", children=[html.Br()]),
-                html.Div(
-                    children=[
-                        html.Div(
-                            id="section-piechart",
-                            className="six columns graph-block",
-                            children=[
-                                dcc.Loading(
-                                    id="loading-icon",
-                                    children=[
-                                        html.Div(
-                                            dcc.Graph(
-                                                id="quiz_correctness_piechart",
-                                                figure=blank_figure(),
-                                            )
-                                        )
-                                    ],
-                                    type="default",
-                                )
-                            ],
-                        ),
-                        html.Div(
-                            id="section-piechart",
-                            className="six columns",
-                            children=[],
-                        ),
-                    ]
-                ),
+                # html.Div(className="section-banner", children="Quiz taken status"),
+                # html.Div(className="twelve columns", children=[html.Br()]),
+                # html.Div(
+                #     children=[
+                #         html.Div(
+                #             id="section-piechart",
+                #             className="six columns graph-block",
+                #             children=[
+                #                 dcc.Loading(
+                #                     id="loading-icon",
+                #                     children=[
+                #                         html.Div(
+                #                             dcc.Graph(
+                #                                 id="quiz_correctness_piechart",
+                #                                 figure=blank_figure(),
+                #                             )
+                #                         )
+                #                     ],
+                #                     type="default",
+                #                 )
+                #             ],
+                #         ),
+                #         html.Div(
+                #             id="section-piechart",
+                #             className="six columns",
+                #             children=[],
+                #         ),
+                #     ]
+                # ),
             ],
         )
     ]
