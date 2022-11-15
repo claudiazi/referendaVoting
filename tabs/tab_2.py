@@ -1,18 +1,18 @@
+import datetime
+import json
+import time
+
+import dash_bootstrap_components as dbc
+import pandas as pd
+import plotly.graph_objs as go
+import requests
+from dash import dash_table
 from dash import dcc
 from dash import html
 from dash.dependencies import Input, Output
-import pandas as pd
+
 from app import app
-import time
-import json
-import requests
 from utils.plotting import blank_figure
-import dash_daq as daq
-import plotly.graph_objs as go
-import dash_bootstrap_components as dbc
-import datetime
-import plotly.express as px
-from dash import dash_table
 
 subsquid_endpoint = "https://squid.subsquid.io/referenda-dashboard/v/0/graphql"
 
@@ -40,12 +40,32 @@ def load_pa_description(referendum_index):
     return df_pa_description
 
 
+def load_refereundum_votes(referendum_index):
+    query = f"""query MyQuery {{
+                  referendumVotes(id: {referendum_index}) {{
+                    voter
+                    referendum_index
+                    timestamp
+                    cum_voted_amount_with_conviction_aye
+                    cum_voted_amount_with_conviction_nay
+                }}
+            }}
+
+        """
+    print("start to load specific referedum votes")
+    start_time = time.time()
+    votes_data = requests.post(subsquid_endpoint, json={"query": query}).text
+    votes_data = json.loads(votes_data)
+    df_votes = pd.DataFrame.from_dict(votes_data["data"]["referendumVotes"])
+    df_votes = df_votes.sort_values("timestamp")
+    print(f"finish loading referedum votes {time.time() - start_time}")
+    return df_votes
+
+
 def load_specific_referendum_stats(referendum_index):
     query = f"""query MyQuery  {{
                 referendumStats(id: {referendum_index}) {{
                     cum_new_accounts
-                    cum_voted_amount_with_conviction_aye
-                    cum_voted_amount_with_conviction_nay
                     decision
                     is_new_account
                     referendum_index
@@ -93,7 +113,11 @@ def build_tab_2():
                         html.Div(
                             className="twelve columns",
                             id="referendum_input_warning",
-                            children=[],
+                            children=[
+                                dcc.Loading(
+                                    id="loading-icon",
+                                )
+                            ],
                         ),
                         html.Div(
                             className="twelve columns",
@@ -119,12 +143,21 @@ def build_tab_2():
                 ),
                 html.Div(className="twelve columns", id="tab2_charts", children=[]),
                 dcc.Store(
-                    id="specific-referendum-data", data=[], storage_type="memory"
+                    id="specific-referendum-data",
+                    data=[],
+                    storage_type="memory",
                 ),
                 dcc.Store(
-                    id="specific-referenda-stats", data=[], storage_type="memory"
+                    id="specific-referenda-stats",
+                    data=[],
+                    storage_type="memory",
                 ),
                 dcc.Store(id="specific-referendum-pa", data=[], storage_type="memory"),
+                dcc.Store(
+                    id="specific-referendum-votes",
+                    data=[],
+                    storage_type="memory",
+                ),
             ],
         )
     ]
@@ -132,198 +165,209 @@ def build_tab_2():
 
 def build_charts():
     return [
-        html.Div(
-            className="twelve columns gragh-block",
-            children=[ dcc.Loading(
-                dcc.Graph(
-                    id="referendum_timeline",
-                    figure=blank_figure(),
-                ))
-            ],
-        ),
-        html.Div(
-            className="twelve columns",
-            id="tab_2_card_row_1",
-            children=[],
-        ),
-        html.Div(className="twelve columns", children=[html.Br()]),
-        html.Div(
-            className="twelve columns graph-block", children=[], id="pa-description"
-        ),
-        html.Div(className="twelve columns", children=[html.Br()]),
-        html.Div(
-            className="twelve columns",
-            id="tab_2_card_row_2",
-            children=[],
-        ),
-        html.Div(className="twelve columns", children=[html.Br()]),
-        html.Div(
-            className="twelve columns",
+        dcc.Loading(
+            id="loading-icon",
             children=[
                 html.Div(
-                    className="four columns graph-block",
-                    children=[
-                        html.Div(
-                            id="iii-chart",
-                            className="twelve columns",
-                            children=[
-                                dcc.Loading(
-                                    id="loading-icon",
-                                    children=[
-                                        html.Div(
-                                            dcc.Graph(
-                                                id="aye_nay_chart",
-                                                figure=blank_figure(),
-                                            )
-                                        )
-                                    ],
-                                    type="default",
-                                ),
-                            ],
-                        ),
-                    ],
-                ),
-                html.Div(
-                    className="four columns graph-block",
-                    children=[
-                        html.Div(
-                            className="twelve columns",
-                            children=[
-                                dcc.Loading(
-                                    id="loading-icon",
-                                    children=[
-                                        html.Div(
-                                            dcc.Graph(
-                                                id="delegation_chart",
-                                                figure=blank_figure(),
-                                            )
-                                        )
-                                    ],
-                                    type="default",
-                                )
-                            ],
-                        ),
-                    ],
-                ),
-                html.Div(
-                    className="four columns graph-block",
-                    children=[
-                        html.Div(
-                            className="twelve columns",
-                            children=[
-                                dcc.Loading(
-                                    id="loading-icon",
-                                    children=[
-                                        html.Div(
-                                            dcc.Graph(
-                                                id="voter_type_chart",
-                                                figure=blank_figure(),
-                                            )
-                                        )
-                                    ],
-                                    type="default",
-                                )
-                            ],
-                        ),
-                    ],
-                ),
-            ],
-        ),
-        html.Div(className="twelve columns", children=[html.Br()]),
-        html.Div(
-            className="twelve columns",
-            children=[
-                html.Div(
-                    className="six columns graph-block",
-                    children=[
-                        html.Div(
-                            id="first-chart",
-                            className="twelve columns",
-                            children=[
-                                dcc.Loading(
-                                    id="loading-icon",
-                                    children=[
-                                        html.Div(
-                                            dcc.Graph(
-                                                id="cum_voted_amount_chart",
-                                                figure=blank_figure(),
-                                            )
-                                        )
-                                    ],
-                                    type="default",
-                                ),
-                            ],
-                        ),
-                    ],
-                ),
-                html.Div(
-                    className="six columns graph-block",
-                    children=[
-                        html.Div(
-                            className="twelve columns",
-                            children=[
-                                dcc.Loading(
-                                    id="loading-icon",
-                                    children=[
-                                        html.Div(
-                                            dcc.Graph(
-                                                id="distribution_voted_amount_scatterchart",
-                                                figure=blank_figure(),
-                                            )
-                                        )
-                                    ],
-                                    type="default",
-                                )
-                            ],
-                        ),
-                    ],
-                ),
-            ],
-        ),
-        html.Div(className="twelve columns", children=[html.Br()]),
-        html.Div(className="section-banner", children="Top 5 Delegated Accounts"),
-        html.Div(className="twelve columns", children=[html.Br()]),
-        html.Div(
-            className="twelve columns",
-            children=[
-                dcc.Loading(
-                    html.Div(
-                        id="top-5-delegated-table",
-                        children=[],
-                    )
-                )
-            ],
-        ),
-        html.Div(className="twelve columns", children=[html.Br()]),
-        html.Div(className="section-banner", children="Quiz taken status"),
-        html.Div(className="twelve columns", children=[html.Br()]),
-        html.Div(
-            children=[
-                html.Div(
-                    id="section-piechart",
-                    className="six columns graph-block",
+                    className="twelve columns gragh-block",
                     children=[
                         dcc.Loading(
-                            id="loading-icon",
-                            children=[
-                                html.Div(
-                                    dcc.Graph(
-                                        id="quiz_correctness_piechart",
-                                        figure=blank_figure(),
-                                    )
-                                )
-                            ],
-                            type="default",
+                            dcc.Graph(
+                                id="referendum_timeline",
+                                figure=blank_figure(),
+                            )
                         )
                     ],
                 ),
                 html.Div(
-                    id="section-piechart",
-                    className="six columns",
+                    className="twelve columns",
+                    id="tab_2_card_row_1",
                     children=[],
                 ),
-            ]
-        ),
+                html.Div(className="twelve columns", children=[html.Br()]),
+                html.Div(
+                    className="twelve columns graph-block",
+                    children=[],
+                    id="pa-description",
+                ),
+                html.Div(className="twelve columns", children=[html.Br()]),
+                html.Div(
+                    className="twelve columns",
+                    id="tab_2_card_row_2",
+                    children=[],
+                ),
+                html.Div(className="twelve columns", children=[html.Br()]),
+                html.Div(
+                    className="twelve columns",
+                    children=[
+                        html.Div(
+                            className="four columns graph-block",
+                            children=[
+                                html.Div(
+                                    id="iii-chart",
+                                    className="twelve columns",
+                                    children=[
+                                        dcc.Loading(
+                                            id="loading-icon",
+                                            children=[
+                                                html.Div(
+                                                    dcc.Graph(
+                                                        id="aye_nay_chart",
+                                                        figure=blank_figure(),
+                                                    )
+                                                )
+                                            ],
+                                            type="default",
+                                        ),
+                                    ],
+                                ),
+                            ],
+                        ),
+                        html.Div(
+                            className="four columns graph-block",
+                            children=[
+                                html.Div(
+                                    className="twelve columns",
+                                    children=[
+                                        dcc.Loading(
+                                            id="loading-icon",
+                                            children=[
+                                                html.Div(
+                                                    dcc.Graph(
+                                                        id="delegation_chart",
+                                                        figure=blank_figure(),
+                                                    )
+                                                )
+                                            ],
+                                            type="default",
+                                        )
+                                    ],
+                                ),
+                            ],
+                        ),
+                        html.Div(
+                            className="four columns graph-block",
+                            children=[
+                                html.Div(
+                                    className="twelve columns",
+                                    children=[
+                                        dcc.Loading(
+                                            id="loading-icon",
+                                            children=[
+                                                html.Div(
+                                                    dcc.Graph(
+                                                        id="voter_type_chart",
+                                                        figure=blank_figure(),
+                                                    )
+                                                )
+                                            ],
+                                            type="default",
+                                        )
+                                    ],
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+                html.Div(className="twelve columns", children=[html.Br()]),
+                html.Div(
+                    className="twelve columns",
+                    children=[
+                        html.Div(
+                            className="six columns graph-block",
+                            children=[
+                                html.Div(
+                                    id="first-chart",
+                                    className="twelve columns",
+                                    children=[
+                                        dcc.Loading(
+                                            id="loading-icon",
+                                            children=[
+                                                html.Div(
+                                                    dcc.Graph(
+                                                        id="cum_voted_amount_chart",
+                                                        figure=blank_figure(),
+                                                    )
+                                                )
+                                            ],
+                                            type="default",
+                                        ),
+                                    ],
+                                ),
+                            ],
+                        ),
+                        html.Div(
+                            className="six columns graph-block",
+                            children=[
+                                html.Div(
+                                    className="twelve columns",
+                                    children=[
+                                        dcc.Loading(
+                                            id="loading-icon",
+                                            children=[
+                                                html.Div(
+                                                    dcc.Graph(
+                                                        id="distribution_voted_amount_scatterchart",
+                                                        figure=blank_figure(),
+                                                    )
+                                                )
+                                            ],
+                                            type="default",
+                                        )
+                                    ],
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+                html.Div(className="twelve columns", children=[html.Br()]),
+                html.Div(
+                    className="section-banner", children="Top 5 Delegated Accounts"
+                ),
+                html.Div(className="twelve columns", children=[html.Br()]),
+                html.Div(
+                    className="twelve columns",
+                    children=[
+                        dcc.Loading(
+                            html.Div(
+                                id="top-5-delegated-table",
+                                children=[],
+                            )
+                        )
+                    ],
+                ),
+                html.Div(className="twelve columns", children=[html.Br()]),
+                html.Div(className="section-banner", children="Quiz taken status"),
+                html.Div(className="twelve columns", children=[html.Br()]),
+                html.Div(
+                    children=[
+                        html.Div(
+                            id="section-piechart",
+                            className="six columns graph-block",
+                            children=[
+                                dcc.Loading(
+                                    id="loading-icon",
+                                    children=[
+                                        html.Div(
+                                            dcc.Graph(
+                                                id="quiz_correctness_piechart",
+                                                figure=blank_figure(),
+                                            )
+                                        )
+                                    ],
+                                    type="default",
+                                )
+                            ],
+                        ),
+                        html.Div(
+                            id="section-piechart",
+                            className="six columns",
+                            children=[],
+                        ),
+                    ]
+                ),
+            ],
+        )
     ]
 
 
@@ -335,6 +379,7 @@ layout = build_tab_2()
         Output("specific-referendum-data", "data"),
         Output("specific-referenda-stats", "data"),
         Output("specific-referendum-pa", "data"),
+        Output("specific-referendum-votes", "data"),
         Output("referendum_input_warning", "children"),
     ],
     [
@@ -349,6 +394,7 @@ def update_specific_referendum_data(referenda_data, n_clicks, referendum_input):
     df_referenda = pd.DataFrame(referenda_data)
     df_specific_referenda_stats = pd.DataFrame()
     df_specific_referendum_pa = pd.DataFrame()
+    df_referendum_votes = pd.DataFrame()
     if referendum_input:
         try:
             df_specific_referendum = load_specific_referendum_stats(referendum_input)
@@ -356,17 +402,24 @@ def update_specific_referendum_data(referenda_data, n_clicks, referendum_input):
                 df_referenda["referendum_index"] == int(referendum_input)
             ]
             df_specific_referendum_pa = load_pa_description(referendum_input)
+            df_referendum_votes = load_refereundum_votes(referendum_input)
         except:
-            warning = html.P(className="alert alert-danger", children=["Invalid input"])
+            warning = dcc.Loading(
+                id="loading-icon",
+                children=[
+                    html.P(className="alert alert-danger", children=["Invalid input"])
+                ],
+            )
         if df_specific_referendum.empty:
             warning = html.P(className="alert alert-danger", children=["Invalid input"])
         return (
             df_specific_referendum.to_dict("record"),
             df_specific_referenda_stats.to_dict("record"),
             df_specific_referendum_pa.to_dict("record"),
+            df_referendum_votes.to_dict("record"),
             [warning],
         )
-    return None, None, None, html.P()
+    return None, None, None, None, html.P()
 
 
 @app.callback(
@@ -703,6 +756,7 @@ def update_card2(referenda_data):
 
     return None
 
+
 @app.callback(
     output=Output("pa-description", "children"),
     inputs=[
@@ -715,11 +769,14 @@ def update_pa_description(referendum_pa_data):
         return [
             dbc.Card(
                 className="twelve columns",
-                    children=[
+                children=[
                     dbc.CardBody(
                         [
                             html.H4("PA Description", className="card-title"),
-                            html.Strong(df_referendum_pa["title"].values[0], className="card-text"),
+                            html.Strong(
+                                df_referendum_pa["title"].values[0],
+                                className="card-text",
+                            ),
                         ]
                     ),
                 ],
@@ -727,8 +784,7 @@ def update_pa_description(referendum_pa_data):
             html.Div(
                 [
                     dbc.Collapse(
-                        dbc.Card(
-                            dbc.CardBody(df_referendum_pa["content"].values[0])),
+                        dbc.Card(dbc.CardBody(df_referendum_pa["content"].values[0])),
                         id="collapse",
                         is_open=False,
                     ),
@@ -738,7 +794,6 @@ def update_pa_description(referendum_pa_data):
                         className="mb-3 click-button",
                         n_clicks=0,
                     ),
-
                 ]
             ),
         ]
@@ -758,11 +813,11 @@ def toggle_collapse(n, is_open):
 
 @app.callback(
     output=Output("cum_voted_amount_chart", "figure"),
-    inputs=[Input("specific-referendum-data", "data")],
+    inputs=[Input("specific-referendum-votes", "data")],
 )
-def cum_voted_amount_chart(referendum_data):
-    if referendum_data:
-        df_referenda = pd.DataFrame(referendum_data)
+def cum_voted_amount_chart(votes_data):
+    if votes_data:
+        df_referenda = pd.DataFrame(votes_data)
         second_graph_data = [
             go.Scatter(
                 name="Aye Votes",

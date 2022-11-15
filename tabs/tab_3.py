@@ -1,20 +1,19 @@
+import json
+import time
+
+import dash_bootstrap_components as dbc
+import dash_daq as daq
+import pandas as pd
+import plotly.graph_objs as go
+import requests
+from dash import dash_table
 from dash import dcc
 from dash import html
 from dash.dependencies import Input, Output
-import pandas as pd
+
 from app import app
-import time
-import json
-import requests
+from config import voting_group_colors
 from utils.plotting import blank_figure
-import dash_daq as daq
-import plotly.graph_objs as go
-import dash_bootstrap_components as dbc
-from config import voting_group_dict, voting_group_perc_dict, voting_group_colors
-from dash import dash_table
-
-
-import plotly.express as px
 
 subsquid_endpoint = "https://squid.subsquid.io/referenda-dashboard/v/0/graphql"
 
@@ -163,52 +162,82 @@ def build_tab_3():
 
 def build_charts():
     return [
-        html.Div(className="twelve columns", children=[html.Br()]),
-        html.Div(
-            className="twelve columns",
-            id="tab3_card_row_1",
-            children=[],
-        ),
-        html.Div(className="twelve columns", children=[html.Br()]),
-        html.Div(
-            className="twelve columns",
-            id="tab3_card_row_2",
-            children=[],
-        ),
-        html.Div(className="twelve columns", children=[html.Br()]),
-        html.Div(
-            className="twelve columns",
-            id="tab3_card_row_3",
-            children=[],
-        ),
-        html.Div(className="twelve columns", children=[html.Br()]),
-        html.Div(
-            className="twelve columns",
+        dcc.Loading(
+            id="loading-icon",
             children=[
+                html.Div(className="twelve columns", children=[html.Br()]),
                 html.Div(
-                    className="six columns graph-block",
+                    className="twelve columns",
+                    id="tab3_card_row_1",
+                    children=[],
+                ),
+                html.Div(className="twelve columns", children=[html.Br()]),
+                html.Div(
+                    className="twelve columns",
+                    id="tab3_card_row_2",
+                    children=[],
+                ),
+                html.Div(className="twelve columns", children=[html.Br()]),
+                html.Div(
+                    className="twelve columns",
+                    id="tab3_card_row_3",
+                    children=[],
+                ),
+                html.Div(className="twelve columns", children=[html.Br()]),
+                html.Div(
+                    className="twelve columns",
                     children=[
                         html.Div(
-                            id="first-chart",
-                            className="twelve columns",
+                            className="six columns graph-block",
                             children=[
-                                    html.Div(
+                                html.Div(
+                                    id="first-chart",
                                     className="twelve columns",
                                     children=[
                                         html.Div(
                                             className="twelve columns",
                                             children=[
-                                                daq.ToggleSwitch(
-                                                    id="votes_split_selection",
-                                                    label=["Decision", "Outcome"],
-                                                    value=True,
-                                                )
+                                                html.Div(
+                                                    className="twelve columns",
+                                                    children=[
+                                                        daq.ToggleSwitch(
+                                                            id="votes_split_selection",
+                                                            label=[
+                                                                "Decision",
+                                                                "Outcome",
+                                                            ],
+                                                            value=True,
+                                                        )
+                                                    ],
+                                                ),
+                                            ],
+                                        ),
+                                        html.Div(
+                                            id="second-chart",
+                                            className="twelve columns",
+                                            children=[
+                                                dcc.Loading(
+                                                    id="loading-icon",
+                                                    children=[
+                                                        html.Div(
+                                                            dcc.Graph(
+                                                                id="voted_amount_barchart",
+                                                                figure=blank_figure(),
+                                                            )
+                                                        )
+                                                    ],
+                                                    type="default",
+                                                ),
                                             ],
                                         ),
                                     ],
                                 ),
+                            ],
+                        ),
+                        html.Div(
+                            className="six columns graph-block",
+                            children=[
                                 html.Div(
-                                    id="second-chart",
                                     className="twelve columns",
                                     children=[
                                         dcc.Loading(
@@ -216,107 +245,52 @@ def build_charts():
                                             children=[
                                                 html.Div(
                                                     dcc.Graph(
-                                                        id="voted_amount_barchart",
+                                                        id="voting_time_distribution",
                                                         figure=blank_figure(),
                                                     )
                                                 )
                                             ],
                                             type="default",
-                                        ),
-                                    ],
-                                ),
-                            ],
-                        ),
-                    ],
-                ),
-                html.Div(
-                    className="six columns graph-block",
-                    children=[
-                        html.Div(
-                            className="twelve columns",
-                            children=[
-                                dcc.Loading(
-                                    id="loading-icon",
-                                    children=[
-                                        html.Div(
-                                            dcc.Graph(
-                                                id="voting_time_distribution",
-                                                figure=blank_figure(),
-                                            )
                                         )
                                     ],
-                                    type="default",
-                                )
-                            ],
-                        ),
-                    ],
-                ),
-            ],
-        ),
-        html.Div(
-            className="twelve columns",
-            children=[
-                html.Div(
-                    className="six columns graph-block",
-                    children=[
-                        html.Div(
-                            id="iii-chart",
-                            className="twelve columns",
-                            children=[
-                                html.Div(
-                                    className="twelve columns",
-                                    children=[
-                                        dcc.Loading(
-                                            id="loading-icon",
-                                            children=[
-                                                html.Div(
-                                                    dcc.Graph(
-                                                        id="delegate_to_chart",
-                                                        figure=blank_figure(),
-                                                    )
-                                                )
-                                            ],
-                                            type="default",
-                                        ),
-                                    ],
                                 ),
                             ],
                         ),
                     ],
                 ),
                 html.Div(
-                    className="six columns graph-block",
+                    className="twelve columns",
                     children=[
                         html.Div(
-                            className="twelve columns",
+                            className="six columns graph-block",
                             children=[
-                                dcc.Loading(
-                                    id="loading-icon",
+                                html.Div(
+                                    id="iii-chart",
+                                    className="twelve columns",
                                     children=[
                                         html.Div(
-                                            dcc.Graph(
-                                                id="delegated_chart",
-                                                figure=blank_figure(),
-                                            )
-                                        )
+                                            className="twelve columns",
+                                            children=[
+                                                dcc.Loading(
+                                                    id="loading-icon",
+                                                    children=[
+                                                        html.Div(
+                                                            dcc.Graph(
+                                                                id="delegate_to_chart",
+                                                                figure=blank_figure(),
+                                                            )
+                                                        )
+                                                    ],
+                                                    type="default",
+                                                ),
+                                            ],
+                                        ),
                                     ],
-                                    type="default",
-                                )
+                                ),
                             ],
                         ),
-                    ],
-                ),
-            ],
-        ),
-        html.Div(
-            className="twelve columns",
-            children=[
-                html.Div(
-                    className="six columns graph-block",
-                    children=[
                         html.Div(
-                            id="v-chart",
-                            className="twelve columns",
+                            className="six columns graph-block",
                             children=[
                                 html.Div(
                                     className="twelve columns",
@@ -326,13 +300,13 @@ def build_charts():
                                             children=[
                                                 html.Div(
                                                     dcc.Graph(
-                                                        id="voter-type-timeline-chart",
+                                                        id="delegated_chart",
                                                         figure=blank_figure(),
                                                     )
                                                 )
                                             ],
                                             type="default",
-                                        ),
+                                        )
                                     ],
                                 ),
                             ],
@@ -340,19 +314,52 @@ def build_charts():
                     ],
                 ),
                 html.Div(
-                    className="six columns graph-block",
+                    className="twelve columns",
                     children=[
-                        html.H6(children='Quiz Correctness'),
-                        dcc.Loading(
-                            html.Div(
-                                id="quiz-correctness-table",
-                                children=[],
-                            )
-                        )
+                        html.Div(
+                            className="six columns graph-block",
+                            children=[
+                                html.Div(
+                                    id="v-chart",
+                                    className="twelve columns",
+                                    children=[
+                                        html.Div(
+                                            className="twelve columns",
+                                            children=[
+                                                dcc.Loading(
+                                                    id="loading-icon",
+                                                    children=[
+                                                        html.Div(
+                                                            dcc.Graph(
+                                                                id="voter-type-timeline-chart",
+                                                                figure=blank_figure(),
+                                                            )
+                                                        )
+                                                    ],
+                                                    type="default",
+                                                ),
+                                            ],
+                                        ),
+                                    ],
+                                ),
+                            ],
+                        ),
+                        html.Div(
+                            className="six columns graph-block",
+                            children=[
+                                html.H6(children="Quiz Correctness"),
+                                dcc.Loading(
+                                    html.Div(
+                                        id="quiz-correctness-table",
+                                        children=[],
+                                    )
+                                ),
+                            ],
+                        ),
                     ],
                 ),
             ],
-        ),
+        )
     ]
 
 
@@ -378,9 +385,19 @@ def update_specific_account_data(n_clicks, account_input):
             df_specific_account = load_specific_account_stats(account_input)
             df_delegation = load_delegation_data()
         except:
-            warning = html.P(className="alert alert-danger", children=["Invalid input"])
+            warning = dcc.Loading(
+                id="loading-icon",
+                children=[
+                    html.P(className="alert alert-danger", children=["Invalid input"])
+                ],
+            )
         if df_specific_account.empty:
-            warning = html.P(className="alert alert-danger", children=["Invalid input"])
+            warning = dcc.Loading(
+                id="loading-icon",
+                children=[
+                    html.P(className="alert alert-danger", children=["Invalid input"])
+                ],
+            )
         return (
             df_specific_account.to_dict("record"),
             df_delegation.to_dict("record"),
@@ -965,10 +982,12 @@ def update_delegated_chart(account_data, delegation_data, referenda_data):
 def voter_type_barchart(account_data):
     if account_data:
         df_account = pd.DataFrame(account_data)
-        df_normal = df_account[df_account["voter_type"]=='normal']
-        df_validator = df_account[df_account["voter_type"]=='validator']
-        df_councillor = df_account[df_account["voter_type"]=='councillor']
-        df_councillor_validator = df_account[df_account["voter_type"]=='validator + councillor']
+        df_normal = df_account[df_account["voter_type"] == "normal"]
+        df_validator = df_account[df_account["voter_type"] == "validator"]
+        df_councillor = df_account[df_account["voter_type"] == "councillor"]
+        df_councillor_validator = df_account[
+            df_account["voter_type"] == "validator + councillor"
+        ]
         first_graph_data = [
             go.Scatter(
                 name="Normal Votes",
@@ -1011,7 +1030,6 @@ def voter_type_barchart(account_data):
     return None
 
 
-
 @app.callback(
     Output("quiz-correctness-table", "children"),
     inputs=[Input("specific-account-data", "data")],
@@ -1052,8 +1070,8 @@ def create_top_5_delegtation_table(account_data):
             style_header={"backgroundColor": "#161a28", "color": "darkgray"},
             style_data={"backgroundColor": "#161a28", "color": "white"},
             page_size=10,
-              style_table={"height": "350px", "overflowY": "auto"},
+            style_table={"height": "350px", "overflowY": "auto"},
         )
     else:
-        my_table=None
+        my_table = None
     return my_table
