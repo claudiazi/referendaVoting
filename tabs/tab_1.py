@@ -601,11 +601,11 @@ def create_live_data_table(ongoing_referenda_data):
     )
     df["turnout_total_perc"] = df["turnout_total_perc"].apply(lambda x: f"{x:.2f} %")
     df["voted_amount_aye"] = df.apply(
-        lambda x: f"{x['voted_amount_aye']} ({x['voted_amount_aye_perc']:.2f} %)",
+        lambda x: f"{x['voted_amount_aye']:.2f} ({x['voted_amount_aye_perc']:.2f} %)",
         axis=1,
     )
     df["voted_amount_nay"] = df.apply(
-        lambda x: f"{x['voted_amount_nay']} ({x['voted_amount_nay_perc']:.2f} %)",
+        lambda x: f"{x['voted_amount_nay']:.2f} ({x['voted_amount_nay_perc']:.2f} %)",
         axis=1,
     )
     df = df[
