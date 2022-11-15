@@ -40,6 +40,28 @@ def load_pa_description(referendum_index):
     return df_pa_description
 
 
+def load_refereundum_votes(referendum_index):
+    query = f"""query MyQuery {{
+                  referendumVotes(id: {referendum_index}) {{
+                    voter
+                    referendum_index
+                    timestamp
+                    cum_voted_amount_with_conviction_aye
+                    cum_voted_amount_with_conviction_nay
+                }}
+            }}
+
+        """
+    print("start to load specific referedum votes")
+    start_time = time.time()
+    votes_data = requests.post(subsquid_endpoint, json={"query": query}).text
+    votes_data = json.loads(votes_data)
+    df_votes = pd.DataFrame.from_dict(votes_data["data"]["referendumVotes"])
+    df_votes = df_votes.sort_values("timestamp")
+    print(f"finish loading referedum votes {time.time() - start_time}")
+    return df_votes
+
+
 def load_specific_referendum_stats(referendum_index):
     query = f"""query MyQuery  {{
                 referendumStats(id: {referendum_index}) {{
@@ -335,6 +357,7 @@ layout = build_tab_2()
         Output("specific-referendum-data", "data"),
         Output("specific-referenda-stats", "data"),
         Output("specific-referendum-pa", "data"),
+        Output("specific-referendum-votes", "data"),
         Output("referendum_input_warning", "children"),
     ],
     [
@@ -349,6 +372,7 @@ def update_specific_referendum_data(referenda_data, n_clicks, referendum_input):
     df_referenda = pd.DataFrame(referenda_data)
     df_specific_referenda_stats = pd.DataFrame()
     df_specific_referendum_pa = pd.DataFrame()
+    df_referendum_votes = pd.DataFrame()
     if referendum_input:
         try:
             df_specific_referendum = load_specific_referendum_stats(referendum_input)
@@ -356,6 +380,7 @@ def update_specific_referendum_data(referenda_data, n_clicks, referendum_input):
                 df_referenda["referendum_index"] == int(referendum_input)
             ]
             df_specific_referendum_pa = load_pa_description(referendum_input)
+            df_referendum_votes = load_refereundum_votes(referendum_input)
         except:
             warning = html.P(className="alert alert-danger", children=["Invalid input"])
         if df_specific_referendum.empty:
@@ -364,9 +389,10 @@ def update_specific_referendum_data(referenda_data, n_clicks, referendum_input):
             df_specific_referendum.to_dict("record"),
             df_specific_referenda_stats.to_dict("record"),
             df_specific_referendum_pa.to_dict("record"),
+            df_referendum_votes.to_dict("record"),
             [warning],
         )
-    return None, None, None, html.P()
+    return None, None, None, None, html.P()
 
 
 @app.callback(
@@ -758,11 +784,11 @@ def toggle_collapse(n, is_open):
 
 @app.callback(
     output=Output("cum_voted_amount_chart", "figure"),
-    inputs=[Input("specific-referendum-data", "data")],
+    inputs=[Input("specific-referendum-votes", "data")],
 )
-def cum_voted_amount_chart(referendum_data):
-    if referendum_data:
-        df_referenda = pd.DataFrame(referendum_data)
+def cum_voted_amount_chart(votes_data):
+    if votes_data:
+        df_referenda = pd.DataFrame(votes_data)
         second_graph_data = [
             go.Scatter(
                 name="Aye Votes",
