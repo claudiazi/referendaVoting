@@ -154,7 +154,11 @@ def build_tab_3():
                 )
             ]
         ),
-        html.Div(className="twelve columns", id="tab3_charts", children=[]),
+        html.Div(
+            className="twelve columns",
+            id="tab3_charts",
+            children=[dcc.Loading(id="loading-icon")],
+        ),
         dcc.Store(id="specific-account-data", data=[], storage_type="memory"),
         dcc.Store(id="delegation-data", data=[], storage_type="memory"),
     ]

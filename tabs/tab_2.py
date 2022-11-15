@@ -141,7 +141,11 @@ def build_tab_2():
                         ),
                     ],
                 ),
-                html.Div(className="twelve columns", id="tab2_charts", children=[]),
+                html.Div(
+                    className="twelve columns",
+                    id="tab2_charts",
+                    children=[dcc.Loading(id="loading-icon")],
+                ),
                 dcc.Store(
                     id="specific-referendum-data",
                     data=[],
