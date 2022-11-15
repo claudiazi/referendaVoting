@@ -156,8 +156,7 @@ def build_tab_3():
         ),
         html.Div(
             className="twelve columns",
-            id="tab3_charts",
-            children=[dcc.Loading(id="loading-icon")],
+            children=[dcc.Loading(id="tab3_charts", children=[])],
         ),
         dcc.Store(id="specific-account-data", data=[], storage_type="memory"),
         dcc.Store(id="delegation-data", data=[], storage_type="memory"),
@@ -440,7 +439,7 @@ def update_card1(account_data):
                         [
                             dbc.CardBody(
                                 [
-                                    html.H4("First Vote", className="card-title"),
+                                    html.H5("First Vote", className="card-title"),
                                     html.P(
                                         f"Timestamp: {df_account['first_voting_timestamp'].unique()[0]}",
                                         className="card-value",
@@ -463,7 +462,7 @@ def update_card1(account_data):
                         [
                             dbc.CardBody(
                                 [
-                                    html.H4("# of Ref. Voted", className="card-title"),
+                                    html.H5("# of Ref. Voted", className="card-title"),
                                     html.P(
                                         f"{df_account['referendum_index'].count()}",
                                         className="card-value",
@@ -483,7 +482,7 @@ def update_card1(account_data):
                         [
                             dbc.CardBody(
                                 [
-                                    html.H4("Avg. Voted KSM", className="card-title"),
+                                    html.H5("Avg. Voted KSM", className="card-title"),
                                     html.P(
                                         f"{df_account['voted_amount_with_conviction'].mean():.2f}",
                                         className="card-value",
@@ -536,7 +535,7 @@ def update_card2(account_data, delegation_data):
                         [
                             dbc.CardBody(
                                 [
-                                    html.H4(
+                                    html.H5(
                                         "# of Active delegations",
                                         className="card-title",
                                     ),
@@ -558,7 +557,7 @@ def update_card2(account_data, delegation_data):
                         [
                             dbc.CardBody(
                                 [
-                                    html.H4(
+                                    html.H5(
                                         "Active delegate to",
                                         className="card-title",
                                     ),
@@ -597,7 +596,7 @@ def update_card3(account_data):
                         [
                             dbc.CardBody(
                                 [
-                                    html.H4(
+                                    html.H5(
                                         "# of Quizzes Taken", className="card-title"
                                     ),
                                     html.P(
@@ -618,7 +617,7 @@ def update_card3(account_data):
                         [
                             dbc.CardBody(
                                 [
-                                    html.H4(
+                                    html.H5(
                                         "# of Quizzes Fully Correct",
                                         className="card-title",
                                     ),

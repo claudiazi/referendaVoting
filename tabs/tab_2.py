@@ -143,8 +143,7 @@ def build_tab_2():
                 ),
                 html.Div(
                     className="twelve columns",
-                    id="tab2_charts",
-                    children=[dcc.Loading(id="loading-icon")],
+                    children=[dcc.Loading(id="tab2_charts", children=[])],
                 ),
                 dcc.Store(
                     id="specific-referendum-data",
@@ -594,7 +593,7 @@ def update_card1(referenda_data):
                         [
                             dbc.CardBody(
                                 [
-                                    html.H4("Section", className="card-title"),
+                                    html.H5("Section", className="card-title"),
                                     html.P(
                                         df_referenda["section"],
                                         className="card-value",
@@ -613,7 +612,7 @@ def update_card1(referenda_data):
                         [
                             dbc.CardBody(
                                 [
-                                    html.H4("Method", className="card-title"),
+                                    html.H5("Method", className="card-title"),
                                     html.P(
                                         df_referenda["method"],
                                         className="card-value",
@@ -632,7 +631,7 @@ def update_card1(referenda_data):
                         [
                             dbc.CardBody(
                                 [
-                                    html.H4(
+                                    html.H5(
                                         "Passing Threshold", className="card-title"
                                     ),
                                     html.P(
@@ -653,7 +652,7 @@ def update_card1(referenda_data):
                         [
                             dbc.CardBody(
                                 [
-                                    html.H4("Proposer", className="card-title"),
+                                    html.H5("Proposer", className="card-title"),
                                     html.P(
                                         df_referenda["proposer"],
                                         className="card-value",
@@ -687,7 +686,7 @@ def update_card2(referenda_data):
                         [
                             dbc.CardBody(
                                 [
-                                    html.H4("Vote Total", className="card-title"),
+                                    html.H5("Vote Total", className="card-title"),
                                     html.P(
                                         f"{df_referenda['count_total'].values[0]}",
                                         className="card-value",
@@ -706,7 +705,7 @@ def update_card2(referenda_data):
                         [
                             dbc.CardBody(
                                 [
-                                    html.H4("Voted Amount", className="card-title"),
+                                    html.H5("Voted Amount", className="card-title"),
                                     html.P(
                                         f"{df_referenda['voted_amount_total'].values[0]:.2f} KSM",
                                         className="card-value",
@@ -725,7 +724,7 @@ def update_card2(referenda_data):
                         [
                             dbc.CardBody(
                                 [
-                                    html.H4("Turnout (%)", className="card-title"),
+                                    html.H5("Turnout (%)", className="card-title"),
                                     html.P(
                                         f"{df_referenda['turnout_total_perc'].values[0]:.2f}",
                                         className="card-value",
@@ -744,7 +743,7 @@ def update_card2(referenda_data):
                         [
                             dbc.CardBody(
                                 [
-                                    html.H4("New Accounts", className="card-title"),
+                                    html.H5("New Accounts", className="card-title"),
                                     html.P(
                                         f"{df_referenda['count_new'].values[0]}",
                                         f"{df_referenda['count_new_perc'].values[0]}",
@@ -776,7 +775,7 @@ def update_pa_description(referendum_pa_data):
                 children=[
                     dbc.CardBody(
                         [
-                            html.H4("PA Description", className="card-title"),
+                            html.H5("PA Description", className="card-title"),
                             html.Strong(
                                 df_referendum_pa["title"].values[0],
                                 className="card-text",
@@ -788,7 +787,7 @@ def update_pa_description(referendum_pa_data):
             html.Div(
                 [
                     dbc.Collapse(
-                        dbc.Card(dbc.CardBody(df_referendum_pa["content"].values[0])),
+                        dbc.Card(dbc.CardBody(dcc.Markdown(df_referendum_pa["content"].values[0]), className="small_card_body")),
                         id="collapse",
                         is_open=False,
                     ),
