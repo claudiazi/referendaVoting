@@ -388,6 +388,7 @@ layout = build_tab_3()
 def update_specific_account_data(n_clicks, account_input):
     warning = None
     df_specific_account = pd.DataFrame()
+    df_delegation = pd.DataFrame()
     if account_input:
         try:
             df_specific_account = load_specific_account_stats(account_input)
