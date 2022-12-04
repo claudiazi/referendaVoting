@@ -439,6 +439,7 @@ def build_tab_1():
                 ),
             ]
         ),
+        html.Div(className="twelve columns", children=[html.Br()]),
         html.Div(
             className="twelve columns",
             children=[

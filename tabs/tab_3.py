@@ -250,6 +250,7 @@ def build_charts():
                         ),
                     ],
                 ),
+                html.Div(className="twelve columns", children=[html.Br()]),
                 html.Div(
                     className="twelve columns",
                     children=[
@@ -305,6 +306,7 @@ def build_charts():
                         ),
                     ],
                 ),
+                html.Div(className="twelve columns", children=[html.Br()]),
                 html.Div(
                     className="twelve columns",
                     children=[
