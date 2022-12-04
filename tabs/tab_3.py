@@ -127,28 +127,12 @@ def build_tab_3():
                         ),
                         html.Div(
                             className="twelve columns",
-                            id="account_input_warning",
-                            children=[],
-                        ),
-                        html.Div(
-                            className="twelve columns",
+                            id="input_warning",
                             children=[
-                                html.Button(
-                                    "Confirm",
-                                    id="account-trigger-btn",
-                                    className="click-button",
-                                    n_clicks=0,
-                                    style={
-                                        "display": "inline-block",
-                                        "float": "middle",
-                                    },
+                                dcc.Loading(
+                                    id="account_input_warning",
                                 )
                             ],
-                            style={
-                                "display": "flex",
-                                "padding": 5,
-                                "justifyContent": "center",
-                            },
                         ),
                     ],
                 )
@@ -381,11 +365,10 @@ layout = build_tab_3()
         Output("account_input_warning", "children"),
     ],
     [
-        Input("account-trigger-btn", "n_clicks"),
         Input("account_input", "value"),
     ],
 )
-def update_specific_account_data(n_clicks, account_input):
+def update_specific_account_data(account_input):
     warning = None
     df_specific_account = pd.DataFrame()
     df_delegation = pd.DataFrame()
@@ -397,14 +380,24 @@ def update_specific_account_data(n_clicks, account_input):
             warning = dcc.Loading(
                 id="loading-icon",
                 children=[
-                    html.P(className="alert alert-danger", children=["Possible message: The above wallet is invalid or has not participated in Kusama Governance yet"])
+                    html.P(
+                        className="alert alert-danger",
+                        children=[
+                            "Possible message: The above wallet is invalid or has not participated in Kusama Governance yet"
+                        ],
+                    )
                 ],
             )
         if df_specific_account.empty:
             warning = dcc.Loading(
                 id="loading-icon",
                 children=[
-                    html.P(className="alert alert-danger", children=["Possible message: The above wallet is invalid or has not participated in Kusama Governance yet"])
+                    html.P(
+                        className="alert alert-danger",
+                        children=[
+                            "Possible message: The above wallet is invalid or has not participated in Kusama Governance yet"
+                        ],
+                    )
                 ],
             )
         return (
@@ -418,11 +411,10 @@ def update_specific_account_data(n_clicks, account_input):
 @app.callback(
     output=Output("tab3_charts", "children"),
     inputs=[
-        Input("account-trigger-btn", "n_clicks"),
         Input("account_input_warning", "children"),
     ],
 )
-def build_tab3_charts(n_clicks, input_warning):
+def build_tab3_charts(input_warning):
     if input_warning == [None]:
         return build_charts()
 
