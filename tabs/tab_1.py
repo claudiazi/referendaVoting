@@ -445,7 +445,6 @@ def build_tab_1():
                 html.Div(
                     className="six columns graph-block",
                     children=[
-                        html.Div(className="twelve columns", children=[html.Br()]),
                         html.Div(
                             id="fifth-chart",
                             className="twelve columns",
