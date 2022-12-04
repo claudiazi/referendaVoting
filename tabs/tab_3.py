@@ -247,11 +247,16 @@ def build_charts():
                                             id="loading-icon",
                                             children=[
                                                 html.Div(
+                                                    className="twelve columns",
+                                                    children=[html.Br()],
+                                                ),
+                                                html.Div(
                                                     dcc.Graph(
+                                                        className="twelve columns",
                                                         id="voting_time_distribution",
                                                         figure=blank_figure(),
                                                     )
-                                                )
+                                                ),
                                             ],
                                             type="default",
                                         )
@@ -1085,5 +1090,5 @@ def create_quiz_correctness_table(account_data):
             style_table={"height": "350px", "overflowY": "auto"},
         )
     else:
-        my_table=html.P("No quizzes attended.")
+        my_table = html.P("No quizzes attended.")
     return my_table
