@@ -879,6 +879,15 @@ def update_delegate_to_chart(account_data, delegation_data, referenda_data):
         )
         fig_first_graph = go.Figure(data=first_graph_data, layout=first_graph_layout)
         fig_first_graph.update_traces(opacity=0.75)
+        if df_active_delegate_to.empty and df_active_delegate_to.empty:
+            fig_first_graph.add_annotation(
+                x=1,
+                y=1,
+                text="No delegation votes",
+                showarrow=False,
+                yshift=10,
+                font=dict(size=16),
+            )
         return fig_first_graph
     return None
 
@@ -953,6 +962,15 @@ def update_delegated_chart(account_data, delegation_data, referenda_data):
         )
         fig_first_graph = go.Figure(data=first_graph_data, layout=first_graph_layout)
         fig_first_graph.update_traces(opacity=0.75)
+        if df_active_delegated.empty and df_past_delegated.empty:
+            fig_first_graph.add_annotation(
+                x=1,
+                y=1,
+                text="No delegated votes",
+                showarrow=False,
+                yshift=10,
+                font=dict(size=16),
+            )
         return fig_first_graph
     return None
 
@@ -1028,7 +1046,7 @@ def voter_type_barchart(account_data):
     Output("quiz-correctness-table", "children"),
     inputs=[Input("specific-account-data", "data")],
 )
-def create_top_5_delegtation_table(account_data):
+def create_quiz_correctness_table(account_data):
     df = pd.DataFrame(account_data)
     df = df[df["correct_answers_count"].notnull()]
     if not df.empty:
@@ -1067,5 +1085,5 @@ def create_top_5_delegtation_table(account_data):
             style_table={"height": "350px", "overflowY": "auto"},
         )
     else:
-        my_table = None
+        my_table=html.P("No quizzes attended.")
     return my_table
