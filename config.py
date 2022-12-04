@@ -13,6 +13,7 @@ voting_group_perc_dict = {
 }
 
 voting_group_colors = ["#ffffff", "#ffb3e0", "#ff33ad", "#e6007a"]
+voter_type_colors = ["#ffffff", "#ffb3e0", "#ff33ad", "#e6007a"]
 
 color_scale = [
     "#ffffff",
