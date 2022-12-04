@@ -397,14 +397,14 @@ def update_specific_account_data(n_clicks, account_input):
             warning = dcc.Loading(
                 id="loading-icon",
                 children=[
-                    html.P(className="alert alert-danger", children=["Invalid input"])
+                    html.P(className="alert alert-danger", children=["Possible message: The above wallet is invalid or has not participated in Kusama Governance yet"])
                 ],
             )
         if df_specific_account.empty:
             warning = dcc.Loading(
                 id="loading-icon",
                 children=[
-                    html.P(className="alert alert-danger", children=["Invalid input"])
+                    html.P(className="alert alert-danger", children=["Possible message: The above wallet is invalid or has not participated in Kusama Governance yet"])
                 ],
             )
         return (
