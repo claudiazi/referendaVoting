@@ -89,19 +89,23 @@ def build_tab_1():
                         "border": 0,
                     },
                     className="three columns",
-                )
+                ),
             ],
             className="twelve columns",
             style={"display": "inline-block", "align": "center"},
         ),
         html.Div(className="twelve columns", children=[html.Br()]),
-        html.Div(className="twelve columns", children=[
-            html.Div(html.Br(),className='five columns'),
+        html.Div(
+            className="twelve columns",
+            children=[
+                html.Div(html.Br(), className="five columns"),
                 html.Button(
                     "Clear Selection",
                     id="clear-radio",
                     className="click-button",
-                ),]),
+                ),
+            ],
+        ),
         html.Div(className="twelve columns", children=[html.Br()]),
         html.Div(
             className="twelve columns",
@@ -693,7 +697,7 @@ def update_votes_counts_chart(
         plot_bgcolor="#161a28",
         xaxis=dict(title="Referendum ID", linecolor="#BCCCDC"),
         yaxis=dict(title="Vote counts", linecolor="#021C1E"),
-        legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01),
+        legend=dict(orientation="h", yanchor="bottom", y=-0.3, xanchor="left", x=0),
         template="plotly_dark",
         hovermode="x",
     )
@@ -860,7 +864,7 @@ def update_bar_chart(
         barmode="stack",
         xaxis=dict(title="Referendum ID", linecolor="#BCCCDC"),
         yaxis=dict(title="Turnout (% of total issued Kusama)", linecolor="#021C1E"),
-        legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.8),
+        legend=dict(orientation="h", yanchor="bottom", y=-0.3, xanchor="left", x=0),
         template="plotly_dark",
         hovermode="x",
     )
@@ -938,7 +942,7 @@ def update_new_accounts_chart(
         #     overlaying="y",
         #     side="right",
         # ),
-        legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01),
+        legend=dict(orientation="h", yanchor="bottom", y=-0.3, xanchor="left", x=0),
         template="plotly_dark",
     )
 
@@ -1014,7 +1018,7 @@ def update_vote_amount_with_conviction_chart(
         template="plotly_dark",
         xaxis=dict(title="Referendum ID", linecolor="#BCCCDC"),
         yaxis=dict(title=yaxis_name, linecolor="#021C1E"),
-        legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01),
+        legend=dict(orientation="h", yanchor="bottom", y=-0.3, xanchor="left", x=0),
     )
     fig_forth_graph = go.Figure(data=forth_graph_data, layout=forth_graph_layout)
     return fig_forth_graph
@@ -1120,7 +1124,7 @@ def update_delegation_chart(
         barmode="stack",
         xaxis=dict(title="Referendum ID", linecolor="#BCCCDC"),
         yaxis=dict(title=yaxis_name, linecolor="#021C1E"),
-        legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.8),
+        legend=dict(orientation="h", yanchor="bottom", y=-0.3, xanchor="left", x=0),
         template="plotly_dark",
         hovermode="x",
     )
@@ -1249,7 +1253,7 @@ def update_voter_type_chart(
         barmode="stack",
         xaxis=dict(title="Referendum ID", linecolor="#BCCCDC"),
         yaxis=dict(title=yaxis_name, linecolor="#021C1E"),
-        legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.8),
+        legend=dict(orientation="h", yanchor="bottom", y=-0.3, xanchor="left", x=0),
         template="plotly_dark",
         hovermode="x",
     )
@@ -1316,7 +1320,7 @@ def update_voting_time_barchart(
             barmode="stack",
             xaxis=dict(title="Referendum ID", linecolor="#BCCCDC"),
             yaxis=dict(title="Count of voting time groups", linecolor="#021C1E"),
-            legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.8),
+            legend=dict(orientation="h", yanchor="bottom", y=-0.5, xanchor="left", x=0),
             template="plotly_dark",
             hovermode="x",
         )
@@ -1472,6 +1476,8 @@ def update_pie_chart(
         hovermode="x",
         autosize=True,
         clickmode="event+select",
+        uniformtext_minsize=6,
+        uniformtext_mode="hide",
     )
     fig_ix_graph = go.Figure(data=ix_graph_data, layout=ix_graph_layout)
     return fig_ix_graph
@@ -1503,18 +1509,24 @@ def update_pie_chart(
         selected_method,
         selected_proposer,
     )
-    df_method_group_count = df_referenda["method"].value_counts()
+    df_method_group_count = (
+        df_referenda.groupby("method")
+        .size()
+        .reset_index(name="count")
+        .sort_values(by="count", ascending=False)
+    )
+    df_method_group_count["method_short"] = df_method_group_count["method"].apply(
+        lambda x: f"{x[:20]}..."
+    )
     x_graph_data = [
         go.Pie(
-            labels=df_method_group_count.index,
-            values=df_method_group_count.values,
+            labels=df_method_group_count["method_short"],
+            values=df_method_group_count["count"],
             marker=dict(colors=color_scale),
             textposition="inside",
             opacity=0.8,
-            # hovertemplate="Referendum id: %{x:.0f}<br>"
-            # + "Group count: %{y:.0f}<br>"
-            # + "Total: %{customdata:.0f}<br>"
-            # + "<extra></extra>",
+            customdata=df_method_group_count["method"],
+            hovertemplate="%{customdata}<br>" + "%{percent}" + "<extra></extra>",
         )
     ]
     x_graph_layout = go.Layout(
@@ -1526,6 +1538,8 @@ def update_pie_chart(
         hovermode="x",
         autosize=True,
         clickmode="event+select",
+        uniformtext_minsize=6,
+        uniformtext_mode="hide",
     )
     fig_x_graph = go.Figure(data=x_graph_data, layout=x_graph_layout)
     return fig_x_graph
@@ -1557,17 +1571,23 @@ def update_pie_chart(
         selected_method,
         selected_proposer,
     )
-    df_proposer_count = df_referenda["proposer"].value_counts()
+    df_proposer_count = (
+        df_referenda.groupby("proposer")
+        .size()
+        .reset_index(name="count")
+        .sort_values(by="count", ascending=False)
+    )
+    df_proposer_count["proposer_short"] = df_proposer_count["proposer"].apply(
+        lambda x: f"{x[:6]}...{x[-4:]}"
+    )
     xi_graph_data = [
         go.Pie(
-            labels=df_proposer_count.index,
-            values=df_proposer_count.values,
+            labels=df_proposer_count["proposer_short"],
+            values=df_proposer_count["count"],
             marker=dict(colors=color_scale),
+            customdata=df_proposer_count["proposer"],
             textposition="inside",
-            # hovertemplate="Referendum id: %{x:.0f}<br>"
-            # + "Group count: %{y:.0f}<br>"
-            # + "Total: %{customdata:.0f}<br>"
-            # + "<extra></extra>",
+            hovertemplate="%{customdata}<br>" + "%{percent}" + "<extra></extra>",
         )
     ]
     xi_graph_layout = go.Layout(
@@ -1579,6 +1599,8 @@ def update_pie_chart(
         hovermode="x",
         autosize=True,
         clickmode="event+select",
+        uniformtext_minsize=6,
+        uniformtext_mode="hide",
     )
     fig_xi_graph = go.Figure(data=xi_graph_data, layout=xi_graph_layout)
     return fig_xi_graph
@@ -1676,8 +1698,8 @@ def update_quiz_answer_chart(
                 marker_color="#e6007a",
                 opacity=0.8,
                 hovertemplate="Referendum: %{x:.0f}<br>"
-                              + "# quiz attended: %{y:.0f}<br>"
-                              + "<extra></extra>",
+                + "# quiz attended: %{y:.0f}<br>"
+                + "<extra></extra>",
             ),
             go.Scatter(
                 name="Fully Correct Answers",
@@ -1712,15 +1734,15 @@ def update_quiz_answer_chart(
                 name="% fully correct of Total Answers",
                 x=df_referenda["referendum_index"],
                 y=df_referenda["count_fully_correct"]
-                  / df_referenda["count_quiz_attended_wallets"]
-                  * 100,
+                / df_referenda["count_quiz_attended_wallets"]
+                * 100,
                 mode="lines+markers",
                 line=dict(color="#ffffff"),
                 opacity=0.8,
                 # marker=dict(color="rgb(0, 0, 100)", size=4),
                 hovertemplate="Referendum: %{x:.0f}<br>"
-                              + "% of total answers: %{y:.4f}<br>"
-                              + "<extra></extra>",
+                + "% of total answers: %{y:.4f}<br>"
+                + "<extra></extra>",
             ),
         ]
         yaxis_name = "% of Total Answers"
@@ -1731,14 +1753,7 @@ def update_quiz_answer_chart(
         barmode="stack",
         xaxis=dict(title="Referendum ID", linecolor="#BCCCDC"),
         yaxis=dict(title=yaxis_name, linecolor="#021C1E"),
-        # yaxis2=dict(
-        #     title="New accounts counts (% of total votes counts)",
-        #     linecolor="#021C1E",
-        #     anchor="x",
-        #     overlaying="y",
-        #     side="right",
-        # ),
-        legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.8),
+        legend=dict(orientation="h", yanchor="bottom", y=-0.3, xanchor="left", x=0),
         template="plotly_dark",
     )
 
