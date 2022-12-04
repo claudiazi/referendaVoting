@@ -112,32 +112,12 @@ def build_tab_2():
                         ),
                         html.Div(
                             className="twelve columns",
-                            id="referendum_input_warning",
+                            id="input_check",
                             children=[
                                 dcc.Loading(
-                                    id="loading-icon",
+                                    id="referendum_input_warning",
                                 )
                             ],
-                        ),
-                        html.Div(
-                            className="twelve columns",
-                            children=[
-                                html.Button(
-                                    "Confirm",
-                                    id="referendum-trigger-btn",
-                                    className="click-button",
-                                    n_clicks=0,
-                                    style={
-                                        "display": "inline-block",
-                                        "float": "middle",
-                                    },
-                                )
-                            ],
-                            style={
-                                "display": "flex",
-                                "padding": 5,
-                                "justifyContent": "center",
-                            },
                         ),
                     ],
                 ),
@@ -340,35 +320,6 @@ def build_charts():
                     ],
                 ),
                 html.Div(className="twelve columns", children=[html.Br()]),
-                # html.Div(className="section-banner", children="Quiz taken status"),
-                # html.Div(className="twelve columns", children=[html.Br()]),
-                # html.Div(
-                #     children=[
-                #         html.Div(
-                #             id="section-piechart",
-                #             className="six columns graph-block",
-                #             children=[
-                #                 dcc.Loading(
-                #                     id="loading-icon",
-                #                     children=[
-                #                         html.Div(
-                #                             dcc.Graph(
-                #                                 id="quiz_correctness_piechart",
-                #                                 figure=blank_figure(),
-                #                             )
-                #                         )
-                #                     ],
-                #                     type="default",
-                #                 )
-                #             ],
-                #         ),
-                #         html.Div(
-                #             id="section-piechart",
-                #             className="six columns",
-                #             children=[],
-                #         ),
-                #     ]
-                # ),
             ],
         )
     ]
@@ -376,7 +327,7 @@ def build_charts():
 
 layout = build_tab_2()
 
-# Callback to update the referendum df
+
 @app.callback(
     [
         Output("specific-referendum-data", "data"),
@@ -387,11 +338,10 @@ layout = build_tab_2()
     ],
     [
         Input("full-referenda-data", "data"),
-        Input("referendum-trigger-btn", "n_clicks"),
         Input("referendum_input", "value"),
     ],
 )
-def update_specific_referendum_data(referenda_data, n_clicks, referendum_input):
+def update_specific_referendum_data(referenda_data, referendum_input):
     warning = None
     df_specific_referendum = pd.DataFrame()
     df_referenda = pd.DataFrame(referenda_data)
@@ -428,11 +378,10 @@ def update_specific_referendum_data(referenda_data, n_clicks, referendum_input):
 @app.callback(
     output=Output("tab2_charts", "children"),
     inputs=[
-        Input("referendum-trigger-btn", "n_clicks"),
         Input("referendum_input_warning", "children"),
     ],
 )
-def build_tab2_charts(n_clicks, input_warning):
+def build_tab2_charts(input_warning):
     if input_warning == [None]:
         return build_charts()
 
@@ -787,7 +736,12 @@ def update_pa_description(referendum_pa_data):
             html.Div(
                 [
                     dbc.Collapse(
-                        dbc.Card(dbc.CardBody(dcc.Markdown(df_referendum_pa["content"].values[0]), className="small_card_body")),
+                        dbc.Card(
+                            dbc.CardBody(
+                                dcc.Markdown(df_referendum_pa["content"].values[0]),
+                                className="small_card_body",
+                            )
+                        ),
                         id="collapse",
                         is_open=False,
                     ),
