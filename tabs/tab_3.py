@@ -12,7 +12,7 @@ from dash import html
 from dash.dependencies import Input, Output
 
 from app import app
-from config import voting_group_colors
+from config import voting_group_colors, voter_type_colors
 from utils.plotting import blank_figure
 
 subsquid_endpoint = "https://squid.subsquid.io/referenda-dashboard/v/0/graphql"
@@ -676,7 +676,7 @@ def cum_voter_amount_barchart(account_data):
             barmode="stack",
             xaxis=dict(title="Timestamp", linecolor="#BCCCDC"),
             yaxis=dict(title="Voted Amount with Conviction", linecolor="#021C1E"),
-            legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.8),
+            legend=dict(orientation="h", yanchor="bottom", y=-0.3, xanchor="left", x=0),
             template="plotly_dark",
             hovermode="x",
         )
@@ -745,11 +745,6 @@ def voter_amount_barchart(account_data, selected_votes_split):
                     x=df_not_aligned["referendum_index"],
                     y=df_not_aligned["voted_amount_with_conviction"],
                     marker_color="#e6007a",
-                    # hovertemplate="<b>Nay Votes</b><br><br>"
-                    #               + "Referendum id: %{x:.2f}<br>"
-                    #               + "Turnout perc - nay: %{y:.2f}<br>"
-                    #               + "Turnout perc: %{customdata:.2f}<br>"
-                    #               + "<extra></extra>",
                 ),
             ]
 
@@ -760,7 +755,7 @@ def voter_amount_barchart(account_data, selected_votes_split):
             barmode="stack",
             xaxis=dict(title="Referendum ID", linecolor="#BCCCDC"),
             yaxis=dict(title="Voted Amount with Conviction", linecolor="#021C1E"),
-            legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.8),
+            legend=dict(orientation="h", yanchor="bottom", y=-0.3, xanchor="left", x=0),
             template="plotly_dark",
             hovermode="x",
         )
@@ -798,7 +793,7 @@ def update_vote_timing_distribution(account_data):
             barmode="stack",
             xaxis=dict(title="Referendum ID", linecolor="#BCCCDC"),
             yaxis=dict(title="Count of voting time groups", linecolor="#021C1E"),
-            legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.8),
+            legend=dict(orientation="h", yanchor="bottom", y=-0.3, xanchor="left", x=0),
             template="plotly_dark",
             hovermode="x",
         )
@@ -848,34 +843,27 @@ def update_delegate_to_chart(account_data, delegation_data, referenda_data):
             df_past_delegate_to.groupby("referendum_index")["voted_amount"]
             .sum()
             .reset_index()
+            .sort_values(by="referendum_index")
         )
-        df_active_delegate_to = df_delegate_to[
-            (df_delegate_to["delegation_ended_at"].isnull())
-        ]
+        df_active_delegate_to = (
+            df_delegate_to[(df_delegate_to["delegation_ended_at"].isnull())]
+            .groupby("referendum_index")["voted_amount"]
+            .sum()
+            .reset_index()
+            .sort_values(by="referendum_index")
+        )
         first_graph_data = [
             go.Bar(
                 name="Past Delegate To",
                 x=df_past_delegate_to["referendum_index"],
                 y=df_past_delegate_to["voted_amount"],
                 marker_color="#ffffff",
-                # hovertemplate="<b>Aye Votes</b><br><br>"
-                #               + "Referendum id: %{x:.1f}<br>"
-                #               + "Turnout perc - aye: %{y:.1f}<br>"
-                #               + "Turnout perc: %{custom
-                #               data:.1f}<br>"
-                #               + "<extra></extra>",
             ),
             go.Bar(
                 name="Active Delegate To",
                 x=df_active_delegate_to["referendum_index"],
                 y=df_active_delegate_to["voted_amount"],
                 marker_color="#e6007a",
-                # hovertemplate="<b>Aye Votes</b><br><br>"
-                #               + "Referendum id: %{x:.1f}<br>"
-                #               + "Turnout perc - aye: %{y:.1f}<br>"
-                #               + "Turnout perc: %{custom
-                #               data:.1f}<br>"
-                #               + "<extra></extra>",
             ),
         ]
         first_graph_layout = go.Layout(
@@ -885,12 +873,21 @@ def update_delegate_to_chart(account_data, delegation_data, referenda_data):
             barmode="stack",
             xaxis=dict(title="Referendum ID", linecolor="#BCCCDC"),
             yaxis=dict(title="Voted Amount with Conviction", linecolor="#021C1E"),
-            legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.8),
+            legend=dict(orientation="h", yanchor="bottom", y=-0.3, xanchor="left", x=0),
             template="plotly_dark",
             hovermode="x",
         )
         fig_first_graph = go.Figure(data=first_graph_data, layout=first_graph_layout)
         fig_first_graph.update_traces(opacity=0.75)
+        if df_active_delegate_to.empty and df_active_delegate_to.empty:
+            fig_first_graph.add_annotation(
+                x=1,
+                y=1,
+                text="No delegation votes",
+                showarrow=False,
+                yshift=10,
+                font=dict(size=16),
+            )
         return fig_first_graph
     return None
 
@@ -929,34 +926,27 @@ def update_delegated_chart(account_data, delegation_data, referenda_data):
             df_past_delegated.groupby("referendum_index")["voted_amount"]
             .sum()
             .reset_index()
+            .sort_values(by="referendum_index")
         )
-        df_active_delegated = df_delegated[
-            (df_delegated["delegation_ended_at"].isnull())
-        ]
+        df_active_delegated = (
+            df_delegated[(df_delegated["delegation_ended_at"].isnull())]
+            .groupby("referendum_index")["voted_amount"]
+            .sum()
+            .reset_index()
+            .sort_values(by="referendum_index")
+        )
         first_graph_data = [
             go.Bar(
                 name="Past Delegated",
                 x=df_past_delegated["referendum_index"],
                 y=df_past_delegated["voted_amount"],
                 marker_color="#ffffff",
-                # hovertemplate="<b>Aye Votes</b><br><br>"
-                #               + "Referendum id: %{x:.1f}<br>"
-                #               + "Turnout perc - aye: %{y:.1f}<br>"
-                #               + "Turnout perc: %{custom
-                #               data:.1f}<br>"
-                #               + "<extra></extra>",
             ),
             go.Bar(
                 name="Active Delegated",
                 x=df_active_delegated["referendum_index"],
                 y=df_active_delegated["voted_amount"],
                 marker_color="#e6007a",
-                # hovertemplate="<b>Aye Votes</b><br><br>"
-                #               + "Referendum id: %{x:.1f}<br>"
-                #               + "Turnout perc - aye: %{y:.1f}<br>"
-                #               + "Turnout perc: %{custom
-                #               data:.1f}<br>"
-                #               + "<extra></extra>",
             ),
         ]
         first_graph_layout = go.Layout(
@@ -966,12 +956,21 @@ def update_delegated_chart(account_data, delegation_data, referenda_data):
             barmode="stack",
             xaxis=dict(title="Referendum ID", linecolor="#BCCCDC"),
             yaxis=dict(title="Voted Amount with Conviction", linecolor="#021C1E"),
-            legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.8),
+            legend=dict(orientation="h", yanchor="bottom", y=-0.3, xanchor="left", x=0),
             template="plotly_dark",
             hovermode="x",
         )
         fig_first_graph = go.Figure(data=first_graph_data, layout=first_graph_layout)
         fig_first_graph.update_traces(opacity=0.75)
+        if df_active_delegated.empty and df_past_delegated.empty:
+            fig_first_graph.add_annotation(
+                x=1,
+                y=1,
+                text="No delegated votes",
+                showarrow=False,
+                yshift=10,
+                font=dict(size=16),
+            )
         return fig_first_graph
     return None
 
@@ -985,36 +984,46 @@ def update_delegated_chart(account_data, delegation_data, referenda_data):
 def voter_type_barchart(account_data):
     if account_data:
         df_account = pd.DataFrame(account_data)
-        df_normal = df_account[df_account["voter_type"] == "normal"]
-        df_validator = df_account[df_account["voter_type"] == "validator"]
-        df_councillor = df_account[df_account["voter_type"] == "councillor"]
+        df_normal = df_account[df_account["voter_type"] == "normal"].sort_values(
+            "referendum_index"
+        )
+        df_validator = df_account[df_account["voter_type"] == "validator"].sort_values(
+            "referendum_index"
+        )
+        df_councillor = df_account[
+            df_account["voter_type"] == "councillor"
+        ].sort_values("referendum_index")
         df_councillor_validator = df_account[
             df_account["voter_type"] == "validator + councillor"
-        ]
+        ].sort_values("referendum_index")
         first_graph_data = [
             go.Scatter(
                 name="Normal Votes",
                 x=df_normal["referendum_index"],
                 y=df_normal["voter_type"],
-                marker_color="#e6007a",
+                marker_color=voter_type_colors[0],
+                mode="markers",
             ),
             go.Scatter(
                 name="Validator Votes",
                 x=df_validator["referendum_index"],
                 y=df_validator["voter_type"],
-                marker_color="#e6007a",
+                marker_color=voter_type_colors[1],
+                mode="markers",
             ),
             go.Scatter(
                 name="Councillor Votes",
                 x=df_councillor["referendum_index"],
                 y=df_councillor["voter_type"],
-                marker_color="#e6007a",
+                marker_color=voter_type_colors[2],
+                mode="markers",
             ),
             go.Scatter(
                 name="Councillor + Validator Votes",
                 x=df_councillor_validator["referendum_index"],
                 y=df_councillor_validator["voter_type"],
-                marker_color="#e6007a",
+                marker_color=voter_type_colors[3],
+                mode="markers",
             ),
         ]
         first_graph_layout = go.Layout(
@@ -1023,7 +1032,7 @@ def voter_type_barchart(account_data):
             plot_bgcolor="#161a28",
             xaxis=dict(title="Referendum ID", linecolor="#BCCCDC"),
             yaxis=dict(title="Voter Type", linecolor="#021C1E"),
-            legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.8),
+            legend=dict(orientation="h", yanchor="bottom", y=-0.3, xanchor="left", x=0),
             template="plotly_dark",
             hovermode="x",
         )
@@ -1037,7 +1046,7 @@ def voter_type_barchart(account_data):
     Output("quiz-correctness-table", "children"),
     inputs=[Input("specific-account-data", "data")],
 )
-def create_top_5_delegtation_table(account_data):
+def create_quiz_correctness_table(account_data):
     df = pd.DataFrame(account_data)
     df = df[df["correct_answers_count"].notnull()]
     if not df.empty:
@@ -1076,5 +1085,5 @@ def create_top_5_delegtation_table(account_data):
             style_table={"height": "350px", "overflowY": "auto"},
         )
     else:
-        my_table = None
+        my_table=html.P("No quizzes attended.")
     return my_table
