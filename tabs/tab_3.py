@@ -144,6 +144,14 @@ def build_tab_3():
         ),
         dcc.Store(id="specific-account-data", data=[], storage_type="memory"),
         dcc.Store(id="delegation-data", data=[], storage_type="memory"),
+        html.Footer(
+            [
+                html.Div(
+                    "Proof of Chaos © 2022  |  supported by the Kusama treasury  |  powered by subsquid",
+                    id="footer-text",
+                ),
+            ]
+        ),
     ]
 
 
@@ -879,7 +887,7 @@ def update_delegate_to_chart(account_data, delegation_data, referenda_data):
         )
         fig_first_graph = go.Figure(data=first_graph_data, layout=first_graph_layout)
         fig_first_graph.update_traces(opacity=0.75)
-        if df_active_delegate_to.empty and df_active_delegate_to.empty:
+        if df_past_delegate_to.empty and df_active_delegate_to.empty:
             fig_first_graph.add_annotation(
                 x=1,
                 y=1,

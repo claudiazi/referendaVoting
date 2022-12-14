@@ -696,3 +696,9 @@ body {
 .h2 .small_card_body #pa-desctiption {
   font-size:12px !important;
 }
+
+#footer-text {
+  margin: .5rem;
+  font-size: 14px;
+  color: #4b5460;
+}

@@ -531,6 +531,14 @@ def build_tab_1():
                 ),
             ],
         ),
+        html.Div(className="twelve columns", children=[html.Br()]),
+        html.Footer(
+            [
+                html.Div(
+                    "Proof of Chaos © 2022  |  supported by the Kusama treasury  |  powered by subsquid",
+                    id="footer-text"),
+            ]
+        ),
     ]
 
 

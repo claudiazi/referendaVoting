@@ -141,6 +141,14 @@ def build_tab_2():
                     data=[],
                     storage_type="memory",
                 ),
+                html.Footer(
+                    [
+                        html.Div(
+                            "Proof of Chaos © 2022  |  supported by the Kusama treasury  |  powered by subsquid",
+                            id="footer-text",
+                        ),
+                    ]
+                ),
             ],
         )
     ]
@@ -321,7 +329,7 @@ def build_charts():
                 ),
                 html.Div(className="twelve columns", children=[html.Br()]),
             ],
-        )
+        ),
     ]
 
 
