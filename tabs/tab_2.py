@@ -809,7 +809,7 @@ def cum_voted_amount_chart(votes_data):
             barmode="stack",
             xaxis=dict(title="Timestamp", linecolor="#BCCCDC"),
             yaxis=dict(title="Voted Amount with Conviction", linecolor="#021C1E"),
-            legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.8),
+            legend=dict(orientation="h", yanchor="bottom", y=-0.3, xanchor="left", x=0),
             template="plotly_dark",
             hovermode="x",
         )
