@@ -702,3 +702,49 @@ body {
   font-size: 14px;
   color: #4b5460;
 }
+
+.logo-footer{
+  text-align:center;
+  margin:30px auto
+}
+
+.logo-footer .logo-footer-centering{
+  display:inline-block
+}
+
+.logo-footer .logo-footer-centering .logo-footer-container{
+  display:grid;
+  grid-template-columns:max-content max-content max-content;
+  justify-content:center;
+  margin:auto;
+  text-decoration:none
+}
+
+.logo-footer-centering .logo-footer-container h4{
+  font-size:14px;
+  font-weight:400;
+  color:#4b5460;
+}
+
+.logo-footer-centering .logo-footer-container #proofofchaos-icon{
+  padding-left:9px;
+  padding-right:7px
+}
+
+#proofofchaos-icon{
+    padding: 5px;
+    width: 150px;
+}
+
+#kusama-icon{
+    padding: 5px;
+    width: 80px;
+}
+
+.logo-footer .logo-footer-centering .logo-footer-container #appsilon-text{
+  filter:invert(100%)
+}
+
+.logo-footer .logo-footer-centering .logo-footer-container .footer-element{
+  margin:auto
+}

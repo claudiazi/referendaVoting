@@ -145,12 +145,57 @@ def build_tab_3():
         dcc.Store(id="specific-account-data", data=[], storage_type="memory"),
         dcc.Store(id="delegation-data", data=[], storage_type="memory"),
         html.Footer(
-            [
-                html.Div(
-                    "Proof of Chaos © 2022  |  supported by the Kusama treasury  |  powered by subsquid",
-                    id="footer-text",
+            className="logo-footer twelve columns",
+            children=[
+                html.Footer(
+                    className="logo-footer-centering",
+                    children=[
+                        html.A(
+                            href="https://www.proofofchaos.app/",
+                            target="_blank",
+                            className="logo-footer-container",
+                            children=[
+                                html.H4(
+                                    children=["Proof of Chaos © 2022"],
+                                    className="footer-element",
+                                ),
+                                html.Img(
+                                    src="assets/proofofchaos.png",
+                                    id="proofofchaos-icon",
+                                    className="footer-element",
+                                ),
+                            ],
+                        ),
+                        html.A(
+                            href="https://kusama.polkassembly.io/treasury-proposals",
+                            target="_blank",
+                            className="logo-footer-container",
+                            children=[
+                                html.H4(
+                                    children=["Supported by "],
+                                    className="footer-element",
+                                ),
+                                html.Img(
+                                    src="assets/kusama.png",
+                                    id="kusama-icon",
+                                    className="footer-element",
+                                ),
+                            ],
+                        ),
+                        html.A(
+                            href="https://appsilon.com/",
+                            target="_blank",
+                            className="logo-footer-container",
+                            children=[
+                                html.H4(
+                                    children=["Powered by subsquid"],
+                                    className="footer-element",
+                                ),
+                            ],
+                        ),
+                    ],
                 ),
-            ]
+            ],
         ),
     ]
 
