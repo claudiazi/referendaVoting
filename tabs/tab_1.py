@@ -544,7 +544,7 @@ def build_tab_1():
                             className="logo-footer-container",
                             children=[
                                 html.H4(
-                                    children=["Build by "],
+                                    children=["Built by "],
                                     className="footer-element",
                                 ),
                                 html.Img(
@@ -560,7 +560,7 @@ def build_tab_1():
                             className="logo-footer-container",
                             children=[
                                 html.H4(
-                                    children=["Founded by "],
+                                    children=["Funded by "],
                                     className="footer-element",
                                 ),
                                 html.Img(
