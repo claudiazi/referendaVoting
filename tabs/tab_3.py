@@ -875,22 +875,23 @@ def update_delegate_to_chart(account_data, delegation_data, referenda_data):
         df_delegate_to = df_delegate_to.merge(
             df_referenda, how="inner", on="referendum_index"
         )
-        df_past_delegate_to = df_delegate_to[
+        df_delegate_to = df_delegate_to[
             (
                 (
-                    df_delegate_to["not_passed_at"]
-                    > df_delegate_to["delegation_started_at"]
+                    df_delegate_to["created_at"]
+                    >= df_delegate_to["delegation_started_at"]
                 )
-                & (
-                    df_delegate_to["not_passed_at"]
-                    < df_delegate_to["delegation_ended_at"]
+                & (df_delegate_to["delegation_ended_at"].isnull())
+                | (
+                    df_delegate_to["created_at"]
+                    >= df_delegate_to["delegation_started_at"]
                 )
+                & (df_delegate_to["ended_at"] <= df_delegate_to["delegation_ended_at"])
             )
-            | (
-                (df_delegate_to["passed_at"] > df_delegate_to["delegation_started_at"])
-                & (df_delegate_to["passed_at"] < df_delegate_to["delegation_ended_at"])
-            )
-            | (df_delegate_to["delegation_ended_at"].isnull())
+        ]
+
+        df_past_delegate_to = df_delegate_to[
+            df_delegate_to["delegation_ended_at"].notnull()
         ]
         df_past_delegate_to = (
             df_past_delegate_to.groupby("referendum_index")["voted_amount"]
@@ -964,17 +965,21 @@ def update_delegated_chart(account_data, delegation_data, referenda_data):
         df_delegated = df_delegated.merge(
             df_referenda, how="inner", on="referendum_index"
         )
-        df_past_delegated = df_delegated[
+        df_delegated = df_delegated[
             (
-                (df_delegated["not_passed_at"] > df_delegated["delegation_started_at"])
-                & (df_delegated["not_passed_at"] < df_delegated["delegation_ended_at"])
+                (
+                    df_delegated["created_at"]
+                    >= df_delegated["delegation_started_at"]
+                )
+                & (df_delegated["delegation_ended_at"].isnull())
+                | (
+                    df_delegated["created_at"]
+                    >= df_delegated["delegation_started_at"]
+                )
+                & (df_delegated["ended_at"] <= df_delegated["delegation_ended_at"])
             )
-            | (
-                (df_delegated["passed_at"] > df_delegated["delegation_started_at"])
-                & (df_delegated["passed_at"] < df_delegated["delegation_ended_at"])
-            )
-            | (df_delegated["delegation_ended_at"].isnull())
         ]
+        df_past_delegated = df_delegated[df_delegated["delegation_ended_at"].notnull()]
         df_past_delegated = (
             df_past_delegated.groupby("referendum_index")["voted_amount"]
             .sum()
