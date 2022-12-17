@@ -166,8 +166,11 @@ def load_referenda_stats():
                         voted_amount_aye
                         voted_amount_nay
                         voted_amount_total
-                        voted_amount_direct
-                        voted_amount_delegated
+                        voted_amount_with_conviction_aye
+                        voted_amount_with_conviction_nay
+                        voted_amount_with_conviction_total
+                        voted_amount_with_conviction_direct
+                        voted_amount_with_conviction_delegated
                         total_issuance
                         turnout_aye_perc
                         turnout_nay_perc
@@ -202,9 +205,9 @@ def load_referenda_stats():
                         count_validator
                         count_councillor
                         count_normal
-                        voted_amount_validator
-                        voted_amount_councillor
-                        voted_amount_normal
+                        voted_amount_with_conviction_validator
+                        voted_amount_with_conviction_councillor
+                        voted_amount_with_conviction_normal
                      }}
                 }}"""
     print("start to load")

@@ -656,19 +656,19 @@ def create_cross_filters(full_referenda_data):
 def create_live_data_table(ongoing_referenda_data):
     df = pd.DataFrame(ongoing_referenda_data)
     print(f"live data updated {time.time()}")
-    df["voted_amount_aye_perc"] = (
-        df["voted_amount_aye"] / df["voted_amount_total"] * 100
+    df["voted_amount_with_conviction_aye_perc"] = (
+        df["voted_amount_with_conviction_aye"] / df["voted_amount_with_conviction_total"] * 100
     )
-    df["voted_amount_nay_perc"] = (
-        df["voted_amount_nay"] / df["voted_amount_total"] * 100
+    df["voted_amount_with_conviction_nay_perc"] = (
+        df["voted_amount_with_conviction_nay"] / df["voted_amount_with_conviction_total"] * 100
     )
     df["turnout_total_perc"] = df["turnout_total_perc"].apply(lambda x: f"{x:.2f} %")
-    df["voted_amount_aye"] = df.apply(
-        lambda x: f"{x['voted_amount_aye']:.2f} ({x['voted_amount_aye_perc']:.2f} %)",
+    df["voted_amount_with_conviction_aye"] = df.apply(
+        lambda x: f"{x['voted_amount_with_conviction_aye']:.2f} ({x['voted_amount_with_conviction_aye_perc']:.2f} %)",
         axis=1,
     )
-    df["voted_amount_nay"] = df.apply(
-        lambda x: f"{x['voted_amount_nay']:.2f} ({x['voted_amount_nay_perc']:.2f} %)",
+    df["voted_amount_with_conviction_nay"] = df.apply(
+        lambda x: f"{x['voted_amount_with_conviction_nay']:.2f} ({x['voted_amount_with_conviction_nay_perc']:.2f} %)",
         axis=1,
     )
     df = df[
@@ -676,8 +676,8 @@ def create_live_data_table(ongoing_referenda_data):
             "referendum_index",
             "section",
             "turnout_total_perc",
-            "voted_amount_aye",
-            "voted_amount_nay",
+            "voted_amount_with_conviction_aye",
+            "voted_amount_with_conviction_nay",
         ]
     ]
     my_table = dash_table.DataTable(
@@ -1148,11 +1148,11 @@ def update_delegation_chart(
             go.Scatter(
                 name="Direct Votes",
                 x=df_referenda["referendum_index"],
-                y=df_referenda["voted_amount_direct"],
+                y=df_referenda["voted_amount_with_conviction_direct"],
                 marker_color="#ffffff",
                 fill="tozeroy",
                 stackgroup="one",  # define stack group
-                customdata=df_referenda["voted_amount_total"],
+                customdata=df_referenda["voted_amount_with_conviction_total"],
                 hovertemplate="<b>Direct Votes</b><br><br>"
                 + "Referendum: %{x:.0f}<br>"
                 + "Voted amount - Direct: %{y:.0f}<br>"
@@ -1162,8 +1162,8 @@ def update_delegation_chart(
             go.Scatter(
                 name="Delegated Votes",
                 x=df_referenda["referendum_index"],
-                y=df_referenda["voted_amount_delegated"],
-                customdata=df_referenda["voted_amount_total"],
+                y=df_referenda["voted_amount_with_conviction_delegated"],
+                customdata=df_referenda["voted_amount_with_conviction_total"],
                 marker_color="#e6007a",
                 fill="tozeroy",
                 stackgroup="one",  # define stack group
@@ -1266,9 +1266,9 @@ def update_voter_type_chart(
             go.Bar(
                 name="Validator Votes",
                 x=df_referenda["referendum_index"],
-                y=df_referenda["voted_amount_validator"],
+                y=df_referenda["voted_amount_with_conviction_validator"],
                 marker_color="#e6007a",
-                customdata=df_referenda["voted_amount_total"],
+                customdata=df_referenda["voted_amount_with_conviction_total"],
                 hovertemplate="<b>Validator Votes</b><br><br>"
                 + "Referendum: %{x:.0f}<br>"
                 + "Voted amount - validator: %{y:.0f}<br>"
@@ -1279,8 +1279,8 @@ def update_voter_type_chart(
             go.Bar(
                 name="Councillor Votes",
                 x=df_referenda["referendum_index"],
-                y=df_referenda["voted_amount_councillor"],
-                customdata=df_referenda["voted_amount_total"],
+                y=df_referenda["voted_amount_with_conviction_councillor"],
+                customdata=df_referenda["voted_amount_with_conviction_total"],
                 marker_color="#ffb3e0",
                 hovertemplate="<b>Councillor Votes</b><br><br>"
                 + "Referendum: %{x:.0f}<br>"
@@ -1292,8 +1292,8 @@ def update_voter_type_chart(
             go.Bar(
                 name="Normal Votes",
                 x=df_referenda["referendum_index"],
-                y=df_referenda["voted_amount_normal"],
-                customdata=df_referenda["voted_amount_total"],
+                y=df_referenda["voted_amount_with_conviction_normal"],
+                customdata=df_referenda["voted_amount_with_conviction_total"],
                 marker_color="#ffffff",
                 hovertemplate="<b>Normal Votes</b><br><br>"
                 + "Referendum: %{x:.0f}<br>"

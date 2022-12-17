@@ -933,18 +933,18 @@ def voted_amount_distribution_chart(referendum_data):
 def aye_nay_chart(referendum_data):
     if referendum_data:
         df_referenda = pd.DataFrame(referendum_data)
-        df_referenda["voted_amount_aye_perc"] = round(
-            df_referenda["voted_amount_aye"] / df_referenda["voted_amount_total"] * 100,
+        df_referenda["voted_amount_with_conviction_aye_perc"] = round(
+            df_referenda["voted_amount_with_conviction_aye"] / df_referenda["voted_amount_with_conviction_total"] * 100,
             2,
         )
-        df_referenda["voted_amount_nay_perc"] = round(
-            df_referenda["voted_amount_nay"] / df_referenda["voted_amount_total"] * 100,
+        df_referenda["voted_amount_with_conviction_nay_perc"] = round(
+            df_referenda["voted_amount_with_conviction_nay"] / df_referenda["voted_amount_with_conviction_total"] * 100,
             2,
         )
         third_graph_data = [
             go.Bar(
                 name="Aye Votes",
-                x=df_referenda["voted_amount_aye_perc"],
+                x=df_referenda["voted_amount_with_conviction_aye_perc"],
                 y=["referendum_index"],
                 textposition="auto",
                 orientation="h",
@@ -958,7 +958,7 @@ def aye_nay_chart(referendum_data):
             ),
             go.Bar(
                 name="Aye Votes",
-                x=df_referenda["voted_amount_nay_perc"],
+                x=df_referenda["voted_amount_with_conviction_nay_perc"],
                 y=["referendum_index"],
                 textposition="auto",
                 orientation="h",
@@ -977,8 +977,8 @@ def aye_nay_chart(referendum_data):
         space = 0
         for x, category in zip(
             [
-                df_referenda["voted_amount_aye_perc"].values[0],
-                df_referenda["voted_amount_nay_perc"].values[0],
+                df_referenda["voted_amount_with_conviction_aye_perc"].values[0],
+                df_referenda["voted_amount_with_conviction_nay_perc"].values[0],
             ],
             ["Aye", "Nay"],
         ):
@@ -1032,20 +1032,20 @@ def aye_nay_chart(referendum_data):
 def aye_nay_chart(referendum_data):
     if referendum_data:
         df_referenda = pd.DataFrame(referendum_data)
-        df_referenda["voted_amount_direct_perc"] = round(
-            df_referenda["voted_amount_direct"]
+        df_referenda["voted_amount_with_conviction_direct_perc"] = round(
+            df_referenda["voted_amount_with_conviction_direct"]
             / (
-                df_referenda["voted_amount_delegated"]
-                + df_referenda["voted_amount_direct"]
+                df_referenda["voted_amount_with_conviction_delegated"]
+                + df_referenda["voted_amount_with_conviction_direct"]
             )
             * 100,
             2,
         )
-        df_referenda["voted_amount_delegated_perc"] = round(
-            df_referenda["voted_amount_delegated"]
+        df_referenda["voted_amount_with_conviction_delegated_perc"] = round(
+            df_referenda["voted_amount_with_conviction_delegated"]
             / (
-                df_referenda["voted_amount_delegated"]
-                + df_referenda["voted_amount_direct"]
+                df_referenda["voted_amount_with_conviction_delegated"]
+                + df_referenda["voted_amount_with_conviction_direct"]
             )
             * 100,
             2,
@@ -1053,7 +1053,7 @@ def aye_nay_chart(referendum_data):
         third_graph_data = [
             go.Bar(
                 name="Direct Votes",
-                x=df_referenda["voted_amount_direct_perc"],
+                x=df_referenda["voted_amount_with_conviction_direct_perc"],
                 y=["referendum_index"],
                 textposition="inside",
                 orientation="h",
@@ -1067,7 +1067,7 @@ def aye_nay_chart(referendum_data):
             ),
             go.Bar(
                 name="Delegated Votes",
-                x=df_referenda["voted_amount_delegated_perc"],
+                x=df_referenda["voted_amount_with_conviction_delegated_perc"],
                 y=["referendum_index"],
                 textposition="inside",
                 orientation="h",
@@ -1085,8 +1085,8 @@ def aye_nay_chart(referendum_data):
         space = 0
         for x, category in zip(
             [
-                df_referenda["voted_amount_direct_perc"].values[0],
-                df_referenda["voted_amount_delegated_perc"].values[0],
+                df_referenda["voted_amount_with_conviction_direct_perc"].values[0],
+                df_referenda["voted_amount_with_conviction_delegated_perc"].values[0],
             ],
             ["Direct", "Delegated"],
         ):
@@ -1140,32 +1140,32 @@ def aye_nay_chart(referendum_data):
 def aye_nay_chart(referendum_data):
     if referendum_data:
         df_referenda = pd.DataFrame(referendum_data)
-        df_referenda["voted_amount_validator_perc"] = round(
-            df_referenda["voted_amount_validator"]
+        df_referenda["voted_amount_with_conviction_validator_perc"] = round(
+            df_referenda["voted_amount_with_conviction_validator"]
             / (
-                df_referenda["voted_amount_validator"]
-                + df_referenda["voted_amount_normal"]
-                + df_referenda["voted_amount_councillor"]
+                df_referenda["voted_amount_with_conviction_validator"]
+                + df_referenda["voted_amount_with_conviction_normal"]
+                + df_referenda["voted_amount_with_conviction_councillor"]
             )
             * 100,
             2,
         )
-        df_referenda["voted_amount_normal_perc"] = round(
-            df_referenda["voted_amount_normal"]
+        df_referenda["voted_amount_with_conviction_normal_perc"] = round(
+            df_referenda["voted_amount_with_conviction_normal"]
             / (
-                df_referenda["voted_amount_validator"]
-                + df_referenda["voted_amount_normal"]
-                + df_referenda["voted_amount_councillor"]
+                df_referenda["voted_amount_with_conviction_validator"]
+                + df_referenda["voted_amount_with_conviction_normal"]
+                + df_referenda["voted_amount_with_conviction_councillor"]
             )
             * 100,
             2,
         )
-        df_referenda["voted_amount_councillor_perc"] = round(
-            df_referenda["voted_amount_councillor"]
+        df_referenda["voted_amount_with_conviction_councillor_perc"] = round(
+            df_referenda["voted_amount_with_conviction_councillor"]
             / (
-                df_referenda["voted_amount_validator"]
-                + df_referenda["voted_amount_normal"]
-                + df_referenda["voted_amount_councillor"]
+                df_referenda["voted_amount_with_conviction_validator"]
+                + df_referenda["voted_amount_with_conviction_normal"]
+                + df_referenda["voted_amount_with_conviction_councillor"]
             )
             * 100,
             2,
@@ -1173,7 +1173,7 @@ def aye_nay_chart(referendum_data):
         third_graph_data = [
             go.Bar(
                 name="Validator Votes",
-                x=df_referenda["voted_amount_validator_perc"],
+                x=df_referenda["voted_amount_with_conviction_validator_perc"],
                 y=["referendum_index"],
                 textposition="inside",
                 orientation="h",
@@ -1187,7 +1187,7 @@ def aye_nay_chart(referendum_data):
             ),
             go.Bar(
                 name="Normal Votes",
-                x=df_referenda["voted_amount_normal_perc"],
+                x=df_referenda["voted_amount_with_conviction_normal_perc"],
                 y=["referendum_index"],
                 textposition="inside",
                 orientation="h",
@@ -1202,7 +1202,7 @@ def aye_nay_chart(referendum_data):
             ),
             go.Bar(
                 name="Councillor Votes",
-                x=df_referenda["voted_amount_councillor_perc"],
+                x=df_referenda["voted_amount_with_conviction_councillor_perc"],
                 y=["referendum_index"],
                 textposition="inside",
                 orientation="h",
@@ -1220,9 +1220,9 @@ def aye_nay_chart(referendum_data):
         space = 0
         for x, category in zip(
             [
-                df_referenda["voted_amount_validator_perc"].values[0],
-                df_referenda["voted_amount_normal_perc"].values[0],
-                df_referenda["voted_amount_councillor_perc"].values[0],
+                df_referenda["voted_amount_with_conviction_validator_perc"].values[0],
+                df_referenda["voted_amount_with_conviction_normal_perc"].values[0],
+                df_referenda["voted_amount_with_conviction_councillor_perc"].values[0],
             ],
             ["Validator", "Normal", "Councillor"],
         ):

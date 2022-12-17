@@ -899,14 +899,14 @@ def update_delegate_to_chart(account_data, delegation_data, referenda_data):
             df_delegate_to["delegation_ended_at"].notnull()
         ]
         df_past_delegate_to = (
-            df_past_delegate_to.groupby("referendum_index")["voted_amount"]
+            df_past_delegate_to.groupby("referendum_index")["voted_amount_with_conviction"]
             .sum()
             .reset_index()
             .sort_values(by="referendum_index")
         )
         df_active_delegate_to = (
             df_delegate_to[(df_delegate_to["delegation_ended_at"].isnull())]
-            .groupby("referendum_index")["voted_amount"]
+            .groupby("referendum_index")["voted_amount_with_conviction"]
             .sum()
             .reset_index()
             .sort_values(by="referendum_index")
@@ -915,13 +915,13 @@ def update_delegate_to_chart(account_data, delegation_data, referenda_data):
             go.Bar(
                 name="Past Delegate To",
                 x=df_past_delegate_to["referendum_index"],
-                y=df_past_delegate_to["voted_amount"],
+                y=df_past_delegate_to["voted_amount_with_conviction"],
                 marker_color="#ffffff",
             ),
             go.Bar(
                 name="Active Delegate To",
                 x=df_active_delegate_to["referendum_index"],
-                y=df_active_delegate_to["voted_amount"],
+                y=df_active_delegate_to["voted_amount_with_conviction"],
                 marker_color="#e6007a",
             ),
         ]
@@ -986,14 +986,14 @@ def update_delegated_chart(account_data, delegation_data, referenda_data):
         ]
         df_past_delegated = df_delegated[df_delegated["delegation_ended_at"].notnull()]
         df_past_delegated = (
-            df_past_delegated.groupby("referendum_index")["voted_amount"]
+            df_past_delegated.groupby("referendum_index")["voted_amount_with_conviction"]
             .sum()
             .reset_index()
             .sort_values(by="referendum_index")
         )
         df_active_delegated = (
             df_delegated[(df_delegated["delegation_ended_at"].isnull())]
-            .groupby("referendum_index")["voted_amount"]
+            .groupby("referendum_index")["voted_amount_with_conviction"]
             .sum()
             .reset_index()
             .sort_values(by="referendum_index")
@@ -1002,13 +1002,13 @@ def update_delegated_chart(account_data, delegation_data, referenda_data):
             go.Bar(
                 name="Past Delegated",
                 x=df_past_delegated["referendum_index"],
-                y=df_past_delegated["voted_amount"],
+                y=df_past_delegated["voted_amount_with_conviction"],
                 marker_color="#ffffff",
             ),
             go.Bar(
                 name="Active Delegated",
                 x=df_active_delegated["referendum_index"],
-                y=df_active_delegated["voted_amount"],
+                y=df_active_delegated["voted_amount_with_conviction"],
                 marker_color="#e6007a",
             ),
         ]
