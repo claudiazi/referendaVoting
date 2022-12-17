@@ -153,7 +153,7 @@ def build_tab_2():
                                     className="logo-footer-container",
                                     children=[
                                         html.H4(
-                                            children=["Build by Proof of Chaos"],
+                                            children=["Build by "],
                                             className="footer-element",
                                         ),
                                         html.Img(
@@ -180,7 +180,7 @@ def build_tab_2():
                                     ],
                                 ),
                                 html.A(
-                                    href="https://appsilon.com/",
+                                    href="https://subsquid.io/",
                                     target="_blank",
                                     className="logo-footer-container",
                                     children=[
@@ -190,7 +190,7 @@ def build_tab_2():
                                         ),
                                         html.Img(
                                             src="assets/subsquid.png",
-                                            id="kusama-icon",
+                                            id="subsquid-icon",
                                             className="footer-element",
                                         ),
                                     ],

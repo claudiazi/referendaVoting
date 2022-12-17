@@ -741,6 +741,11 @@ body {
     width: 80px;
 }
 
+#subsquid-icon{
+    padding: 5px;
+    width: 120px;
+}
+
 .logo-footer .logo-footer-centering .logo-footer-container #appsilon-text{
   filter:invert(100%)
 }
