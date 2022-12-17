@@ -156,11 +156,11 @@ def build_tab_3():
                             className="logo-footer-container",
                             children=[
                                 html.H4(
-                                    children=["Proof of Chaos © 2022"],
+                                    children=["Build by Proof of Chaos"],
                                     className="footer-element",
                                 ),
                                 html.Img(
-                                    src="assets/proofofchaos.png",
+                                    src="assets/proofofchaos_white.png",
                                     id="proofofchaos-icon",
                                     className="footer-element",
                                 ),
@@ -172,7 +172,7 @@ def build_tab_3():
                             className="logo-footer-container",
                             children=[
                                 html.H4(
-                                    children=["Supported by "],
+                                    children=["Founded by "],
                                     className="footer-element",
                                 ),
                                 html.Img(
@@ -188,7 +188,12 @@ def build_tab_3():
                             className="logo-footer-container",
                             children=[
                                 html.H4(
-                                    children=["Powered by subsquid"],
+                                    children=["Powered by"],
+                                    className="footer-element",
+                                ),
+                                html.Img(
+                                    src="assets/subsquid.png",
+                                    id="kusama-icon",
                                     className="footer-element",
                                 ),
                             ],
