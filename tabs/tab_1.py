@@ -153,7 +153,7 @@ def build_tab_1():
                                 daq.ToggleSwitch(
                                     id="turn_out_chart_selection",
                                     className="toggle_switch",
-                                    label=["Absolute", "Percentage"],
+                                    label=["Voted amount", "Turnout"],
                                     value=False,
                                 )
                             ],
@@ -860,32 +860,34 @@ def update_bar_chart(
             go.Scatter(
                 name="Aye Votes",
                 x=df_referenda["referendum_index"],
-                y=df_referenda["voted_amount_aye"],
+                y=df_referenda["voted_amount_with_conviction_aye"],
                 marker_color="#ffffff",
                 fill="tozeroy",
-                customdata=df_referenda["voted_amount_total"],
+                customdata=df_referenda["voted_amount_with_conviction_total"],
                 stackgroup="one",  # define stack group
                 hovertemplate="<b>Aye Votes</b><br><br>"
                 + "Referendum: %{x:.0f}<br>"
-                + "Aye amount: %{y:.1f}<br>"
+                + "Aye amount with conviction: %{y:.1f}<br>"
                 + "Turnout: %{customdata:.2f}<br>"
                 + "<extra></extra>",
             ),
             go.Scatter(
                 name="Nay Votes",
                 x=df_referenda["referendum_index"],
-                y=df_referenda["voted_amount_nay"],
-                customdata=df_referenda["voted_amount_total"],
+                y=df_referenda["voted_amount_with_conviction_nay"],
+                customdata=df_referenda["voted_amount_with_conviction_total"],
                 marker_color="#e6007a",
                 fill="tonexty",
                 stackgroup="one",  # define stack group
                 hovertemplate="<b>Nay Votes</b><br><br>"
                 + "Referendum: %{x:.0f}<br>"
-                + "Nay Amount: %{y:.1f}<br>"
+                + "Nay Amount with conviction: %{y:.1f}<br>"
                 + "Turnout: %{customdata:.2f}<br>"
                 + "<extra></extra>",
             ),
         ]
+        title = "Voted Amount"
+        yaxis_name = "Voted Amount"
     else:
         second_graph_data = [
             go.Bar(
@@ -894,11 +896,11 @@ def update_bar_chart(
                 y=df_referenda["turnout_aye_perc"],
                 marker_color="#ffffff",
                 opacity=0.8,
-                customdata=df_referenda["turnout_total_perc"],
+                customdata=df_referenda["voted_amount_aye"],
                 hovertemplate="<b>Aye Votes</b><br><br>"
                 + "Referendum id: %{x:.0f}<br>"
-                + "Turnout perc - aye: %{y:.2f}<br>"
-                + "Turnout perc: %{customdata:.2f}<br>"
+                + "Turnout - aye: %{y:.2f} %<br>"
+                + "Voted amount without conviction - aye: %{customdata:.2f}<br>"
                 + "<extra></extra>",
             ),
             go.Bar(
@@ -906,23 +908,25 @@ def update_bar_chart(
                 x=df_referenda["referendum_index"],
                 y=df_referenda["turnout_nay_perc"],
                 opacity=0.8,
-                customdata=df_referenda["turnout_total_perc"],
+                customdata=df_referenda["voted_amount_nay"],
                 marker_color="#e6007a",
                 hovertemplate="<b>Nay Votes</b><br><br>"
                 + "Referendum id: %{x:.0f}<br>"
-                + "Turnout perc - nay: %{y:.2f}<br>"
-                + "Turnout perc: %{customdata:.2f}<br>"
+                + "Turnout - nay: %{y:.2f} %<br>"
+                + "Voted amount without conviction - nay: %{customdata:.2f}<br>"
                 + "<extra></extra>",
             ),
         ]
+        title = "Turnout"
+        yaxis_name = "Turnout (% of total issued Kusama)"
 
     second_graph_layout = go.Layout(
-        title="<b>Turnout</b>",
+        title=f"<b>{title}</b>",
         paper_bgcolor="#161a28",
         plot_bgcolor="#161a28",
         barmode="stack",
         xaxis=dict(title="Referendum ID", linecolor="#BCCCDC"),
-        yaxis=dict(title="Turnout (% of total issued Kusama)", linecolor="#021C1E"),
+        yaxis=dict(title=yaxis_name, linecolor="#021C1E"),
         legend=dict(orientation="h", yanchor="bottom", y=-0.3, xanchor="left", x=0),
         template="plotly_dark",
         hovermode="x",
