@@ -845,7 +845,7 @@ def update_vote_timing_distribution(account_data):
             )
         ]
         second_graph_layout = go.Layout(
-            title="<b>When Wallets Voted</b>",
+            title="<b>When Wallet Voted</b>",
             paper_bgcolor="#161a28",
             plot_bgcolor="#161a28",
             barmode="stack",
