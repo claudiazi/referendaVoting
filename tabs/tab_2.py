@@ -804,7 +804,7 @@ def update_pa_description(referendum_pa_data):
                         is_open=False,
                     ),
                     dbc.Button(
-                        "Read more",
+                        children="Read more",
                         id="collapse-button",
                         className="mb-3 click-button",
                         n_clicks=0,
@@ -817,13 +817,13 @@ def update_pa_description(referendum_pa_data):
 
 
 @app.callback(
-    output=Output("collapse", "is_open"),
-    inputs=[Input("collapse-button", "n_clicks"), Input("collapse", "is_open")],
+    output=[Output("collapse", "is_open"), Output("collapse-button", "children")],
+    inputs=[Input("collapse-button", "n_clicks")],
 )
-def toggle_collapse(n, is_open):
-    if n:
-        return not is_open
-    return is_open
+def toggle_collapse(n):
+    if n % 2 == 0:
+        return False, "Read more"
+    return True, "Read less"
 
 
 @app.callback(
