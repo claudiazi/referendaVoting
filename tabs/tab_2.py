@@ -1,88 +1,20 @@
 import datetime
-import json
-import time
 
 import dash_bootstrap_components as dbc
 import pandas as pd
 import plotly.graph_objs as go
-import requests
 from dash import dash_table
 from dash import dcc
 from dash import html
 from dash.dependencies import Input, Output
 
 from app import app
+from utils.data_preparation import (
+    load_refereundum_votes,
+    load_specific_referendum_stats,
+    load_pa_description,
+)
 from utils.plotting import blank_figure
-
-subsquid_endpoint = "https://squid.subsquid.io/referenda-dashboard/v/0/graphql"
-
-polkassembly_graphql_endpoint = "https://kusama.polkassembly.io/v1/graphql"
-
-
-def load_pa_description(referendum_index):
-    query = f"""query MyQuery {{
-          posts(where: {{onchain_link: {{onchain_referendum_id: {{_eq: {referendum_index}}}}}}}) {{
-            content
-            created_at
-            title
-            onchain_link {{
-                onchain_referendum_id
-            }}
-          }}
-        }}
-        """
-    print("start to load specific referedum pa description")
-    start_time = time.time()
-    pa_data = requests.post(polkassembly_graphql_endpoint, json={"query": query}).text
-    pa_data = json.loads(pa_data)
-    df_pa_description = pd.DataFrame.from_dict(pa_data["data"]["posts"])
-    print(f"finish loading referedum pa description {time.time() - start_time}")
-    return df_pa_description
-
-
-def load_refereundum_votes(referendum_index):
-    query = f"""query MyQuery {{
-                  referendumVotes(id: {referendum_index}) {{
-                    voter
-                    referendum_index
-                    timestamp
-                    cum_voted_amount_with_conviction_aye
-                    cum_voted_amount_with_conviction_nay
-                }}
-            }}
-
-        """
-    print("start to load specific referedum votes")
-    start_time = time.time()
-    votes_data = requests.post(subsquid_endpoint, json={"query": query}).text
-    votes_data = json.loads(votes_data)
-    df_votes = pd.DataFrame.from_dict(votes_data["data"]["referendumVotes"])
-    df_votes = df_votes.sort_values("timestamp")
-    print(f"finish loading referedum votes {time.time() - start_time}")
-    return df_votes
-
-
-def load_specific_referendum_stats(referendum_index):
-    query = f"""query MyQuery  {{
-                referendumStats(id: {referendum_index}) {{
-                    cum_new_accounts
-                    decision
-                    is_new_account
-                    referendum_index
-                    timestamp
-                    voted_amount_with_conviction
-                    voter
-                    delegated_to
-                   }}
-                }}"""
-    print("start to load specific referedum stats")
-    start_time = time.time()
-    referendum_data = requests.post(subsquid_endpoint, json={"query": query}).text
-    referendum_data = json.loads(referendum_data)
-    df_referendum = pd.DataFrame.from_dict(referendum_data["data"]["referendumStats"])
-    df_referendum = df_referendum.sort_values("timestamp")
-    print(f"finish loading referendum_stats {time.time() - start_time}")
-    return df_referendum
 
 
 def build_tab_2():
@@ -444,19 +376,16 @@ def build_tab2_charts(input_warning):
         return build_charts()
 
 
-# Update tenth chart
 @app.callback(
     output=Output("referendum_timeline", "figure"),
     inputs=[
         Input("specific-referenda-stats", "data"),
-        Input("tab2_charts", "children"),
     ],
 )
-def update_timeline(referenda_data, children_content):
+def update_timeline(referenda_data):
     fig_first_graph = None
     if referenda_data:
         df_referenda = pd.DataFrame(referenda_data)
-        print(df_referenda.columns)
         df_timeline = df_referenda[
             [
                 "referendum_index",
@@ -840,11 +769,6 @@ def cum_voted_amount_chart(votes_data):
                 y=df_referenda["cum_voted_amount_with_conviction_aye"],
                 mode="lines",
                 marker_color="#ffffff",
-                # hovertemplate="<b>Aye Votes</b><br><br>"
-                # + "Referendum id: %{x:.0f}<br>"
-                # + "Aye amount: %{y:.0f}<br>"
-                # + "Turnout: %{customdata:.0f}<br>"
-                # + "<extra></extra>",
             ),
             go.Scatter(
                 name="Nay Votes",
@@ -852,11 +776,6 @@ def cum_voted_amount_chart(votes_data):
                 y=df_referenda["cum_voted_amount_with_conviction_nay"],
                 mode="lines",
                 marker_color="#e6007a",
-                # hovertemplate="<b>Nay Votes</b><br><br>"
-                # + "Referendum id: %{x:.0f}<br>"
-                # + "Nay Amount: %{y:.0f}<br>"
-                # + "Turnout: %{customdata:.0f}<br>"
-                # + "<extra></extra>",
             ),
         ]
 
@@ -891,22 +810,12 @@ def voted_amount_distribution_chart(referendum_data):
                 x=df_aye["voted_amount_with_conviction"],
                 boxpoints=False,
                 marker_color="#ffffff",
-                # hovertemplate="<b>Aye Votes</b><br><br>"
-                # + "Referendum id: %{x:.0f}<br>"
-                # + "Aye amount: %{y:.0f}<br>"
-                # + "Turnout: %{customdata:.0f}<br>"
-                # + "<extra></extra>",
             ),
             go.Box(
                 name="Nay Votes",
                 x=df_nay["voted_amount_with_conviction"],
                 boxpoints=False,
                 marker_color="#e6007a",
-                # hovertemplate="<b>Nay Votes</b><br><br>"
-                # + "Referendum id: %{x:.0f}<br>"
-                # + "Nay Amount: %{y:.0f}<br>"
-                # + "Turnout: %{customdata:.0f}<br>"
-                # + "<extra></extra>",
             ),
         ]
 
@@ -934,11 +843,15 @@ def aye_nay_chart(referendum_data):
     if referendum_data:
         df_referenda = pd.DataFrame(referendum_data)
         df_referenda["voted_amount_with_conviction_aye_perc"] = round(
-            df_referenda["voted_amount_with_conviction_aye"] / df_referenda["voted_amount_with_conviction_total"] * 100,
+            df_referenda["voted_amount_with_conviction_aye"]
+            / df_referenda["voted_amount_with_conviction_total"]
+            * 100,
             2,
         )
         df_referenda["voted_amount_with_conviction_nay_perc"] = round(
-            df_referenda["voted_amount_with_conviction_nay"] / df_referenda["voted_amount_with_conviction_total"] * 100,
+            df_referenda["voted_amount_with_conviction_nay"]
+            / df_referenda["voted_amount_with_conviction_total"]
+            * 100,
             2,
         )
         third_graph_data = [
@@ -950,11 +863,6 @@ def aye_nay_chart(referendum_data):
                 orientation="h",
                 marker_color="#ffffff",
                 texttemplate="<b>%{x} %</b>",
-                # hovertemplate="<b>Aye Votes</b><br><br>"
-                # + "Referendum id: %{x:.0f}<br>"
-                # + "Aye amount: %{y:.0f}<br>"
-                # + "Turnout: %{customdata:.0f}<br>"
-                # + "<extra></extra>",
             ),
             go.Bar(
                 name="Aye Votes",
@@ -966,11 +874,6 @@ def aye_nay_chart(referendum_data):
                 texttemplate="<b>%{x} %</b>",
                 textangle=0,
                 textfont_color="white",
-                # hovertemplate="<b>Aye Votes</b><br><br>"
-                # + "Referendum id: %{x:.0f}<br>"
-                # + "Aye amount: %{y:.0f}<br>"
-                # + "Turnout: %{customdata:.0f}<br>"
-                # + "<extra></extra>",
             ),
         ]
         annotations = []
@@ -1059,11 +962,6 @@ def aye_nay_chart(referendum_data):
                 orientation="h",
                 marker_color="#ffffff",
                 texttemplate="<b>%{x} %</b>",
-                # hovertemplate="<b>Aye Votes</b><br><br>"
-                # + "Referendum id: %{x:.0f}<br>"
-                # + "Aye amount: %{y:.0f}<br>"
-                # + "Turnout: %{customdata:.0f}<br>"
-                # + "<extra></extra>",
             ),
             go.Bar(
                 name="Delegated Votes",
@@ -1074,11 +972,6 @@ def aye_nay_chart(referendum_data):
                 marker_color="#e6007a",
                 texttemplate="<b>%{x} %</b>",
                 textangle=0,
-                # hovertemplate="<b>Aye Votes</b><br><br>"
-                # + "Referendum id: %{x:.0f}<br>"
-                # + "Aye amount: %{y:.0f}<br>"
-                # + "Turnout: %{customdata:.0f}<br>"
-                # + "<extra></extra>",
             ),
         ]
         annotations = []
@@ -1194,11 +1087,6 @@ def aye_nay_chart(referendum_data):
                 marker_color="#ffffff",
                 texttemplate="<b>%{x} %</b>",
                 textangle=0,
-                # hovertemplate="<b>Aye Votes</b><br><br>"
-                # + "Referendum id: %{x:.0f}<br>"
-                # + "Aye amount: %{y:.0f}<br>"
-                # + "Turnout: %{customdata:.0f}<br>"
-                # + "<extra></extra>",
             ),
             go.Bar(
                 name="Councillor Votes",
@@ -1209,11 +1097,6 @@ def aye_nay_chart(referendum_data):
                 marker_color="#ffb3e0",
                 texttemplate="<b>%{x} %</b>",
                 textangle=0,
-                # hovertemplate="<b>Aye Votes</b><br><br>"
-                # + "Referendum id: %{x:.0f}<br>"
-                # + "Aye amount: %{y:.0f}<br>"
-                # + "Turnout: %{customdata:.0f}<br>"
-                # + "<extra></extra>",
             ),
         ]
         annotations = []
@@ -1299,8 +1182,6 @@ def create_top_5_delegtation_table(referendum_data_data):
                     "color": "#e6007a",
                 }
             ]
-            # + data_perc_bars(dff, "voted_amount_aye")
-            # + data_perc_bars(dff, "voted_amount_nay")
         ),
         style_cell={
             "width": "100px",
@@ -1313,51 +1194,5 @@ def create_top_5_delegtation_table(referendum_data_data):
         },
         style_header={"backgroundColor": "#161a28", "color": "darkgray"},
         style_data={"backgroundColor": "#161a28", "color": "white"},
-        #   style_table={"height": "200px", "overflowY": "auto"},
-        #    css=[
-        #        {"selector": ".dash-spreadsheet tr th", "rule": "height: 30px;"},
-        #        # set height of header
-        #        {"selector": ".dash-spreadsheet tr td", "rule": "height: 25px;"},
-        #        # set height of body rows
-        #    ]
     )
     return my_table
-
-
-# Update x chart
-# @app.callback(
-#     Output("quiz_correctness_piechart", "figure"),
-#     [
-#         Input("specific-referenda-stats", "data"),
-#     ],
-# )
-# def update_pie_chart(
-#     referenda_data
-# ):
-#     df_referenda = pd.DataFrame(referenda_data)
-#     df_referenda['count_1_question_correct_perc'] = df_referenda['count_1_question_correct_perc'] /
-#     x_graph_data = [
-#         go.Pie(
-#             labels=df_method_group_count.index,
-#             values=df_method_group_count.values,
-#             marker=dict(colors=color_scale),
-#             textposition="inside",
-#             opacity=0.8,
-#             # hovertemplate="Referendum id: %{x:.0f}<br>"
-#             # + "Group count: %{y:.0f}<br>"
-#             # + "Total: %{customdata:.0f}<br>"
-#             # + "<extra></extra>",
-#         )
-#     ]
-#     x_graph_layout = go.Layout(
-#         title="<b>Method</b>",
-#         paper_bgcolor="#161a28",
-#         plot_bgcolor="#161a28",
-#         legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.8),
-#         template="plotly_dark",
-#         hovermode="x",
-#         autosize=True,
-#         clickmode="event+select",
-#     )
-#     fig_x_graph = go.Figure(data=x_graph_data, layout=x_graph_layout)
-#     return fig_x_graph

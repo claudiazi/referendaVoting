@@ -1,12 +1,8 @@
 pandas
-matplotlib
-seaborn
 dash
-pymongo[tls,srv]
 plotly
 dash_daq
 dash_bootstrap_components
 substrate-interface
-pandasql
 Flask-Caching
 gunicorn

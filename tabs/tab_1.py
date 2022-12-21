@@ -657,10 +657,14 @@ def create_live_data_table(ongoing_referenda_data):
     df = pd.DataFrame(ongoing_referenda_data)
     print(f"live data updated {time.time()}")
     df["voted_amount_with_conviction_aye_perc"] = (
-        df["voted_amount_with_conviction_aye"] / df["voted_amount_with_conviction_total"] * 100
+        df["voted_amount_with_conviction_aye"]
+        / df["voted_amount_with_conviction_total"]
+        * 100
     )
     df["voted_amount_with_conviction_nay_perc"] = (
-        df["voted_amount_with_conviction_nay"] / df["voted_amount_with_conviction_total"] * 100
+        df["voted_amount_with_conviction_nay"]
+        / df["voted_amount_with_conviction_total"]
+        * 100
     )
     df["turnout_total_perc"] = df["turnout_total_perc"].apply(lambda x: f"{x:.2f} %")
     df["voted_amount_with_conviction_aye"] = df.apply(
@@ -694,8 +698,6 @@ def create_live_data_table(ongoing_referenda_data):
                     "color": "#e6007a",
                 }
             ]
-            # + data_perc_bars(dff, "voted_amount_aye")
-            # + data_perc_bars(dff, "voted_amount_nay")
         ),
         style_cell={
             "width": "100px",
@@ -708,13 +710,6 @@ def create_live_data_table(ongoing_referenda_data):
         },
         style_header={"backgroundColor": "#161a28", "color": "darkgray"},
         style_data={"backgroundColor": "#161a28", "color": "white"},
-        #   style_table={"height": "200px", "overflowY": "auto"},
-        #    css=[
-        #        {"selector": ".dash-spreadsheet tr th", "rule": "height: 30px;"},
-        #        # set height of header
-        #        {"selector": ".dash-spreadsheet tr td", "rule": "height: 25px;"},
-        #        # set height of body rows
-        #    ]
     )
     return my_table
 
@@ -781,10 +776,6 @@ def update_votes_counts_chart(
                 customdata=df_referenda["count_total"],
                 marker_color="#e6007a",
                 opacity=0.8,
-                # hovertemplate="<b>Nay Votes</b><br><br>"
-                # + "Vote count: %{y:.0f}<br>"
-                # + "Total counts: %{customdata:.0f}<br>"
-                # + "<extra></extra>",
             ),
         ]
     if selected_toggle_value == True:
@@ -827,7 +818,6 @@ def update_votes_counts_chart(
     return fig_first_graph
 
 
-# Update second chart
 @app.callback(
     output=Output("turnout_scatterchart", "figure"),
     inputs=[
@@ -935,7 +925,6 @@ def update_bar_chart(
     return fig_second_graph
 
 
-# Update third chart
 @app.callback(
     output=Output("new_accounts_barchart", "figure"),
     inputs=[Input("new_accounts_selection", "value")],
@@ -985,7 +974,6 @@ def update_new_accounts_chart(
                 # mode="lines+markers",
                 line=dict(color="#e6007a"),
                 opacity=0.8,
-                # marker=dict(color="rgb(0, 0, 100)", size=4),
                 hovertemplate="Referendum id: %{x:.0f}<br>"
                 + "% of total votes counts: %{y:.4f}<br>"
                 + "<extra></extra>",
@@ -998,13 +986,6 @@ def update_new_accounts_chart(
         barmode="stack",
         xaxis=dict(title="Referendum ID", linecolor="#BCCCDC"),
         yaxis=dict(title="New accounts counts", linecolor="#021C1E"),
-        # yaxis2=dict(
-        #     title="New accounts counts (% of total votes counts)",
-        #     linecolor="#021C1E",
-        #     anchor="x",
-        #     overlaying="y",
-        #     side="right",
-        # ),
         legend=dict(orientation="h", yanchor="bottom", y=-0.3, xanchor="left", x=0),
         template="plotly_dark",
     )
@@ -1087,7 +1068,6 @@ def update_vote_amount_with_conviction_chart(
     return fig_forth_graph
 
 
-# Update v chart
 @app.callback(
     output=Output("delegation_barchart", "figure"),
     inputs=[Input("delegated_chart_selection", "value")],
@@ -1324,7 +1304,6 @@ def update_voter_type_chart(
     return fig_v_graph
 
 
-# Update fifth chart
 @app.callback(
     output=Output("voting_time_barchart", "figure"),
     inputs=[Input("voting_time_selection", "value")],
@@ -1370,10 +1349,6 @@ def update_voting_time_barchart(
                     customdata=df_referenda["count_total"],
                     marker=dict(color=voting_group_colors[count]),
                     opacity=0.8,
-                    # hovertemplate="Referendum id: %{x:.0f}<br>"
-                    # + "Group count: %{y:.0f}<br>"
-                    # + "Total: %{customdata:.0f}<br>"
-                    # + "<extra></extra>",
                 )
             )
         fifth_graph_layout = go.Layout(
@@ -1423,13 +1398,9 @@ def update_voting_time_barchart(
     return fig_fifth_graph
 
 
-# Update sixth chart
 @app.callback(
     output=Output("vote_timing_distribution", "figure"),
     inputs=[
-        Input("voting_time_selection", "value"),
-    ],
-    state=[
         Input("full-referenda-data", "data"),
         Input("selected-ids", "value"),
         Input("crossfilter_section", "value"),
@@ -1438,7 +1409,6 @@ def update_voting_time_barchart(
     ],
 )
 def update_vote_timing_distribution(
-    selected_toggle_value,
     referenda_data,
     selected_ids,
     selected_section,
@@ -1467,10 +1437,6 @@ def update_vote_timing_distribution(
             values=df_voting_group_sum.values,
             customdata=df_referenda["count_total"],
             marker=dict(colors=voting_group_colors),
-            # hovertemplate="Referendum id: %{x:.0f}<br>"
-            # + "Group count: %{y:.0f}<br>"
-            # + "Total: %{customdata:.0f}<br>"
-            # + "<extra></extra>",
         )
     ]
     sixth_graph_layout = go.Layout(
@@ -1489,8 +1455,6 @@ def update_vote_timing_distribution(
     return fig_sixth_graph
 
 
-#
-# Update ix chart
 @app.callback(
     Output("section_piechart", "figure"),
     [
@@ -1524,10 +1488,6 @@ def update_pie_chart(
             marker=dict(colors=color_scale),
             textposition="inside",
             opacity=0.8,
-            # hovertemplate="Referendum id: %{x:.0f}<br>"
-            # + "Group count: %{y:.0f}<br>"
-            # + "Total: %{customdata:.0f}<br>"
-            # + "<extra></extra>",
         )
     ]
     ix_graph_layout = go.Layout(
@@ -1546,7 +1506,6 @@ def update_pie_chart(
     return fig_ix_graph
 
 
-# Update x chart
 @app.callback(
     Output("method_piechart", "figure"),
     [
@@ -1608,7 +1567,6 @@ def update_pie_chart(
     return fig_x_graph
 
 
-# Update xi chart
 @app.callback(
     Output("proposer_piechart", "figure"),
     [
@@ -1669,7 +1627,6 @@ def update_pie_chart(
     return fig_xi_graph
 
 
-# Update vi chart
 @app.callback(
     Output("threshold_piechart", "figure"),
     [
@@ -1703,10 +1660,6 @@ def update_threshold_piechart(
             marker=dict(colors=["#e6007a", "#ffffff"]),
             textposition="inside",
             opacity=0.8,
-            # hovertemplate="Referendum id: %{x:.0f}<br>"
-            # + "Group count: %{y:.0f}<br>"
-            # + "Total: %{customdata:.0f}<br>"
-            # + "<extra></extra>",
         )
     ]
     vi_graph_layout = go.Layout(
@@ -1723,7 +1676,6 @@ def update_threshold_piechart(
     return fig_vi_graph
 
 
-# Update xii chart
 @app.callback(
     output=Output("quiz_answers_barchart", "figure"),
     inputs=[Input("quiz_selection", "value")],

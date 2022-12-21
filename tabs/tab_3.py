@@ -1,11 +1,7 @@
-import json
-import time
-
 import dash_bootstrap_components as dbc
 import dash_daq as daq
 import pandas as pd
 import plotly.graph_objs as go
-import requests
 from dash import dash_table
 from dash import dcc
 from dash import html
@@ -13,91 +9,8 @@ from dash.dependencies import Input, Output
 
 from app import app
 from config import voting_group_colors, voter_type_colors
+from utils.data_preparation import load_specific_account_stats, load_delegation_data
 from utils.plotting import blank_figure
-
-subsquid_endpoint = "https://squid.subsquid.io/referenda-dashboard/v/0/graphql"
-
-
-def load_specific_account_stats(voter):
-    query = f"""query MyQuery {{
-                  accountStats(address: "{voter}") {{
-                    referendum_index
-                    balance_value
-                    conviction
-                    decision
-                    first_referendum_index
-                    first_voting_timestamp
-                    voted_amount_with_conviction
-                    voter
-                    voting_result_group
-                    voting_time_group
-                    questions_count
-                    correct_answers_count
-                    quiz_fully_correct
-                    voter_type
-                    delegated_to
-                    type   
-                  }}
-                }}"""
-    print("start to load specific account stats")
-    start_time = time.time()
-    account_data = requests.post(subsquid_endpoint, json={"query": query}).text
-    account_data = json.loads(account_data)
-    df_account = pd.DataFrame.from_dict(account_data["data"]["accountStats"])
-    df_account = df_account.sort_values("referendum_index")
-    print(f"finish loading account_stats {time.time() - start_time}")
-    return df_account
-
-
-def load_delegation_data():
-    query = f"""query MyQuery {{
-                  delegations {{
-                    wallet
-                    to
-                    timestamp
-                    timestampEnd
-                    blockNumberStart
-                    blockNumberEnd
-                    balance
-                    lockPeriod
-                  }}
-                }}"""
-    print("start to load delegation data")
-    start_time = time.time()
-    delegation_data = requests.post(subsquid_endpoint, json={"query": query}).text
-    delegation_data = json.loads(delegation_data)
-    df_delegation = pd.DataFrame.from_dict(delegation_data["data"]["delegations"])
-    df_delegation = df_delegation[df_delegation["balance"].notnull()]
-    df_delegation["conviction"] = df_delegation["lockPeriod"].apply(
-        lambda x: 0.1 if x == 0 else x
-    )
-    df_delegation["voted_amount"] = round(
-        df_delegation["conviction"]
-        * df_delegation["balance"].astype(int)
-        / 1000000000000,
-        2,
-    )
-    df_delegation = df_delegation.rename(
-        {
-            "timestamp": "delegation_started_at",
-            "timestampEnd": "delegation_ended_at",
-            "to": "delegated_to",
-        },
-        axis=1,
-    )
-    df_delegation = df_delegation[
-        [
-            "wallet",
-            "delegated_to",
-            "delegation_started_at",
-            "delegation_ended_at",
-            "voted_amount",
-            "balance",
-            "conviction",
-        ]
-    ]
-    print(f"finish loading delegation data {time.time() - start_time}")
-    return df_delegation
 
 
 def build_tab_3():
@@ -417,7 +330,7 @@ def build_charts():
 
 layout = build_tab_3()
 
-# Callback to update the referendum df
+
 @app.callback(
     [
         Output("specific-account-data", "data"),
@@ -708,22 +621,12 @@ def cum_voter_amount_barchart(account_data):
                 x=df_account["timestamp"],
                 y=df_account["cum_voted_amount_with_conviction_aye"],
                 mode="lines",
-                # hovertemplate="<b>Aye Votes</b><br><br>"
-                # + "Referendum id: %{x:.0f}<br>"
-                # + "Aye amount: %{y:.0f}<br>"
-                # + "Turnout: %{customdata:.0f}<br>"
-                # + "<extra></extra>",
             ),
             go.Scatter(
                 name="Nay Votes",
                 x=df_account["timestamp"],
                 y=df_account["cum_voted_amount_with_conviction_nay"],
                 mode="lines",
-                # hovertemplate="<b>Nay Votes</b><br><br>"
-                # + "Referendum id: %{x:.0f}<br>"
-                # + "Nay Amount: %{y:.0f}<br>"
-                # + "Turnout: %{customdata:.0f}<br>"
-                # + "<extra></extra>",
             ),
         ]
 
@@ -762,23 +665,12 @@ def voter_amount_barchart(account_data, selected_votes_split):
                     x=df_aye["referendum_index"],
                     y=df_aye["voted_amount_with_conviction"],
                     marker_color="#ffffff",
-                    # hovertemplate="<b>Aye Votes</b><br><br>"
-                    #               + "Referendum id: %{x:.1f}<br>"
-                    #               + "Turnout perc - aye: %{y:.1f}<br>"
-                    #               + "Turnout perc: %{custom
-                    #               data:.1f}<br>"
-                    #               + "<extra></extra>",
                 ),
                 go.Bar(
                     name="Nay Votes",
                     x=df_nay["referendum_index"],
                     y=df_nay["voted_amount_with_conviction"],
                     marker_color="#e6007a",
-                    # hovertemplate="<b>Nay Votes</b><br><br>"
-                    #               + "Referendum id: %{x:.2f}<br>"
-                    #               + "Turnout perc - nay: %{y:.2f}<br>"
-                    #               + "Turnout perc: %{customdata:.2f}<br>"
-                    #               + "<extra></extra>",
                 ),
             ]
         else:
@@ -792,11 +684,6 @@ def voter_amount_barchart(account_data, selected_votes_split):
                     x=df_aligned["referendum_index"],
                     y=df_aligned["voted_amount_with_conviction"],
                     marker_color="#ffffff",
-                    # hovertemplate="<b>Aye Votes</b><br><br>"
-                    #               + "Referendum id: %{x:.1f}<br>"
-                    #               + "Turnout perc - aye: %{y:.1f}<br>"
-                    #               + "Turnout perc: %{customdata:.1f}<br>"
-                    #               + "<extra></extra>",
                 ),
                 go.Bar(
                     name="Not Aligned with Final Result",
@@ -838,10 +725,6 @@ def update_vote_timing_distribution(account_data):
                 labels=df_voting_group_sum.index,
                 values=df_voting_group_sum.values,
                 marker=dict(colors=voting_group_colors),
-                # hovertemplate="Referendum id: %{x:.0f}<br>"
-                # + "Group count: %{y:.0f}<br>"
-                # + "Total: %{customdata:.0f}<br>"
-                # + "<extra></extra>",
             )
         ]
         second_graph_layout = go.Layout(
@@ -899,7 +782,9 @@ def update_delegate_to_chart(account_data, delegation_data, referenda_data):
             df_delegate_to["delegation_ended_at"].notnull()
         ]
         df_past_delegate_to = (
-            df_past_delegate_to.groupby("referendum_index")["voted_amount_with_conviction"]
+            df_past_delegate_to.groupby("referendum_index")[
+                "voted_amount_with_conviction"
+            ]
             .sum()
             .reset_index()
             .sort_values(by="referendum_index")
@@ -972,21 +857,17 @@ def update_delegated_chart(account_data, delegation_data, referenda_data):
         )
         df_delegated = df_delegated[
             (
-                (
-                    df_delegated["created_at"]
-                    >= df_delegated["delegation_started_at"]
-                )
+                (df_delegated["created_at"] >= df_delegated["delegation_started_at"])
                 & (df_delegated["delegation_ended_at"].isnull())
-                | (
-                    df_delegated["created_at"]
-                    >= df_delegated["delegation_started_at"]
-                )
+                | (df_delegated["created_at"] >= df_delegated["delegation_started_at"])
                 & (df_delegated["ended_at"] <= df_delegated["delegation_ended_at"])
             )
         ]
         df_past_delegated = df_delegated[df_delegated["delegation_ended_at"].notnull()]
         df_past_delegated = (
-            df_past_delegated.groupby("referendum_index")["voted_amount_with_conviction"]
+            df_past_delegated.groupby("referendum_index")[
+                "voted_amount_with_conviction"
+            ]
             .sum()
             .reset_index()
             .sort_values(by="referendum_index")
