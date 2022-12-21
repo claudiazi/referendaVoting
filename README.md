@@ -19,11 +19,9 @@ The dashboard has three tabs:
 
 
 ### Running the app locally:
-1. Set up virtual environment
+1. install necessary packages
 
 ```
-python -m venv venv
-source venv/bin/activate  # Windows: \venv\scripts\activate
 pip install -r requirements.txt
 ```
 
