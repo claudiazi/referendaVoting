@@ -828,7 +828,6 @@ def update_bar_chart(
     df_referenda = filter_referenda(
         df_referenda, selected_ids, filters_input, filters_gov2
     )
-    print(df_referenda.head(5))
     if selected_toggle_value == False:
         second_graph_data = [
             go.Scatter(
