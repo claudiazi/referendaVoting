@@ -409,6 +409,7 @@ def build_gov2_tab_1():
         ),
         html.Div(className="twelve columns", children=[html.Br()]),
         html.Div(
+            className="twelve columns",
             children=[
                 html.Div(
                     id="section-piechart-gov2",
