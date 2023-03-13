@@ -5,7 +5,7 @@ import time
 import pandas as pd
 import requests
 
-subsquid_endpoint = "https://squid.subsquid.io/referenda-dashboard/v/0/graphql"
+subsquid_endpoint = "https://squid.subsquid.io/referenda-dashboard/v/v2/graphql"
 polkassembly_graphql_endpoint = "https://kusama.polkassembly.io/v1/graphql"
 
 
@@ -19,7 +19,7 @@ def load_current_block():
     return json.loads(current_block)["data"]["squidStatus"]["height"]
 
 
-def load_referenda_stats(current_block):
+def load_referenda_stats_gov1(current_block):
     query = f"""query MyQuery {{
                      referendaStats {{
                         referendum_index
@@ -103,6 +103,84 @@ def load_referenda_stats(current_block):
         else None,
         axis=1,
     )
+    df = df.sort_values("referendum_index")
+    df_ongoing = df[df["ended_at"].isnull()].sort_values("referendum_index")
+    return (
+        df.to_dict("record"),
+        df_ongoing.to_dict("record"),
+    )
+
+
+def load_referenda_stats_gov2():
+    query = f"""query MyQuery {{
+                     gov2referendaStats {{
+                        referendum_index
+                        status
+                        created_at
+                        passed_at
+                        not_passed_at
+                        cancelled_at
+                        ended_at
+                        count_aye
+                        count_nay
+                        count_total
+                        referendum_ayes
+                        referendum_nays
+                        count_direct
+                        count_delegated
+                        voted_amount_aye
+                        voted_amount_nay
+                        voted_amount_total
+                        voted_amount_with_conviction_aye
+                        voted_amount_with_conviction_nay
+                        voted_amount_with_conviction_total
+                        voted_amount_with_conviction_direct
+                        voted_amount_with_conviction_delegated    
+                        total_issuance
+                        turnout_aye_perc
+                        turnout_nay_perc
+                        turnout_total_perc
+                        count_new
+                        count_new_perc    
+                        conviction_mean_aye
+                        conviction_mean_nay
+                        conviction_mean
+                        conviction_median_aye
+                        conviction_median_nay
+                        conviction_median
+                        vote_duration
+                        count_0_4_1_4_vote_duration
+                        count_1_4_2_4_vote_duration
+                        count_2_4_3_4_vote_duration
+                        count_3_4_4_4_vote_duration
+                        count_0_4_1_4_vote_duration_perc
+                        count_1_4_2_4_vote_duration_perc
+                        count_2_4_3_4_vote_duration_perc
+                        count_3_4_4_4_vote_duration_perc  
+                        decision_deposit_who
+                        decision_deposit_amount
+                        submission_deposit_who
+                        submission_deposit_amount
+                        method
+                        section
+                        count_quiz_attended_wallets
+                        count_fully_correct
+                        quiz_fully_correct_perc
+                        count_1_question_correct_perc
+                        count_2_question_correct_perc
+                        count_3_question_correct_perc
+                        count_validator
+                        count_normal
+                        voted_amount_with_conviction_validator
+                        voted_amount_with_conviction_normal
+                         }}
+                }}"""
+    print("start to load")
+    start_time = time.time()
+    referenda_data = requests.post(subsquid_endpoint, json={"query": query}).text
+    referenda_data = json.loads(referenda_data)
+    df = pd.DataFrame.from_dict(referenda_data["data"]["gov2referendaStats"])
+    print(f"finish loading referenda_stats {time.time() - start_time}")
     df = df.sort_values("referendum_index")
     df_ongoing = df[df["ended_at"].isnull()].sort_values("referendum_index")
     return (
@@ -306,10 +384,9 @@ def load_delegation_data():
     return df_delegation
 
 
-
 if __name__ == "__main__":
     current_block = load_current_block()
-    dict_all, dict_ongoing = load_referenda_stats(current_block)
+    dict_all, dict_ongoing = load_referenda_stats_gov1(current_block)
     df_specific = load_specific_referendum_stats(211)
     df_account = load_specific_account_stats(
         "Eakn18SoWyCLE7o3hc23MABqMtNayE4nqNckpznSSZZgWFC"

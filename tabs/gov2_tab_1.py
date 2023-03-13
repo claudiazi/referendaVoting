@@ -15,11 +15,50 @@ from config import (
     voting_group_colors,
     color_scale,
 )
-from utils.data_preparation import filter_referenda
+
+# from utils.data_preparation import filter_referenda
 from utils.plotting import blank_figure
+from config import default_ids_range_dict, filters_gov2
 
 
-def build_tab_1():
+def filter_referenda(
+    df_referenda: pd.DataFrame,
+    selected_ids,
+    cross_filters_input_list,
+    cross_filters_list,
+) -> pd.DataFrame:
+    print(cross_filters_input_list)
+    if selected_ids:
+        df_referenda = df_referenda[
+            (df_referenda["referendum_index"] >= selected_ids[0])
+            & (df_referenda["referendum_index"] <= selected_ids[1])
+        ]
+    for filter_input, filter in zip(cross_filters_input_list, cross_filters_list):
+        if filter_input != None and filter_input != "All":
+            df_referenda = df_referenda[df_referenda[filter] == filter_input]
+    return df_referenda
+
+
+def create_cross_filters(filters_list, gov_version):
+    dcc_list = []
+    for filter in filters_list:
+        dcc_list.append(
+            dcc.Dropdown(
+                id=f"crossfilter_{filter}_{gov_version}",
+                searchable=True,
+                style={
+                    "width": "90%",
+                    "margin": 0,
+                    "padding": 0,
+                    "border": 0,
+                },
+                className="three columns",
+            )
+        )
+    return dcc_list
+
+
+def build_gov2_tab_1():
     return [
         html.Div(className="twelve columns", children=[html.Br()]),
         html.Div(className="section-banner", children="Ongoing Referenda"),
@@ -29,7 +68,7 @@ def build_tab_1():
             children=[
                 dcc.Loading(
                     html.Div(
-                        id="live-data-table",
+                        id="live-data-table-gov2",
                         children=[],
                     )
                 )
@@ -43,11 +82,13 @@ def build_tab_1():
                 html.Div([], className="one column"),
                 # rangebar
                 html.Div(
-                    id="id-rangebar",
+                    id="id-rangebar-gov2",
                     className="twelve columns",
                     children=[
                         "Loading",
-                        dcc.RangeSlider(id="selected-ids", min=0, max=20, marks=None),
+                        dcc.RangeSlider(
+                            id="selected-ids-gov2", min=0, max=20, marks=None
+                        ),
                     ],
                 ),
                 html.Div([], className="one column"),
@@ -55,42 +96,10 @@ def build_tab_1():
         ),
         html.Div(className="twelve columns", children=[html.Br()]),
         html.Div(
-            id="cross-filters",
-            children=[
-                dcc.Dropdown(
-                    id=f"crossfilter_section",
-                    searchable=True,
-                    style={
-                        "width": "90%",
-                        "margin": 0,
-                        "padding": 0,
-                        "border": 0,
-                    },
-                    className="three columns",
-                ),
-                dcc.Dropdown(
-                    id=f"crossfilter_method",
-                    searchable=True,
-                    style={
-                        "width": "90%",
-                        "margin": 0,
-                        "padding": 0,
-                        "border": 0,
-                    },
-                    className="three columns",
-                ),
-                dcc.Dropdown(
-                    id=f"crossfilter_proposer",
-                    searchable=True,
-                    style={
-                        "width": "90%",
-                        "margin": 0,
-                        "padding": 0,
-                        "border": 0,
-                    },
-                    className="three columns",
-                ),
-            ],
+            id="cross-filters-gov2",
+            children=create_cross_filters(
+                filters_list=filters_gov2, gov_version="gov2"
+            ),
             className="twelve columns",
             style={"display": "inline-block", "align": "center"},
         ),
@@ -101,7 +110,7 @@ def build_tab_1():
                 html.Div(html.Br(), className="five columns"),
                 html.Button(
                     "Clear Selection",
-                    id="clear-radio",
+                    id="clear-radio-gov2",
                     className="click-button",
                 ),
             ],
@@ -117,7 +126,7 @@ def build_tab_1():
                             className="twelve columns",
                             children=[
                                 daq.ToggleSwitch(
-                                    id="votes_counts_chart_selection",
+                                    id="votes_counts_chart_selection_gov2",
                                     className="toggle_switch",
                                     label=["Votes Split", "Duration"],
                                     value=False,
@@ -133,7 +142,7 @@ def build_tab_1():
                                     children=[
                                         html.Div(
                                             dcc.Graph(
-                                                id="votes_counts_barchart",
+                                                id="votes_counts_barchart_gov2",
                                                 figure=blank_figure(),
                                             )
                                         )
@@ -151,7 +160,7 @@ def build_tab_1():
                             className="twelve columns",
                             children=[
                                 daq.ToggleSwitch(
-                                    id="turn_out_chart_selection",
+                                    id="turn_out_chart_selection_gov2",
                                     className="toggle_switch",
                                     label=["Voted amount", "Turnout"],
                                     value=False,
@@ -167,7 +176,7 @@ def build_tab_1():
                                     children=[
                                         html.Div(
                                             dcc.Graph(
-                                                id="turnout_scatterchart",
+                                                id="turnout_scatterchart_gov2",
                                                 figure=blank_figure(),
                                             )
                                         )
@@ -191,7 +200,7 @@ def build_tab_1():
                             className="twelve columns",
                             children=[
                                 daq.ToggleSwitch(
-                                    id="new_accounts_selection",
+                                    id="new_accounts_selection_gov2",
                                     className="toggle_switch",
                                     label=["Absolute", "Percentage"],
                                     value=False,
@@ -207,7 +216,7 @@ def build_tab_1():
                                     children=[
                                         html.Div(
                                             dcc.Graph(
-                                                id="new_accounts_barchart",
+                                                id="new_accounts_barchart_gov2",
                                                 figure=blank_figure(),
                                             )
                                         )
@@ -225,7 +234,7 @@ def build_tab_1():
                             className="twelve columns",
                             children=[
                                 daq.ToggleSwitch(
-                                    id="conviction_selection",
+                                    id="conviction_selection_gov2",
                                     label=["Mean", "Median"],
                                     value=False,
                                 )
@@ -240,7 +249,7 @@ def build_tab_1():
                                     children=[
                                         html.Div(
                                             dcc.Graph(
-                                                id="voted_ksm_scatterchart",
+                                                id="voted_ksm_scatterchart_gov2",
                                                 figure=blank_figure(),
                                             )
                                         )
@@ -264,7 +273,7 @@ def build_tab_1():
                             className="twelve columns",
                             children=[
                                 daq.ToggleSwitch(
-                                    id="delegated_chart_selection",
+                                    id="delegated_chart_selection_gov2",
                                     className="toggle_switch",
                                     label=["Votes Split", "Voted Amount Split"],
                                     value=False,
@@ -280,7 +289,7 @@ def build_tab_1():
                                     children=[
                                         html.Div(
                                             dcc.Graph(
-                                                id="delegation_barchart",
+                                                id="delegation_barchart_gov2",
                                                 figure=blank_figure(),
                                             )
                                         )
@@ -298,7 +307,7 @@ def build_tab_1():
                             className="twelve columns",
                             children=[
                                 daq.ToggleSwitch(
-                                    id="voter_type_chart_selection",
+                                    id="voter_type_chart_selection_gov2",
                                     className="toggle_switch",
                                     label=["Votes Split", "Voted Amount Split"],
                                     value=False,
@@ -314,7 +323,7 @@ def build_tab_1():
                                     children=[
                                         html.Div(
                                             dcc.Graph(
-                                                id="voter_type_barchart",
+                                                id="voter_type_barchart_gov2",
                                                 figure=blank_figure(),
                                             )
                                         )
@@ -338,7 +347,7 @@ def build_tab_1():
                             className="twelve columns",
                             children=[
                                 daq.ToggleSwitch(
-                                    id="voting_time_selection",
+                                    id="voting_time_selection_gov2",
                                     label=["Absolute", "Percentage"],
                                     value=False,
                                 )
@@ -353,7 +362,7 @@ def build_tab_1():
                                     children=[
                                         html.Div(
                                             dcc.Graph(
-                                                id="voting_time_barchart",
+                                                id="voting_time_barchart_gov2",
                                                 figure=blank_figure(),
                                             )
                                         )
@@ -368,14 +377,14 @@ def build_tab_1():
                     className="six columns graph-block",
                     children=[
                         html.Div(
-                            id="sixth-chart",
+                            id="sixth-chart-gov2",
                             className="twelve columns",
                             children=[
                                 html.Div(
                                     className="twelve columns", children=[html.Br()]
                                 ),
                                 html.Div(
-                                    id="fifth-chart",
+                                    id="fifth-chart-gov2",
                                     className="twelve columns",
                                     children=[
                                         dcc.Loading(
@@ -383,7 +392,7 @@ def build_tab_1():
                                             children=[
                                                 html.Div(
                                                     dcc.Graph(
-                                                        id="vote_timing_distribution",
+                                                        id="vote_timing_distribution_gov2",
                                                         figure=blank_figure(),
                                                     )
                                                 )
@@ -403,7 +412,7 @@ def build_tab_1():
             className="twelve columns",
             children=[
                 html.Div(
-                    id="section-piechart",
+                    id="section-piechart-gov2",
                     className="six columns graph-block",
                     children=[
                         dcc.Loading(
@@ -411,7 +420,7 @@ def build_tab_1():
                             children=[
                                 html.Div(
                                     dcc.Graph(
-                                        id="section_piechart",
+                                        id="section_piechart_gov2",
                                         figure=blank_figure(),
                                     )
                                 )
@@ -421,7 +430,7 @@ def build_tab_1():
                     ],
                 ),
                 html.Div(
-                    id="section-piechart",
+                    id="method-piechart-gov2",
                     className="six columns graph-block",
                     children=[
                         dcc.Loading(
@@ -429,7 +438,7 @@ def build_tab_1():
                             children=[
                                 html.Div(
                                     dcc.Graph(
-                                        id="method_piechart",
+                                        id="method_piechart_gov2",
                                         figure=blank_figure(),
                                     )
                                 )
@@ -448,7 +457,7 @@ def build_tab_1():
                     className="six columns graph-block",
                     children=[
                         html.Div(
-                            id="fifth-chart",
+                            id="fifth-chart-gov2",
                             className="twelve columns",
                             children=[
                                 dcc.Loading(
@@ -456,7 +465,7 @@ def build_tab_1():
                                     children=[
                                         html.Div(
                                             dcc.Graph(
-                                                id="proposer_piechart",
+                                                id="submission_deposit_who_piechart_gov2",
                                                 figure=blank_figure(),
                                             )
                                         )
@@ -467,35 +476,6 @@ def build_tab_1():
                         ),
                     ],
                 ),
-                html.Div(
-                    className="six columns graph-block",
-                    children=[
-                        html.Div(
-                            id="vi-chart",
-                            className="twelve columns",
-                            children=[
-                                dcc.Loading(
-                                    id="loading-icon",
-                                    children=[
-                                        html.Div(
-                                            dcc.Graph(
-                                                id="threshold_piechart",
-                                                figure=blank_figure(),
-                                            )
-                                        )
-                                    ],
-                                    type="default",
-                                )
-                            ],
-                        ),
-                    ],
-                ),
-            ],
-        ),
-        html.Div(className="twelve columns", children=[html.Br()]),
-        html.Div(
-            className="twelve columns",
-            children=[
                 html.Div(
                     className="six columns graph-block",
                     children=[
@@ -503,7 +483,7 @@ def build_tab_1():
                             className="twelve columns",
                             children=[
                                 daq.ToggleSwitch(
-                                    id="quiz_selection",
+                                    id="quiz_selection_gov2",
                                     className="toggle_switch",
                                     label=["Absolute", "Percentage"],
                                     value=False,
@@ -519,7 +499,7 @@ def build_tab_1():
                                     children=[
                                         html.Div(
                                             dcc.Graph(
-                                                id="quiz_answers_barchart",
+                                                id="quiz_answers_barchart_gov2",
                                                 figure=blank_figure(),
                                             )
                                         )
@@ -594,47 +574,41 @@ def build_tab_1():
     ]
 
 
-layout = build_tab_1()
+layout = build_gov2_tab_1()
 
 
 @app.callback(
-    Output("id-rangebar", "children"),
-    [Input("full-referenda-data", "data")],
+    Output("id-rangebar-gov2", "children"),
+    [Input("full-referenda-data", "data"), Input("gov_version", "value")],
 )
-def create_rangeslider(full_referenda_data):
+def create_rangeslider(full_referenda_data, gov_version):
     df = pd.DataFrame(full_referenda_data)
     range_min = df["referendum_index"].min()
     range_max = df["referendum_index"].max()
     return dcc.RangeSlider(
-        id="selected-ids",
+        id="selected-ids-gov2",
         min=range_min,
         max=range_max,
-        value=[160, range_max],
+        value=[default_ids_range_dict[gov_version], range_max],
         tooltip={"placement": "top", "always_visible": True},
     )
 
 
 @app.callback(
-    Output("cross-filters", "children"),
+    Output("cross-filters-gov2", "children"),
     Input("full-referenda-data", "data"),
 )
 def create_cross_filters(full_referenda_data):
     df = pd.DataFrame(full_referenda_data)
-    section_list = list(df["section"].unique())
-    method_list = list(df["method"].unique())
-    proposer_list = list(df["proposer"].unique())
-    filter_name_list = ["section", "method", "proposer"]
     filters = [html.Div("Filters", className="two columns")]
-    for filter, filter_name in zip(
-        [section_list, method_list, proposer_list],
-        filter_name_list,
-    ):
+    for filter in filters_gov2:
+        filter_values = list(df[filter].unique())
         filters.append(
             html.Div(
                 children=[
                     dcc.Dropdown(
-                        options=filter,
-                        id=f"crossfilter_{filter_name}",
+                        options=filter_values,
+                        id=f"crossfilter_{filter}_gov2",
                         searchable=True,
                         style={
                             "width": "90%",
@@ -643,7 +617,7 @@ def create_cross_filters(full_referenda_data):
                             "border": 0,
                         },
                         className="three columns",
-                        placeholder=filter_name,
+                        placeholder=filter,
                     )
                 ]
             )
@@ -652,7 +626,8 @@ def create_cross_filters(full_referenda_data):
 
 
 @app.callback(
-    Output("live-data-table", "children"), [Input("ongoing-referenda-data", "data")]
+    Output("live-data-table-gov2", "children"),
+    [Input("ongoing-referenda-data", "data")],
 )
 def create_live_data_table(ongoing_referenda_data):
     df = pd.DataFrame(ongoing_referenda_data)
@@ -717,14 +692,15 @@ def create_live_data_table(ongoing_referenda_data):
 
 # Update first chart
 @app.callback(
-    output=Output("votes_counts_barchart", "figure"),
+    output=Output("votes_counts_barchart_gov2", "figure"),
     inputs=[
         Input("interval-component", "n_intervals"),
-        Input("selected-ids", "value"),
-        Input("votes_counts_chart_selection", "value"),
-        Input("crossfilter_section", "value"),
-        Input("crossfilter_method", "value"),
-        Input("crossfilter_proposer", "value"),
+        Input("selected-ids-gov2", "value"),
+        Input("votes_counts_chart_selection_gov2", "value"),
+        Input("crossfilter_section_gov2", "value"),
+        Input("crossfilter_method_gov2", "value"),
+        Input("crossfilter_submission_deposit_who_gov2", "value"),
+        Input("crossfilter_decision_deposit_who_gov2", "value"),
     ],
     state=Input("full-referenda-data", "data"),
 )
@@ -734,16 +710,19 @@ def update_votes_counts_chart(
     selected_toggle_value,
     selected_section,
     selected_method,
-    selected_proposer,
+    selected_submission_deposit_who,
+    selected_decision_deposit_who,
     referenda_data,
 ):
     df_referenda = pd.DataFrame(referenda_data).sort_values(by="referendum_index")
-    df_referenda = filter_referenda(
-        df_referenda,
-        selected_ids,
+    filters_input = [
         selected_section,
         selected_method,
-        selected_proposer,
+        selected_submission_deposit_who,
+        selected_decision_deposit_who,
+    ]
+    df_referenda = filter_referenda(
+        df_referenda, selected_ids, filters_input, filters_gov2
     )
     first_graph_layout = go.Layout(
         title="<b>Vote Count</b>",
@@ -820,14 +799,15 @@ def update_votes_counts_chart(
 
 
 @app.callback(
-    output=Output("turnout_scatterchart", "figure"),
+    output=Output("turnout_scatterchart_gov2", "figure"),
     inputs=[
-        Input("turn_out_chart_selection", "value"),
+        Input("turn_out_chart_selection_gov2", "value"),
         Input("full-referenda-data", "data"),
-        Input("selected-ids", "value"),
-        Input("crossfilter_section", "value"),
-        Input("crossfilter_method", "value"),
-        Input("crossfilter_proposer", "value"),
+        Input("selected-ids-gov2", "value"),
+        Input("crossfilter_section_gov2", "value"),
+        Input("crossfilter_method_gov2", "value"),
+        Input("crossfilter_submission_deposit_who_gov2", "value"),
+        Input("crossfilter_decision_deposit_who_gov2", "value"),
     ],
 )
 def update_bar_chart(
@@ -836,15 +816,18 @@ def update_bar_chart(
     selected_ids,
     selected_section,
     selected_method,
-    selected_proposer,
+    selected_submission_deposit_who,
+    selected_decision_deposit_who,
 ):
     df_referenda = pd.DataFrame(referenda_data)
-    df_referenda = filter_referenda(
-        df_referenda,
-        selected_ids,
+    filters_input = [
         selected_section,
         selected_method,
-        selected_proposer,
+        selected_submission_deposit_who,
+        selected_decision_deposit_who,
+    ]
+    df_referenda = filter_referenda(
+        df_referenda, selected_ids, filters_input, filters_gov2
     )
     if selected_toggle_value == False:
         second_graph_data = [
@@ -927,14 +910,15 @@ def update_bar_chart(
 
 
 @app.callback(
-    output=Output("new_accounts_barchart", "figure"),
-    inputs=[Input("new_accounts_selection", "value")],
+    output=Output("new_accounts_barchart_gov2", "figure"),
+    inputs=[Input("new_accounts_selection_gov2", "value")],
     state=[
         Input("full-referenda-data", "data"),
-        Input("selected-ids", "value"),
-        Input("crossfilter_section", "value"),
-        Input("crossfilter_method", "value"),
-        Input("crossfilter_proposer", "value"),
+        Input("selected-ids-gov2", "value"),
+        Input("crossfilter_section_gov2", "value"),
+        Input("crossfilter_method_gov2", "value"),
+        Input("crossfilter_submission_deposit_who_gov2", "value"),
+        Input("crossfilter_decision_deposit_who_gov2", "value"),
     ],
 )
 def update_new_accounts_chart(
@@ -943,15 +927,18 @@ def update_new_accounts_chart(
     selected_ids,
     selected_section,
     selected_method,
-    selected_proposer,
+    selected_submission_deposit_who,
+    selected_decision_deposit_who,
 ):
     df_referenda = pd.DataFrame(referenda_data)
-    df_referenda = filter_referenda(
-        df_referenda,
-        selected_ids,
+    filters_input = [
         selected_section,
         selected_method,
-        selected_proposer,
+        selected_submission_deposit_who,
+        selected_decision_deposit_who,
+    ]
+    df_referenda = filter_referenda(
+        df_referenda, selected_ids, filters_input, filters_gov2
     )
     if selected_toggle_value == False:
         third_graph_data = [
@@ -997,14 +984,15 @@ def update_new_accounts_chart(
 
 # Update forth chart
 @app.callback(
-    output=Output("voted_ksm_scatterchart", "figure"),
-    inputs=[Input("conviction_selection", "value")],
+    output=Output("voted_ksm_scatterchart_gov2", "figure"),
+    inputs=[Input("conviction_selection_gov2", "value")],
     state=[
         Input("full-referenda-data", "data"),
-        Input("selected-ids", "value"),
-        Input("crossfilter_section", "value"),
-        Input("crossfilter_method", "value"),
-        Input("crossfilter_proposer", "value"),
+        Input("selected-ids-gov2", "value"),
+        Input("crossfilter_section_gov2", "value"),
+        Input("crossfilter_method_gov2", "value"),
+        Input("crossfilter_submission_deposit_who_gov2", "value"),
+        Input("crossfilter_decision_deposit_who_gov2", "value"),
     ],
 )
 def update_vote_amount_with_conviction_chart(
@@ -1013,15 +1001,18 @@ def update_vote_amount_with_conviction_chart(
     selected_ids,
     selected_section,
     selected_method,
-    selected_proposer,
+    selected_submission_deposit_who,
+    selected_decision_deposit_who,
 ):
     df_referenda = pd.DataFrame(referenda_data)
-    df_referenda = filter_referenda(
-        df_referenda,
-        selected_ids,
+    filters_input = [
         selected_section,
         selected_method,
-        selected_proposer,
+        selected_submission_deposit_who,
+        selected_decision_deposit_who,
+    ]
+    df_referenda = filter_referenda(
+        df_referenda, selected_ids, filters_input, filters_gov2
     )
     if selected_toggle_value == False:
         forth_graph_data = [
@@ -1070,14 +1061,15 @@ def update_vote_amount_with_conviction_chart(
 
 
 @app.callback(
-    output=Output("delegation_barchart", "figure"),
-    inputs=[Input("delegated_chart_selection", "value")],
+    output=Output("delegation_barchart_gov2", "figure"),
+    inputs=[Input("delegated_chart_selection_gov2", "value")],
     state=[
         Input("full-referenda-data", "data"),
-        Input("selected-ids", "value"),
-        Input("crossfilter_section", "value"),
-        Input("crossfilter_method", "value"),
-        Input("crossfilter_proposer", "value"),
+        Input("selected-ids-gov2", "value"),
+        Input("crossfilter_section_gov2", "value"),
+        Input("crossfilter_method_gov2", "value"),
+        Input("crossfilter_submission_deposit_who_gov2", "value"),
+        Input("crossfilter_decision_deposit_who_gov2", "value"),
     ],
 )
 def update_delegation_chart(
@@ -1086,15 +1078,18 @@ def update_delegation_chart(
     selected_ids,
     selected_section,
     selected_method,
-    selected_proposer,
+    selected_submission_deposit_who,
+    selected_decision_deposit_who,
 ):
     df_referenda = pd.DataFrame(referenda_data)
-    df_referenda = filter_referenda(
-        df_referenda,
-        selected_ids,
+    filters_input = [
         selected_section,
         selected_method,
-        selected_proposer,
+        selected_submission_deposit_who,
+        selected_decision_deposit_who,
+    ]
+    df_referenda = filter_referenda(
+        df_referenda, selected_ids, filters_input, filters_gov2
     )
     if selected_toggle_value == False:
         v_graph_data = [
@@ -1177,14 +1172,15 @@ def update_delegation_chart(
 
 
 @app.callback(
-    output=Output("voter_type_barchart", "figure"),
-    inputs=[Input("voter_type_chart_selection", "value")],
+    output=Output("voter_type_barchart_gov2", "figure"),
+    inputs=[Input("voter_type_chart_selection_gov2", "value")],
     state=[
         Input("full-referenda-data", "data"),
-        Input("selected-ids", "value"),
-        Input("crossfilter_section", "value"),
-        Input("crossfilter_method", "value"),
-        Input("crossfilter_proposer", "value"),
+        Input("selected-ids-gov2", "value"),
+        Input("crossfilter_section_gov2", "value"),
+        Input("crossfilter_method_gov2", "value"),
+        Input("crossfilter_submission_deposit_who_gov2", "value"),
+        Input("crossfilter_decision_deposit_who_gov2", "value"),
     ],
 )
 def update_voter_type_chart(
@@ -1193,15 +1189,18 @@ def update_voter_type_chart(
     selected_ids,
     selected_section,
     selected_method,
-    selected_proposer,
+    selected_submission_deposit_who,
+    selected_decision_deposit_who,
 ):
     df_referenda = pd.DataFrame(referenda_data)
-    df_referenda = filter_referenda(
-        df_referenda,
-        selected_ids,
+    filters_input = [
         selected_section,
         selected_method,
-        selected_proposer,
+        selected_submission_deposit_who,
+        selected_decision_deposit_who,
+    ]
+    df_referenda = filter_referenda(
+        df_referenda, selected_ids, filters_input, filters_gov2
     )
     if selected_toggle_value == False:
         v_graph_data = [
@@ -1214,19 +1213,6 @@ def update_voter_type_chart(
                 hovertemplate="<b>Validator Votes</b><br><br>"
                 + "Referendum: %{x:.0f}<br>"
                 + "Count validator votes: %{y:.0f}<br>"
-                + "Count total: %{customdata:.0f}<br>"
-                + "<extra></extra>",
-                opacity=0.8,
-            ),
-            go.Bar(
-                name="Councillor Votes",
-                x=df_referenda["referendum_index"],
-                y=df_referenda["count_councillor"],
-                customdata=df_referenda["count_total"],
-                marker_color="#ffb3e0",
-                hovertemplate="<b>Councillor Votes</b><br><br>"
-                + "Referendum: %{x:.0f}<br>"
-                + "Count councillor votes: %{y:.0f}<br>"
                 + "Count total: %{customdata:.0f}<br>"
                 + "<extra></extra>",
                 opacity=0.8,
@@ -1257,19 +1243,6 @@ def update_voter_type_chart(
                 hovertemplate="<b>Validator Votes</b><br><br>"
                 + "Referendum: %{x:.0f}<br>"
                 + "Voted amount - validator: %{y:.0f}<br>"
-                + "Voted amount - total: %{customdata:.0f}<br>"
-                + "<extra></extra>",
-                opacity=0.8,
-            ),
-            go.Bar(
-                name="Councillor Votes",
-                x=df_referenda["referendum_index"],
-                y=df_referenda["voted_amount_with_conviction_councillor"],
-                customdata=df_referenda["voted_amount_with_conviction_total"],
-                marker_color="#ffb3e0",
-                hovertemplate="<b>Councillor Votes</b><br><br>"
-                + "Referendum: %{x:.0f}<br>"
-                + "Voted amount - councillor: %{y:.0f}<br>"
                 + "Voted amount - total: %{customdata:.0f}<br>"
                 + "<extra></extra>",
                 opacity=0.8,
@@ -1306,14 +1279,15 @@ def update_voter_type_chart(
 
 
 @app.callback(
-    output=Output("voting_time_barchart", "figure"),
-    inputs=[Input("voting_time_selection", "value")],
+    output=Output("voting_time_barchart_gov2", "figure"),
+    inputs=[Input("voting_time_selection_gov2", "value")],
     state=[
         Input("full-referenda-data", "data"),
-        Input("selected-ids", "value"),
-        Input("crossfilter_section", "value"),
-        Input("crossfilter_method", "value"),
-        Input("crossfilter_proposer", "value"),
+        Input("selected-ids-gov2", "value"),
+        Input("crossfilter_section_gov2", "value"),
+        Input("crossfilter_method_gov2", "value"),
+        Input("crossfilter_submission_deposit_who_gov2", "value"),
+        Input("crossfilter_decision_deposit_who_gov2", "value"),
     ],
 )
 def update_voting_time_barchart(
@@ -1322,15 +1296,18 @@ def update_voting_time_barchart(
     selected_ids,
     selected_section,
     selected_method,
-    selected_proposer,
+    selected_submission_deposit_who,
+    selected_decision_deposit_who,
 ):
     df_referenda = pd.DataFrame(referenda_data)
-    df_referenda = filter_referenda(
-        df_referenda,
-        selected_ids,
+    filters_input = [
         selected_section,
         selected_method,
-        selected_proposer,
+        selected_submission_deposit_who,
+        selected_decision_deposit_who,
+    ]
+    df_referenda = filter_referenda(
+        df_referenda, selected_ids, filters_input, filters_gov2
     )
     if selected_toggle_value == False:
         fifth_graph_data = []
@@ -1400,13 +1377,14 @@ def update_voting_time_barchart(
 
 
 @app.callback(
-    output=Output("vote_timing_distribution", "figure"),
+    output=Output("vote_timing_distribution_gov2", "figure"),
     inputs=[
         Input("full-referenda-data", "data"),
-        Input("selected-ids", "value"),
-        Input("crossfilter_section", "value"),
-        Input("crossfilter_method", "value"),
-        Input("crossfilter_proposer", "value"),
+        Input("selected-ids-gov2", "value"),
+        Input("crossfilter_section_gov2", "value"),
+        Input("crossfilter_method_gov2", "value"),
+        Input("crossfilter_submission_deposit_who_gov2", "value"),
+        Input("crossfilter_decision_deposit_who_gov2", "value"),
     ],
 )
 def update_vote_timing_distribution(
@@ -1414,15 +1392,18 @@ def update_vote_timing_distribution(
     selected_ids,
     selected_section,
     selected_method,
-    selected_proposer,
+    selected_submission_deposit_who,
+    selected_decision_deposit_who,
 ):
     df_referenda = pd.DataFrame(referenda_data)
-    df_referenda = filter_referenda(
-        df_referenda,
-        selected_ids,
+    filters_input = [
         selected_section,
         selected_method,
-        selected_proposer,
+        selected_submission_deposit_who,
+        selected_decision_deposit_who,
+    ]
+    df_referenda = filter_referenda(
+        df_referenda, selected_ids, filters_input, filters_gov2
     )
     df_voting_group_sum = df_referenda[
         [
@@ -1457,13 +1438,14 @@ def update_vote_timing_distribution(
 
 
 @app.callback(
-    Output("section_piechart", "figure"),
+    Output("section_piechart_gov2", "figure"),
     [
         Input("full-referenda-data", "data"),
-        Input("selected-ids", "value"),
-        Input("crossfilter_section", "value"),
-        Input("crossfilter_method", "value"),
-        Input("crossfilter_proposer", "value"),
+        Input("selected-ids-gov2", "value"),
+        Input("crossfilter_section_gov2", "value"),
+        Input("crossfilter_method_gov2", "value"),
+        Input("crossfilter_submission_deposit_who_gov2", "value"),
+        Input("crossfilter_decision_deposit_who_gov2", "value"),
     ],
 )
 def update_pie_chart(
@@ -1471,15 +1453,18 @@ def update_pie_chart(
     selected_ids,
     selected_section,
     selected_method,
-    selected_proposer,
+    selected_submission_deposit_who,
+    selected_decision_deposit_who,
 ):
     df_referenda = pd.DataFrame(referenda_data)
-    df_referenda = filter_referenda(
-        df_referenda,
-        selected_ids,
+    filters_input = [
         selected_section,
         selected_method,
-        selected_proposer,
+        selected_submission_deposit_who,
+        selected_decision_deposit_who,
+    ]
+    df_referenda = filter_referenda(
+        df_referenda, selected_ids, filters_input, filters_gov2
     )
     df_section_group_count = df_referenda["section"].value_counts()
     ix_graph_data = [
@@ -1508,13 +1493,14 @@ def update_pie_chart(
 
 
 @app.callback(
-    Output("method_piechart", "figure"),
+    Output("method_piechart_gov2", "figure"),
     [
         Input("full-referenda-data", "data"),
-        Input("selected-ids", "value"),
-        Input("crossfilter_section", "value"),
-        Input("crossfilter_method", "value"),
-        Input("crossfilter_proposer", "value"),
+        Input("selected-ids-gov2", "value"),
+        Input("crossfilter_section_gov2", "value"),
+        Input("crossfilter_method_gov2", "value"),
+        Input("crossfilter_submission_deposit_who_gov2", "value"),
+        Input("crossfilter_decision_deposit_who_gov2", "value"),
     ],
 )
 def update_pie_chart(
@@ -1522,15 +1508,18 @@ def update_pie_chart(
     selected_ids,
     selected_section,
     selected_method,
-    selected_proposer,
+    selected_submission_deposit_who,
+    selected_decision_deposit_who,
 ):
     df_referenda = pd.DataFrame(referenda_data)
-    df_referenda = filter_referenda(
-        df_referenda,
-        selected_ids,
+    filters_input = [
         selected_section,
         selected_method,
-        selected_proposer,
+        selected_submission_deposit_who,
+        selected_decision_deposit_who,
+    ]
+    df_referenda = filter_referenda(
+        df_referenda, selected_ids, filters_input, filters_gov2
     )
     df_method_group_count = (
         df_referenda.groupby("method")
@@ -1569,13 +1558,14 @@ def update_pie_chart(
 
 
 @app.callback(
-    Output("proposer_piechart", "figure"),
+    Output("submission_deposit_who_piechart_gov2", "figure"),
     [
         Input("full-referenda-data", "data"),
-        Input("selected-ids", "value"),
-        Input("crossfilter_section", "value"),
-        Input("crossfilter_method", "value"),
-        Input("crossfilter_proposer", "value"),
+        Input("selected-ids-gov2", "value"),
+        Input("crossfilter_section_gov2", "value"),
+        Input("crossfilter_method_gov2", "value"),
+        Input("crossfilter_submission_deposit_who_gov2", "value"),
+        Input("crossfilter_decision_deposit_who_gov2", "value"),
     ],
 )
 def update_pie_chart(
@@ -1583,37 +1573,40 @@ def update_pie_chart(
     selected_ids,
     selected_section,
     selected_method,
-    selected_proposer,
+    selected_submission_deposit_who,
+    selected_decision_deposit_who,
 ):
     df_referenda = pd.DataFrame(referenda_data)
-    df_referenda = filter_referenda(
-        df_referenda,
-        selected_ids,
+    filters_input = [
         selected_section,
         selected_method,
-        selected_proposer,
+        selected_submission_deposit_who,
+        selected_decision_deposit_who,
+    ]
+    df_referenda = filter_referenda(
+        df_referenda, selected_ids, filters_input, filters_gov2
     )
     df_proposer_count = (
-        df_referenda.groupby("proposer")
+        df_referenda.groupby("submission_deposit_who")
         .size()
         .reset_index(name="count")
         .sort_values(by="count", ascending=False)
     )
-    df_proposer_count["proposer_short"] = df_proposer_count["proposer"].apply(
-        lambda x: f"{x[:6]}...{x[-4:]}"
-    )
+    df_proposer_count["proposer_short"] = df_proposer_count[
+        "submission_deposit_who"
+    ].apply(lambda x: f"{x[:6]}...{x[-4:]}")
     xi_graph_data = [
         go.Pie(
             labels=df_proposer_count["proposer_short"],
             values=df_proposer_count["count"],
             marker=dict(colors=color_scale),
-            customdata=df_proposer_count["proposer"],
+            customdata=df_proposer_count["submission_deposit_who"],
             textposition="inside",
             hovertemplate="%{customdata}<br>" + "%{percent}" + "<extra></extra>",
         )
     ]
     xi_graph_layout = go.Layout(
-        title="<b>Proposer</b>",
+        title="<b>Submission Deposit Who</b>",
         paper_bgcolor="#161a28",
         plot_bgcolor="#161a28",
         legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.8),
@@ -1629,63 +1622,15 @@ def update_pie_chart(
 
 
 @app.callback(
-    Output("threshold_piechart", "figure"),
-    [
-        Input("full-referenda-data", "data"),
-        Input("selected-ids", "value"),
-        Input("crossfilter_section", "value"),
-        Input("crossfilter_method", "value"),
-        Input("crossfilter_proposer", "value"),
-    ],
-)
-def update_threshold_piechart(
-    referenda_data,
-    selected_ids,
-    selected_section,
-    selected_method,
-    selected_proposer,
-):
-    df_referenda = pd.DataFrame(referenda_data)
-    df_referenda = filter_referenda(
-        df_referenda,
-        selected_ids,
-        selected_section,
-        selected_method,
-        selected_proposer,
-    )
-    df_threshold_count = df_referenda["threshold_type"].value_counts()
-    vi_graph_data = [
-        go.Pie(
-            labels=df_threshold_count.index,
-            values=df_threshold_count.values,
-            marker=dict(colors=["#e6007a", "#ffffff"]),
-            textposition="inside",
-            opacity=0.8,
-        )
-    ]
-    vi_graph_layout = go.Layout(
-        title="<b>Threshold Type</b>",
-        paper_bgcolor="#161a28",
-        plot_bgcolor="#161a28",
-        legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.8),
-        template="plotly_dark",
-        hovermode="x",
-        autosize=True,
-        clickmode="event+select",
-    )
-    fig_vi_graph = go.Figure(data=vi_graph_data, layout=vi_graph_layout)
-    return fig_vi_graph
-
-
-@app.callback(
-    output=Output("quiz_answers_barchart", "figure"),
-    inputs=[Input("quiz_selection", "value")],
+    output=Output("quiz_answers_barchart_gov2", "figure"),
+    inputs=[Input("quiz_selection_gov2", "value")],
     state=[
         Input("full-referenda-data", "data"),
-        Input("selected-ids", "value"),
-        Input("crossfilter_section", "value"),
-        Input("crossfilter_method", "value"),
-        Input("crossfilter_proposer", "value"),
+        Input("selected-ids-gov2", "value"),
+        Input("crossfilter_section_gov2", "value"),
+        Input("crossfilter_method_gov2", "value"),
+        Input("crossfilter_submission_deposit_who_gov2", "value"),
+        Input("crossfilter_decision_deposit_who_gov2", "value"),
     ],
 )
 def update_quiz_answer_chart(
@@ -1694,15 +1639,18 @@ def update_quiz_answer_chart(
     selected_ids,
     selected_section,
     selected_method,
-    selected_proposer,
+    selected_submission_deposit_who,
+    selected_decision_deposit_who,
 ):
     df_referenda = pd.DataFrame(referenda_data)
-    df_referenda = filter_referenda(
-        df_referenda,
-        selected_ids,
+    filters_input = [
         selected_section,
         selected_method,
-        selected_proposer,
+        selected_submission_deposit_who,
+        selected_decision_deposit_who,
+    ]
+    df_referenda = filter_referenda(
+        df_referenda, selected_ids, filters_input, filters_gov2
     )
     df_referenda = df_referenda[df_referenda["count_quiz_attended_wallets"].notnull()]
     if selected_toggle_value == False:
@@ -1779,9 +1727,9 @@ def update_quiz_answer_chart(
 
 @app.callback(
     [
-        Output("crossfilter_section", "value"),
-        Output("crossfilter_method", "value"),
-        Output("crossfilter_proposer", "value"),
+        Output("crossfilter_section_gov2", "value"),
+        Output("crossfilter_method_gov2", "value"),
+        Output("crossfilter_proposer_gov2", "value"),
     ],
     [Input("clear-radio", "n_clicks")],
 )
