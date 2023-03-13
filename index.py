@@ -164,14 +164,13 @@ def update_historical_data(n_intervals, gov_version):
     [Input("app-tabs", "value"), Input("gov_version", "value")],
 )
 def render_tab_content(tab_switch, gov_version):
-    if tab_switch == "tab1" and gov_version == "Gov 2":
-        return gov2_tab_1.layout
     if tab_switch == "tab1" and gov_version == "Gov 1":
         return tab_1.layout
     if tab_switch == "tab2" and gov_version == "Gov 1":
         return tab_2.layout
     if tab_switch == "tab3" and gov_version == "Gov 1":
         return tab_3.layout
+    return gov2_tab_1.layout
 
 
 

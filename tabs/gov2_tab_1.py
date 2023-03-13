@@ -59,519 +59,522 @@ def create_cross_filters(filters_list, gov_version):
 
 
 def build_gov2_tab_1():
-    return [
-        html.Div(className="twelve columns", children=[html.Br()]),
-        html.Div(className="section-banner", children="Ongoing Referenda"),
-        html.Div(className="twelve columns", children=[html.Br()]),
-        html.Div(
-            className="twelve columns",
-            children=[
-                dcc.Loading(
-                    html.Div(
-                        id="live-data-table-gov2",
-                        children=[],
+    return dcc.Loading(
+        id="loading-icon",
+        children=[
+            html.Div(className="twelve columns", children=[html.Br()]),
+            html.Div(className="section-banner", children="Ongoing Referenda"),
+            html.Div(className="twelve columns", children=[html.Br()]),
+            html.Div(
+                className="twelve columns",
+                children=[
+                    dcc.Loading(
+                        html.Div(
+                            id="live-data-table-gov2",
+                            children=[],
+                        )
                     )
-                )
-            ],
-        ),
-        html.Div(className="twelve columns", children=[html.Br()]),
-        html.Div(className="section-banner", children="All Referenda"),
-        html.Div(className="twelve columns", children=[html.Br()]),
-        html.Div(
-            children=[
-                html.Div([], className="one column"),
-                # rangebar
-                html.Div(
-                    id="id-rangebar-gov2",
-                    className="twelve columns",
-                    children=[
-                        "Loading",
-                        dcc.RangeSlider(
-                            id="selected-ids-gov2", min=0, max=20, marks=None
-                        ),
-                    ],
-                ),
-                html.Div([], className="one column"),
-            ]
-        ),
-        html.Div(className="twelve columns", children=[html.Br()]),
-        html.Div(
-            id="cross-filters-gov2",
-            children=create_cross_filters(
-                filters_list=filters_gov2, gov_version="gov2"
+                ],
             ),
-            className="twelve columns",
-            style={"display": "inline-block", "align": "center"},
-        ),
-        html.Div(className="twelve columns", children=[html.Br()]),
-        html.Div(
-            className="twelve columns",
-            children=[
-                html.Div(html.Br(), className="five columns"),
-                html.Button(
-                    "Clear Selection",
-                    id="clear-radio-gov2",
-                    className="click-button",
+            html.Div(className="twelve columns", children=[html.Br()]),
+            html.Div(className="section-banner", children="All Referenda"),
+            html.Div(className="twelve columns", children=[html.Br()]),
+            html.Div(
+                children=[
+                    html.Div([], className="one column"),
+                    # rangebar
+                    html.Div(
+                        id="id-rangebar-gov2",
+                        className="twelve columns",
+                        children=[
+                            "Loading",
+                            dcc.RangeSlider(
+                                id="selected-ids-gov2", min=0, max=20, marks=None
+                            ),
+                        ],
+                    ),
+                    html.Div([], className="one column"),
+                ]
+            ),
+            html.Div(className="twelve columns", children=[html.Br()]),
+            html.Div(
+                id="cross-filters-gov2",
+                children=create_cross_filters(
+                    filters_list=filters_gov2, gov_version="gov2"
                 ),
-            ],
-        ),
-        html.Div(className="twelve columns", children=[html.Br()]),
-        html.Div(
-            className="twelve columns",
-            children=[
-                html.Div(
-                    className="six columns graph-block",
-                    children=[
-                        html.Div(
-                            className="twelve columns",
-                            children=[
-                                daq.ToggleSwitch(
-                                    id="votes_counts_chart_selection_gov2",
-                                    className="toggle_switch",
-                                    label=["Votes Split", "Duration"],
-                                    value=False,
-                                )
-                            ],
-                        ),
-                        html.Div(
-                            id="first-chart",
-                            className="twelve columns",
-                            children=[
-                                dcc.Loading(
-                                    id="loading-icon",
-                                    children=[
-                                        html.Div(
-                                            dcc.Graph(
-                                                id="votes_counts_barchart_gov2",
-                                                figure=blank_figure(),
-                                            )
-                                        )
-                                    ],
-                                    type="default",
-                                ),
-                            ],
-                        ),
-                    ],
-                ),
-                html.Div(
-                    className="six columns graph-block",
-                    children=[
-                        html.Div(
-                            className="twelve columns",
-                            children=[
-                                daq.ToggleSwitch(
-                                    id="turn_out_chart_selection_gov2",
-                                    className="toggle_switch",
-                                    label=["Voted amount", "Turnout"],
-                                    value=False,
-                                )
-                            ],
-                        ),
-                        html.Div(
-                            id="second-chart",
-                            className="twelve columns",
-                            children=[
-                                dcc.Loading(
-                                    id="loading-icon",
-                                    children=[
-                                        html.Div(
-                                            dcc.Graph(
-                                                id="turnout_scatterchart_gov2",
-                                                figure=blank_figure(),
-                                            )
-                                        )
-                                    ],
-                                    type="default",
-                                )
-                            ],
-                        ),
-                    ],
-                ),
-            ],
-        ),
-        html.Div(className="twelve columns", children=[html.Br()]),
-        html.Div(
-            className="twelve columns",
-            children=[
-                html.Div(
-                    className="six columns graph-block",
-                    children=[
-                        html.Div(
-                            className="twelve columns",
-                            children=[
-                                daq.ToggleSwitch(
-                                    id="new_accounts_selection_gov2",
-                                    className="toggle_switch",
-                                    label=["Absolute", "Percentage"],
-                                    value=False,
-                                )
-                            ],
-                        ),
-                        html.Div(
-                            id="third-chart",
-                            className="twelve columns",
-                            children=[
-                                dcc.Loading(
-                                    id="loading-icon",
-                                    children=[
-                                        html.Div(
-                                            dcc.Graph(
-                                                id="new_accounts_barchart_gov2",
-                                                figure=blank_figure(),
-                                            )
-                                        )
-                                    ],
-                                    type="default",
-                                )
-                            ],
-                        ),
-                    ],
-                ),
-                html.Div(
-                    className="six columns graph-block",
-                    children=[
-                        html.Div(
-                            className="twelve columns",
-                            children=[
-                                daq.ToggleSwitch(
-                                    id="conviction_selection_gov2",
-                                    label=["Mean", "Median"],
-                                    value=False,
-                                )
-                            ],
-                        ),
-                        html.Div(
-                            id="forth-chart",
-                            className="twelve columns",
-                            children=[
-                                dcc.Loading(
-                                    id="loading-icon",
-                                    children=[
-                                        html.Div(
-                                            dcc.Graph(
-                                                id="voted_ksm_scatterchart_gov2",
-                                                figure=blank_figure(),
-                                            )
-                                        )
-                                    ],
-                                    type="default",
-                                )
-                            ],
-                        ),
-                    ],
-                ),
-            ],
-        ),
-        html.Div(className="twelve columns", children=[html.Br()]),
-        html.Div(
-            className="twelve columns",
-            children=[
-                html.Div(
-                    className="six columns graph-block",
-                    children=[
-                        html.Div(
-                            className="twelve columns",
-                            children=[
-                                daq.ToggleSwitch(
-                                    id="delegated_chart_selection_gov2",
-                                    className="toggle_switch",
-                                    label=["Votes Split", "Voted Amount Split"],
-                                    value=False,
-                                )
-                            ],
-                        ),
-                        html.Div(
-                            id="v-chart",
-                            className="twelve columns",
-                            children=[
-                                dcc.Loading(
-                                    id="loading-icon",
-                                    children=[
-                                        html.Div(
-                                            dcc.Graph(
-                                                id="delegation_barchart_gov2",
-                                                figure=blank_figure(),
-                                            )
-                                        )
-                                    ],
-                                    type="default",
-                                ),
-                            ],
-                        ),
-                    ],
-                ),
-                html.Div(
-                    className="six columns graph-block",
-                    children=[
-                        html.Div(
-                            className="twelve columns",
-                            children=[
-                                daq.ToggleSwitch(
-                                    id="voter_type_chart_selection_gov2",
-                                    className="toggle_switch",
-                                    label=["Votes Split", "Voted Amount Split"],
-                                    value=False,
-                                )
-                            ],
-                        ),
-                        html.Div(
-                            id="v-chart",
-                            className="twelve columns",
-                            children=[
-                                dcc.Loading(
-                                    id="loading-icon",
-                                    children=[
-                                        html.Div(
-                                            dcc.Graph(
-                                                id="voter_type_barchart_gov2",
-                                                figure=blank_figure(),
-                                            )
-                                        )
-                                    ],
-                                    type="default",
-                                ),
-                            ],
-                        ),
-                    ],
-                ),
-            ],
-        ),
-        html.Div(className="twelve columns", children=[html.Br()]),
-        html.Div(
-            className="twelve columns",
-            children=[
-                html.Div(
-                    className="six columns graph-block",
-                    children=[
-                        html.Div(
-                            className="twelve columns",
-                            children=[
-                                daq.ToggleSwitch(
-                                    id="voting_time_selection_gov2",
-                                    label=["Absolute", "Percentage"],
-                                    value=False,
-                                )
-                            ],
-                        ),
-                        html.Div(
-                            id="fifth-chart",
-                            className="twelve columns",
-                            children=[
-                                dcc.Loading(
-                                    id="loading-icon",
-                                    children=[
-                                        html.Div(
-                                            dcc.Graph(
-                                                id="voting_time_barchart_gov2",
-                                                figure=blank_figure(),
-                                            )
-                                        )
-                                    ],
-                                    type="default",
-                                )
-                            ],
-                        ),
-                    ],
-                ),
-                html.Div(
-                    className="six columns graph-block",
-                    children=[
-                        html.Div(
-                            id="sixth-chart-gov2",
-                            className="twelve columns",
-                            children=[
-                                html.Div(
-                                    className="twelve columns", children=[html.Br()]
-                                ),
-                                html.Div(
-                                    id="fifth-chart-gov2",
-                                    className="twelve columns",
-                                    children=[
-                                        dcc.Loading(
-                                            id="loading-icon",
-                                            children=[
-                                                html.Div(
-                                                    dcc.Graph(
-                                                        id="vote_timing_distribution_gov2",
-                                                        figure=blank_figure(),
-                                                    )
+                className="twelve columns",
+                style={"display": "inline-block", "align": "center"},
+            ),
+            html.Div(className="twelve columns", children=[html.Br()]),
+            html.Div(
+                className="twelve columns",
+                children=[
+                    html.Div(html.Br(), className="five columns"),
+                    html.Button(
+                        "Clear Selection",
+                        id="clear-radio-gov2",
+                        className="click-button",
+                    ),
+                ],
+            ),
+            html.Div(className="twelve columns", children=[html.Br()]),
+            html.Div(
+                className="twelve columns",
+                children=[
+                    html.Div(
+                        className="six columns graph-block",
+                        children=[
+                            html.Div(
+                                className="twelve columns",
+                                children=[
+                                    daq.ToggleSwitch(
+                                        id="votes_counts_chart_selection_gov2",
+                                        className="toggle_switch",
+                                        label=["Votes Split", "Duration"],
+                                        value=False,
+                                    )
+                                ],
+                            ),
+                            html.Div(
+                                id="first-chart",
+                                className="twelve columns",
+                                children=[
+                                    dcc.Loading(
+                                        id="loading-icon",
+                                        children=[
+                                            html.Div(
+                                                dcc.Graph(
+                                                    id="votes_counts_barchart_gov2",
+                                                    figure=blank_figure(),
                                                 )
-                                            ],
-                                            type="default",
-                                        )
-                                    ],
-                                ),
-                            ],
-                        ),
-                    ],
-                ),
-            ],
-        ),
-        html.Div(className="twelve columns", children=[html.Br()]),
-        html.Div(
-            className="twelve columns",
-            children=[
-                html.Div(
-                    id="section-piechart-gov2",
-                    className="six columns graph-block",
-                    children=[
-                        dcc.Loading(
-                            id="loading-icon",
-                            children=[
-                                html.Div(
-                                    dcc.Graph(
-                                        id="section_piechart_gov2",
-                                        figure=blank_figure(),
-                                    )
-                                )
-                            ],
-                            type="default",
-                        )
-                    ],
-                ),
-                html.Div(
-                    id="method-piechart-gov2",
-                    className="six columns graph-block",
-                    children=[
-                        dcc.Loading(
-                            id="loading-icon",
-                            children=[
-                                html.Div(
-                                    dcc.Graph(
-                                        id="method_piechart_gov2",
-                                        figure=blank_figure(),
-                                    )
-                                )
-                            ],
-                            type="default",
-                        )
-                    ],
-                ),
-            ]
-        ),
-        html.Div(className="twelve columns", children=[html.Br()]),
-        html.Div(
-            className="twelve columns",
-            children=[
-                html.Div(
-                    className="six columns graph-block",
-                    children=[
-                        html.Div(
-                            id="fifth-chart-gov2",
-                            className="twelve columns",
-                            children=[
-                                dcc.Loading(
-                                    id="loading-icon",
-                                    children=[
-                                        html.Div(
-                                            dcc.Graph(
-                                                id="submission_deposit_who_piechart_gov2",
-                                                figure=blank_figure(),
                                             )
-                                        )
-                                    ],
-                                    type="default",
-                                )
-                            ],
-                        ),
-                    ],
-                ),
-                html.Div(
-                    className="six columns graph-block",
-                    children=[
-                        html.Div(
-                            className="twelve columns",
-                            children=[
-                                daq.ToggleSwitch(
-                                    id="quiz_selection_gov2",
-                                    className="toggle_switch",
-                                    label=["Absolute", "Percentage"],
-                                    value=False,
-                                )
-                            ],
-                        ),
-                        html.Div(
-                            id="xii-chart",
-                            className="twelve columns",
-                            children=[
-                                dcc.Loading(
-                                    id="loading-icon",
-                                    children=[
-                                        html.Div(
-                                            dcc.Graph(
-                                                id="quiz_answers_barchart_gov2",
-                                                figure=blank_figure(),
+                                        ],
+                                        type="default",
+                                    ),
+                                ],
+                            ),
+                        ],
+                    ),
+                    html.Div(
+                        className="six columns graph-block",
+                        children=[
+                            html.Div(
+                                className="twelve columns",
+                                children=[
+                                    daq.ToggleSwitch(
+                                        id="turn_out_chart_selection_gov2",
+                                        className="toggle_switch",
+                                        label=["Voted amount", "Turnout"],
+                                        value=False,
+                                    )
+                                ],
+                            ),
+                            html.Div(
+                                id="second-chart",
+                                className="twelve columns",
+                                children=[
+                                    dcc.Loading(
+                                        id="loading-icon",
+                                        children=[
+                                            html.Div(
+                                                dcc.Graph(
+                                                    id="turnout_scatterchart_gov2",
+                                                    figure=blank_figure(),
+                                                )
                                             )
+                                        ],
+                                        type="default",
+                                    )
+                                ],
+                            ),
+                        ],
+                    ),
+                ],
+            ),
+            html.Div(className="twelve columns", children=[html.Br()]),
+            html.Div(
+                className="twelve columns",
+                children=[
+                    html.Div(
+                        className="six columns graph-block",
+                        children=[
+                            html.Div(
+                                className="twelve columns",
+                                children=[
+                                    daq.ToggleSwitch(
+                                        id="new_accounts_selection_gov2",
+                                        className="toggle_switch",
+                                        label=["Absolute", "Percentage"],
+                                        value=False,
+                                    )
+                                ],
+                            ),
+                            html.Div(
+                                id="third-chart",
+                                className="twelve columns",
+                                children=[
+                                    dcc.Loading(
+                                        id="loading-icon",
+                                        children=[
+                                            html.Div(
+                                                dcc.Graph(
+                                                    id="new_accounts_barchart_gov2",
+                                                    figure=blank_figure(),
+                                                )
+                                            )
+                                        ],
+                                        type="default",
+                                    )
+                                ],
+                            ),
+                        ],
+                    ),
+                    html.Div(
+                        className="six columns graph-block",
+                        children=[
+                            html.Div(
+                                className="twelve columns",
+                                children=[
+                                    daq.ToggleSwitch(
+                                        id="conviction_selection_gov2",
+                                        label=["Mean", "Median"],
+                                        value=False,
+                                    )
+                                ],
+                            ),
+                            html.Div(
+                                id="forth-chart",
+                                className="twelve columns",
+                                children=[
+                                    dcc.Loading(
+                                        id="loading-icon",
+                                        children=[
+                                            html.Div(
+                                                dcc.Graph(
+                                                    id="voted_ksm_scatterchart_gov2",
+                                                    figure=blank_figure(),
+                                                )
+                                            )
+                                        ],
+                                        type="default",
+                                    )
+                                ],
+                            ),
+                        ],
+                    ),
+                ],
+            ),
+            html.Div(className="twelve columns", children=[html.Br()]),
+            html.Div(
+                className="twelve columns",
+                children=[
+                    html.Div(
+                        className="six columns graph-block",
+                        children=[
+                            html.Div(
+                                className="twelve columns",
+                                children=[
+                                    daq.ToggleSwitch(
+                                        id="delegated_chart_selection_gov2",
+                                        className="toggle_switch",
+                                        label=["Votes Split", "Voted Amount Split"],
+                                        value=False,
+                                    )
+                                ],
+                            ),
+                            html.Div(
+                                id="v-chart",
+                                className="twelve columns",
+                                children=[
+                                    dcc.Loading(
+                                        id="loading-icon",
+                                        children=[
+                                            html.Div(
+                                                dcc.Graph(
+                                                    id="delegation_barchart_gov2",
+                                                    figure=blank_figure(),
+                                                )
+                                            )
+                                        ],
+                                        type="default",
+                                    ),
+                                ],
+                            ),
+                        ],
+                    ),
+                    html.Div(
+                        className="six columns graph-block",
+                        children=[
+                            html.Div(
+                                className="twelve columns",
+                                children=[
+                                    daq.ToggleSwitch(
+                                        id="voter_type_chart_selection_gov2",
+                                        className="toggle_switch",
+                                        label=["Votes Split", "Voted Amount Split"],
+                                        value=False,
+                                    )
+                                ],
+                            ),
+                            html.Div(
+                                id="v-chart",
+                                className="twelve columns",
+                                children=[
+                                    dcc.Loading(
+                                        id="loading-icon",
+                                        children=[
+                                            html.Div(
+                                                dcc.Graph(
+                                                    id="voter_type_barchart_gov2",
+                                                    figure=blank_figure(),
+                                                )
+                                            )
+                                        ],
+                                        type="default",
+                                    ),
+                                ],
+                            ),
+                        ],
+                    ),
+                ],
+            ),
+            html.Div(className="twelve columns", children=[html.Br()]),
+            html.Div(
+                className="twelve columns",
+                children=[
+                    html.Div(
+                        className="six columns graph-block",
+                        children=[
+                            html.Div(
+                                className="twelve columns",
+                                children=[
+                                    daq.ToggleSwitch(
+                                        id="voting_time_selection_gov2",
+                                        label=["Absolute", "Percentage"],
+                                        value=False,
+                                    )
+                                ],
+                            ),
+                            html.Div(
+                                id="fifth-chart",
+                                className="twelve columns",
+                                children=[
+                                    dcc.Loading(
+                                        id="loading-icon",
+                                        children=[
+                                            html.Div(
+                                                dcc.Graph(
+                                                    id="voting_time_barchart_gov2",
+                                                    figure=blank_figure(),
+                                                )
+                                            )
+                                        ],
+                                        type="default",
+                                    )
+                                ],
+                            ),
+                        ],
+                    ),
+                    html.Div(
+                        className="six columns graph-block",
+                        children=[
+                            html.Div(
+                                id="sixth-chart-gov2",
+                                className="twelve columns",
+                                children=[
+                                    html.Div(
+                                        className="twelve columns", children=[html.Br()]
+                                    ),
+                                    html.Div(
+                                        id="fifth-chart-gov2",
+                                        className="twelve columns",
+                                        children=[
+                                            dcc.Loading(
+                                                id="loading-icon",
+                                                children=[
+                                                    html.Div(
+                                                        dcc.Graph(
+                                                            id="vote_timing_distribution_gov2",
+                                                            figure=blank_figure(),
+                                                        )
+                                                    )
+                                                ],
+                                                type="default",
+                                            )
+                                        ],
+                                    ),
+                                ],
+                            ),
+                        ],
+                    ),
+                ],
+            ),
+            html.Div(className="twelve columns", children=[html.Br()]),
+            html.Div(
+                className="twelve columns",
+                children=[
+                    html.Div(
+                        id="section-piechart-gov2",
+                        className="six columns graph-block",
+                        children=[
+                            dcc.Loading(
+                                id="loading-icon",
+                                children=[
+                                    html.Div(
+                                        dcc.Graph(
+                                            id="section_piechart_gov2",
+                                            figure=blank_figure(),
                                         )
-                                    ],
-                                    type="default",
-                                )
-                            ],
-                        ),
-                    ],
-                ),
-            ],
-        ),
-        html.Div(className="twelve columns", children=[html.Br()]),
-        html.Footer(
-            className="logo-footer twelve columns",
-            children=[
-                html.Footer(
-                    className="logo-footer-centering",
-                    children=[
-                        html.A(
-                            href="https://www.proofofchaos.app/",
-                            target="_blank",
-                            className="logo-footer-container",
-                            children=[
-                                html.H4(
-                                    children=["Built by "],
-                                    className="footer-element",
-                                ),
-                                html.Img(
-                                    src="assets/proofofchaos_white.png",
-                                    id="proofofchaos-icon",
-                                    className="footer-element",
-                                ),
-                            ],
-                        ),
-                        html.A(
-                            href="https://kusama.polkassembly.io/treasury-proposals",
-                            target="_blank",
-                            className="logo-footer-container",
-                            children=[
-                                html.H4(
-                                    children=["Funded by "],
-                                    className="footer-element",
-                                ),
-                                html.Img(
-                                    src="assets/kusama.png",
-                                    id="kusama-icon",
-                                    className="footer-element",
-                                ),
-                            ],
-                        ),
-                        html.A(
-                            href="https://subsquid.io/",
-                            target="_blank",
-                            className="logo-footer-container",
-                            children=[
-                                html.H4(
-                                    children=["Powered by"],
-                                    className="footer-element",
-                                ),
-                                html.Img(
-                                    src="assets/subsquid.png",
-                                    id="subsquid-icon",
-                                    className="footer-element",
-                                ),
-                            ],
-                        ),
-                    ],
-                ),
-            ],
-        ),
-    ]
+                                    )
+                                ],
+                                type="default",
+                            )
+                        ],
+                    ),
+                    html.Div(
+                        id="method-piechart-gov2",
+                        className="six columns graph-block",
+                        children=[
+                            dcc.Loading(
+                                id="loading-icon",
+                                children=[
+                                    html.Div(
+                                        dcc.Graph(
+                                            id="method_piechart_gov2",
+                                            figure=blank_figure(),
+                                        )
+                                    )
+                                ],
+                                type="default",
+                            )
+                        ],
+                    ),
+                ],
+            ),
+            html.Div(className="twelve columns", children=[html.Br()]),
+            html.Div(
+                className="twelve columns",
+                children=[
+                    html.Div(
+                        className="six columns graph-block",
+                        children=[
+                            html.Div(
+                                id="fifth-chart-gov2",
+                                className="twelve columns",
+                                children=[
+                                    dcc.Loading(
+                                        id="loading-icon",
+                                        children=[
+                                            html.Div(
+                                                dcc.Graph(
+                                                    id="submission_deposit_who_piechart_gov2",
+                                                    figure=blank_figure(),
+                                                )
+                                            )
+                                        ],
+                                        type="default",
+                                    )
+                                ],
+                            ),
+                        ],
+                    ),
+                    html.Div(
+                        className="six columns graph-block",
+                        children=[
+                            html.Div(
+                                className="twelve columns",
+                                children=[
+                                    daq.ToggleSwitch(
+                                        id="quiz_selection_gov2",
+                                        className="toggle_switch",
+                                        label=["Absolute", "Percentage"],
+                                        value=False,
+                                    )
+                                ],
+                            ),
+                            html.Div(
+                                id="xii-chart",
+                                className="twelve columns",
+                                children=[
+                                    dcc.Loading(
+                                        id="loading-icon",
+                                        children=[
+                                            html.Div(
+                                                dcc.Graph(
+                                                    id="quiz_answers_barchart_gov2",
+                                                    figure=blank_figure(),
+                                                )
+                                            )
+                                        ],
+                                        type="default",
+                                    )
+                                ],
+                            ),
+                        ],
+                    ),
+                ],
+            ),
+            html.Div(className="twelve columns", children=[html.Br()]),
+            html.Footer(
+                className="logo-footer twelve columns",
+                children=[
+                    html.Footer(
+                        className="logo-footer-centering",
+                        children=[
+                            html.A(
+                                href="https://www.proofofchaos.app/",
+                                target="_blank",
+                                className="logo-footer-container",
+                                children=[
+                                    html.H4(
+                                        children=["Built by "],
+                                        className="footer-element",
+                                    ),
+                                    html.Img(
+                                        src="assets/proofofchaos_white.png",
+                                        id="proofofchaos-icon",
+                                        className="footer-element",
+                                    ),
+                                ],
+                            ),
+                            html.A(
+                                href="https://kusama.polkassembly.io/treasury-proposals",
+                                target="_blank",
+                                className="logo-footer-container",
+                                children=[
+                                    html.H4(
+                                        children=["Funded by "],
+                                        className="footer-element",
+                                    ),
+                                    html.Img(
+                                        src="assets/kusama.png",
+                                        id="kusama-icon",
+                                        className="footer-element",
+                                    ),
+                                ],
+                            ),
+                            html.A(
+                                href="https://subsquid.io/",
+                                target="_blank",
+                                className="logo-footer-container",
+                                children=[
+                                    html.H4(
+                                        children=["Powered by"],
+                                        className="footer-element",
+                                    ),
+                                    html.Img(
+                                        src="assets/subsquid.png",
+                                        id="subsquid-icon",
+                                        className="footer-element",
+                                    ),
+                                ],
+                            ),
+                        ],
+                    ),
+                ],
+            ),
+        ],
+    )
 
 
 layout = build_gov2_tab_1()
