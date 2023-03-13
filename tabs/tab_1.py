@@ -1466,7 +1466,7 @@ def update_vote_timing_distribution(
         Input("crossfilter_proposer", "value"),
     ],
 )
-def update_pie_chart(
+def update_section_pie_chart(
     referenda_data,
     selected_ids,
     selected_section,
@@ -1517,7 +1517,7 @@ def update_pie_chart(
         Input("crossfilter_proposer", "value"),
     ],
 )
-def update_pie_chart(
+def update_method_pie_chart(
     referenda_data,
     selected_ids,
     selected_section,
@@ -1578,7 +1578,7 @@ def update_pie_chart(
         Input("crossfilter_proposer", "value"),
     ],
 )
-def update_pie_chart(
+def update_proposer_pie_chart(
     referenda_data,
     selected_ids,
     selected_section,

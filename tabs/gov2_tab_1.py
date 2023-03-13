@@ -1448,7 +1448,7 @@ def update_vote_timing_distribution(
         Input("crossfilter_decision_deposit_who_gov2", "value"),
     ],
 )
-def update_pie_chart(
+def update_section_pie_chart(
     referenda_data,
     selected_ids,
     selected_section,
@@ -1503,7 +1503,7 @@ def update_pie_chart(
         Input("crossfilter_decision_deposit_who_gov2", "value"),
     ],
 )
-def update_pie_chart(
+def update_method_pie_chart(
     referenda_data,
     selected_ids,
     selected_section,
@@ -1568,7 +1568,7 @@ def update_pie_chart(
         Input("crossfilter_decision_deposit_who_gov2", "value"),
     ],
 )
-def update_pie_chart(
+def update_submission_pie_chart(
     referenda_data,
     selected_ids,
     selected_section,
