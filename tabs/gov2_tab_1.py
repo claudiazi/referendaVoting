@@ -7,7 +7,8 @@ from dash import dash_table
 from dash import dcc
 from dash import html
 from dash.dependencies import Input, Output
-
+from substrateinterface import SubstrateInterface, Keypair
+from substrateinterface.exceptions import SubstrateRequestException
 from app import app
 from config import (
     voting_group_dict,
@@ -20,6 +21,42 @@ from config import (
 from utils.plotting import blank_figure
 from config import default_ids_range_dict, filters_gov2
 
+def get_kusama_tracks():
+    # Create a SubstrateInterface instance to connect to Kusama
+    substrate = SubstrateInterface(
+        url="wss://kusama-rpc.polkadot.io/"
+    )
+
+    # Get the 'Tracks' constant from the 'Referenda' module
+    tracks = substrate.get_constant('Referenda', 'Tracks')
+    print(tracks)
+    return tracks
+
+def get_ksm_issuance():
+    # Create a SubstrateInterface instance to connect to Kusama
+    substrate = SubstrateInterface(
+        url="wss://kusama-rpc.polkadot.io/"
+    )
+
+    issuance = substrate.query(
+        'Balances', 'TotalIssuance', []
+    )
+    print(issuance)
+
+    return issuance
+
+def get_ksm_inactive_issuance():
+    # Create a SubstrateInterface instance to connect to Kusama
+    substrate = SubstrateInterface(
+        url="wss://kusama-rpc.polkadot.io/"
+    )
+
+    inactive_issuance = substrate.query(
+        'Balances', 'InactiveIssuance', []
+    )
+    print(inactive_issuance)
+
+    return inactive_issuance
 
 def filter_referenda(
     df_referenda: pd.DataFrame,
