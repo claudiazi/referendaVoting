@@ -217,14 +217,13 @@ def load_specific_referendum_stats(referendum_index):
     query = f"""query MyQuery  {{
                 referendumStats(id: {referendum_index}) {{
                     cum_new_accounts
-                    cum_voted_amount_with_conviction_aye
-                    cum_voted_amount_with_conviction_nay
                     decision
                     is_new_account
                     referendum_index
                     timestamp
                     voted_amount_with_conviction
                     voter
+                    delegated_to
                    }}
                 }}"""
     print("start to load specific referedum stats")
@@ -236,24 +235,55 @@ def load_specific_referendum_stats(referendum_index):
     return df_referendum
 
 
-def load_pa_description(referendum_index):
-    query = f"""query MyQuery {{
-          posts(where: {{onchain_link: {{onchain_referendum_id: {{_eq: {referendum_index}}}}}}}) {{
-            content
-            created_at
-            title
-            onchain_link {{
-                onchain_referendum_id
-            }}
-          }}
-        }}
-        """
-    print("start to load specific referedum pa description")
+def load_specific_referendum_stats_gov2(referendum_index):  # TODO: refactor
+    query = f"""query MyQuery  {{
+                gov2referendumStats(id: {referendum_index}) {{
+                    cum_new_accounts
+                    decision
+                    is_new_account
+                    referendum_index
+                    timestamp
+                    voted_amount_with_conviction
+                    voter
+                    delegated_to
+                   }}
+                }}"""
+    print("start to load specific referedum stats")
     start_time = time.time()
-    pa_data = requests.post(polkassembly_graphql_endpoint, json={"query": query}).text
-    pa_data = json.loads(pa_data)
-    df_pa_description = pd.DataFrame.from_dict(pa_data["data"]["posts"])
-    print(f"finish loading referedum pa description {time.time() - start_time}")
+    referendum_data = requests.post(subsquid_endpoint, json={"query": query}).text
+    referendum_data = json.loads(referendum_data)
+    df_referendum = pd.DataFrame.from_dict(
+        referendum_data["data"]["gov2referendumStats"]
+    )
+    print(f"finish loading referendum_stats {time.time() - start_time}")
+    return df_referendum
+
+
+def load_pa_description(referendum_index):
+    try:
+        query = f"""query MyQuery {{
+              posts(where: {{onchain_link: {{onchain_referendum_id: {{_eq: {referendum_index}}}}}}}) {{
+                content
+                created_at
+                title
+                onchain_link {{
+                    onchain_referendum_id
+                }}
+              }}
+            }}
+            """
+        print("start to load specific referedum pa description")
+        start_time = time.time()
+        pa_data = requests.post(
+            polkassembly_graphql_endpoint, json={"query": query}
+        ).text
+        pa_data = json.loads(pa_data)
+        df_pa_description = pd.DataFrame.from_dict(pa_data["data"]["posts"])
+        print(f"finish loading referedum pa description {time.time() - start_time}")
+    except:
+        df_pa_description = pd.DataFrame.from_dict(
+            {"title": ["Not available."], "content": ["Not available."]}
+        )
     return df_pa_description
 
 
@@ -274,6 +304,28 @@ def load_refereundum_votes(referendum_index):
     votes_data = requests.post(subsquid_endpoint, json={"query": query}).text
     votes_data = json.loads(votes_data)
     df_votes = pd.DataFrame.from_dict(votes_data["data"]["referendumVotes"])
+    df_votes = df_votes.sort_values("timestamp")
+    print(f"finish loading referedum votes {time.time() - start_time}")
+    return df_votes
+
+
+def load_refereundum_votes_gov2(referendum_index):  # TODO:refactor
+    query = f"""query MyQuery {{
+                 gov2referendumVotes(id: {referendum_index}) {{
+                    voter
+                    referendum_index
+                    timestamp
+                    cum_voted_amount_with_conviction_aye
+                    cum_voted_amount_with_conviction_nay
+                }}
+            }}
+
+        """
+    print("start to load specific referedum votes")
+    start_time = time.time()
+    votes_data = requests.post(subsquid_endpoint, json={"query": query}).text
+    votes_data = json.loads(votes_data)
+    df_votes = pd.DataFrame.from_dict(votes_data["data"]["gov2referendumVotes"])
     df_votes = df_votes.sort_values("timestamp")
     print(f"finish loading referedum votes {time.time() - start_time}")
     return df_votes

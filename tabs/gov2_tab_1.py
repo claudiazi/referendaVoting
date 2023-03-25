@@ -64,7 +64,6 @@ def filter_referenda(
     cross_filters_input_list,
     cross_filters_list,
 ) -> pd.DataFrame:
-    print(cross_filters_input_list)
     if selected_ids:
         df_referenda = df_referenda[
             (df_referenda["referendum_index"] >= selected_ids[0])
@@ -79,6 +78,7 @@ def filter_referenda(
 def create_cross_filters(filters_list, gov_version):
     dcc_list = []
     for filter in filters_list:
+        print(f"filter: {filter}")
         dcc_list.append(
             dcc.Dropdown(
                 id=f"crossfilter_{filter}_{gov_version}",
@@ -96,9 +96,7 @@ def create_cross_filters(filters_list, gov_version):
 
 
 def build_gov2_tab_1():
-    return dcc.Loading(
-        id="loading-icon",
-        children=[
+    return [
             html.Div(className="twelve columns", children=[html.Br()]),
             html.Div(className="section-banner", children="Ongoing Referenda"),
             html.Div(className="twelve columns", children=[html.Br()]),
@@ -610,8 +608,7 @@ def build_gov2_tab_1():
                     ),
                 ],
             ),
-        ],
-    )
+        ]
 
 
 layout = build_gov2_tab_1()
@@ -642,14 +639,16 @@ def create_cross_filters(full_referenda_data):
     df = pd.DataFrame(full_referenda_data)
     filters = [html.Div("Filters", className="two columns")]
     for filter in filters_gov2:
-        filter_values = list(df[filter].unique())
+        filter_list = list(df[filter].unique())
+        searchable_bool = True if filter != [None] else False
+        filter_values = filter_list if filter_list != [None] else ["Not available"]
         filters.append(
             html.Div(
                 children=[
                     dcc.Dropdown(
                         options=filter_values,
                         id=f"crossfilter_{filter}_gov2",
-                        searchable=True,
+                        searchable=searchable_bool,
                         style={
                             "width": "90%",
                             "margin": 0,
