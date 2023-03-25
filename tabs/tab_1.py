@@ -629,13 +629,16 @@ def create_cross_filters(full_referenda_data):
         [section_list, method_list, proposer_list],
         filter_name_list,
     ):
+        searchable_bool = True if filter != [None] else False
+        filter_values = filter if filter != [None] else ["Not available"]
+        print(searchable_bool)
         filters.append(
             html.Div(
                 children=[
                     dcc.Dropdown(
-                        options=filter,
+                        options=filter_values,
                         id=f"crossfilter_{filter_name}",
-                        searchable=True,
+                        searchable=searchable_bool,
                         style={
                             "width": "90%",
                             "margin": 0,
