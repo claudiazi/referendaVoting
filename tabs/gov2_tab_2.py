@@ -33,6 +33,7 @@ def build_tab_2():
                                     style={
                                         "width": "70%",
                                         "float": "middle",
+                                        "color": "black"
                                     },
                                 ),
                             ],
@@ -364,7 +365,6 @@ def update_specific_referendum_data(referenda_data, referendum_input_gov2):
             # df_specific_referendum_pa = load_pa_description(referendum_input_gov2)
             df_specific_referendum_pa = load_pa_description(referendum_input_gov2)
             df_referendum_votes = load_refereundum_votes_gov2(referendum_input_gov2)
-            print(df_specific_referenda_stats.columns)
         except:
             warning = dcc.Loading(
                 id="loading-icon",
