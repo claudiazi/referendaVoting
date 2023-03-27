@@ -14,6 +14,8 @@ from utils.plotting import blank_figure
 
 
 gov_version = 2
+
+
 def build_tab_3():
     return [
         html.Div(
@@ -30,6 +32,7 @@ def build_tab_3():
                                     style={
                                         "width": "70%",
                                         "float": "middle",
+                                        "color": "black",
                                     },
                                 ),
                             ],
@@ -348,7 +351,9 @@ def update_specific_account_data(account_input):
     df_delegation = pd.DataFrame()
     if account_input:
         try:
-            df_specific_account = load_specific_account_stats(account_input, gov_version)
+            df_specific_account = load_specific_account_stats(
+                account_input, gov_version
+            )
             df_delegation = load_delegation_data(gov_version)
         except:
             warning = dcc.Loading(
