@@ -354,9 +354,10 @@ def load_specific_referendum_stats(referendum_index):
     return df_referendum
 
 
-def load_specific_account_stats(voter):
+def load_specific_account_stats(voter, gov_version: int = 1):
+    table = "accountStats" if gov_version == 1 else "gov2accountStats"
     query = f"""query MyQuery {{
-                  accountStats(address: "{voter}") {{
+                  {table}(address: "{voter}") {{
                     referendum_index
                     balance_value
                     conviction
@@ -379,15 +380,16 @@ def load_specific_account_stats(voter):
     start_time = time.time()
     account_data = requests.post(subsquid_endpoint, json={"query": query}).text
     account_data = json.loads(account_data)
-    df_account = pd.DataFrame.from_dict(account_data["data"]["accountStats"])
+    df_account = pd.DataFrame.from_dict(account_data["data"][table])
     df_account = df_account.sort_values("referendum_index")
     print(f"finish loading account_stats {time.time() - start_time}")
     return df_account
 
 
-def load_delegation_data():
+def load_delegation_data(gov_version: int = 1):
+    table = "delegations" if gov_version == 1 else "convictionVotingDelegations"
     query = f"""query MyQuery {{
-                  delegations {{
+                  {table} {{
                     wallet
                     to
                     timestamp
@@ -402,7 +404,7 @@ def load_delegation_data():
     start_time = time.time()
     delegation_data = requests.post(subsquid_endpoint, json={"query": query}).text
     delegation_data = json.loads(delegation_data)
-    df_delegation = pd.DataFrame.from_dict(delegation_data["data"]["delegations"])
+    df_delegation = pd.DataFrame.from_dict(delegation_data["data"][table])
     df_delegation = df_delegation[df_delegation["balance"].notnull()]
     df_delegation["conviction"] = df_delegation["lockPeriod"].apply(
         lambda x: 0.1 if x == 0 else x
@@ -437,10 +439,10 @@ def load_delegation_data():
 
 
 if __name__ == "__main__":
-    current_block = load_current_block()
-    dict_all, dict_ongoing = load_referenda_stats_gov1(current_block)
-    df_specific = load_specific_referendum_stats(211)
+    # current_block = load_current_block()
+    # dict_all, dict_ongoing = load_referenda_stats_gov1(current_block)
+    # df_specific = load_specific_referendum_stats(211)
     df_account = load_specific_account_stats(
-        "Eakn18SoWyCLE7o3hc23MABqMtNayE4nqNckpznSSZZgWFC"
+        "Eakn18SoWyCLE7o3hc23MABqMtNayE4nqNckpznSSZZgWFC",2
     )
-    df_delegation = load_delegation_data()
+    df_delegation = load_delegation_data(2)
