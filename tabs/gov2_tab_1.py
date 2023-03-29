@@ -58,6 +58,33 @@ def get_ksm_inactive_issuance():
 
     return inactive_issuance
 
+def get_kusama_identities(wallet_addresses):
+    substrate = SubstrateInterface(url="wss://kusama-rpc.polkadot.io/")
+    storage_keys = []
+    for address in wallet_addresses:
+        storage_keys.append(substrate.create_storage_key(
+            "Identity", "IdentityOf", [address]
+        ))
+    result = substrate.query_multi(storage_keys)
+    filtered_identities = {}
+    for storage_key, value_obj in result:
+        if value_obj and value_obj["info"]:
+            identity_info = value_obj["info"]
+            identity = {
+                "display": identity_info["display"]["Raw"] if "Raw" in identity_info["display"] else None,
+                "legal": identity_info["legal"]["Raw"] if "Raw" in identity_info["legal"] else None,
+                "web": identity_info["web"]["Raw"] if "Raw" in identity_info["web"] else None,
+                "riot": identity_info["riot"]["Raw"] if "Raw" in identity_info["riot"] else None,
+                "email": identity_info["email"]["Raw"] if "Raw" in identity_info["email"] else None,
+                "pgp_fingerprint": identity_info["pgp_fingerprint"] if identity_info["pgp_fingerprint"] is not None else None,
+                "image": identity_info["image"]["Raw"] if "Raw" in identity_info["image"] else None,
+                "twitter": identity_info["twitter"]["Raw"] if "Raw" in identity_info["twitter"] else None,
+            }
+            split_str = str(storage_key).split("params=")
+            wallet_address = split_str[1].strip("[]'").rstrip("'])>").strip()
+            filtered_identities[wallet_address] = identity
+    return filtered_identities
+
 def filter_referenda(
     df_referenda: pd.DataFrame,
     selected_ids,
