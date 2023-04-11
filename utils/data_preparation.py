@@ -4,6 +4,10 @@ import time
 
 import pandas as pd
 import requests
+from substrateinterface import SubstrateInterface, Keypair
+from substrateinterface.exceptions import SubstrateRequestException
+from collections.abc import MutableMapping
+
 
 subsquid_endpoint = "https://squid.subsquid.io/referenda-dashboard/v/v2/graphql"
 polkassembly_graphql_endpoint = "https://kusama.polkassembly.io/v1/graphql"
@@ -161,6 +165,7 @@ def load_referenda_stats_gov2():
                         decision_deposit_amount
                         submission_deposit_who
                         submission_deposit_amount
+                        track
                         method
                         section
                         count_quiz_attended_wallets
@@ -181,6 +186,13 @@ def load_referenda_stats_gov2():
     referenda_data = json.loads(referenda_data)
     df = pd.DataFrame.from_dict(referenda_data["data"]["gov2referendaStats"])
     print(f"finish loading referenda_stats {time.time() - start_time}")
+    df_tracks = get_kusama_tracks()
+    df_tracks = df_tracks[["id", "name"]]
+    df = (
+        pd.merge(df, df_tracks, left_on="track", right_on="id", how="left")
+        .drop(columns=["id"])
+        .rename(columns={"name": "track_name"})
+    )
     df = df.sort_values("referendum_index")
     df_ongoing = df[df["ended_at"].isnull()].sort_values("referendum_index")
     return (
@@ -438,11 +450,112 @@ def load_delegation_data(gov_version: int = 1):
     return df_delegation
 
 
+def flatten_dict(d, parent_key="", sep="_"):
+    items = []
+    for k, v in d.items():
+        new_key = f"{parent_key}{sep}{k}" if parent_key else k
+        if isinstance(v, MutableMapping):
+            items.extend(flatten_dict(v, new_key, sep=sep).items())
+        else:
+            items.append((new_key, v))
+    return dict(items)
+
+
+def flatten_df_columns(df, sep="_"):
+    df = df.copy()
+    for col in df.columns:
+        if isinstance(df[col][0], MutableMapping):
+            flattened = df[col].apply(lambda x: flatten_dict(x, sep=sep))
+            flattened = pd.DataFrame.from_records(flattened.tolist())
+            flattened.columns = [f"{col}{sep}{c}" for c in flattened.columns]
+            df = pd.concat([df, flattened], axis=1)
+            df = df.drop(col, axis=1)
+    return df
+
+
+def get_kusama_tracks():
+    # Create a SubstrateInterface instance to connect to Kusama
+    substrate = SubstrateInterface(url="wss://kusama-rpc.polkadot.io/")
+
+    # Get the 'Tracks' constant from the 'Referenda' module
+    tracks = substrate.get_constant("Referenda", "Tracks")
+    df = pd.DataFrame(tracks.value, columns=["id", "params"])
+    df = pd.concat([df.drop(["params"], axis=1), df["params"].apply(pd.Series)], axis=1)
+    df = flatten_df_columns(df)
+    return df
+
+
+def get_ksm_issuance():
+    # Create a SubstrateInterface instance to connect to Kusama
+    substrate = SubstrateInterface(url="wss://kusama-rpc.polkadot.io/")
+
+    issuance = substrate.query("Balances", "TotalIssuance", [])
+    print(issuance)
+
+    return issuance
+
+
+def get_ksm_inactive_issuance():
+    # Create a SubstrateInterface instance to connect to Kusama
+    substrate = SubstrateInterface(url="wss://kusama-rpc.polkadot.io/")
+
+    inactive_issuance = substrate.query("Balances", "InactiveIssuance", [])
+    print(inactive_issuance)
+
+    return inactive_issuance
+
+
+def get_kusama_identities(wallet_addresses):
+    substrate = SubstrateInterface(url="wss://kusama-rpc.polkadot.io/")
+    storage_keys = []
+    for address in wallet_addresses:
+        storage_keys.append(
+            substrate.create_storage_key("Identity", "IdentityOf", [address])
+        )
+    result = substrate.query_multi(storage_keys)
+    filtered_identities = {}
+    for storage_key, value_obj in result:
+        if value_obj and value_obj["info"]:
+            identity_info = value_obj["info"]
+            identity = {
+                "display": identity_info["display"]["Raw"]
+                if "Raw" in identity_info["display"]
+                else None,
+                "legal": identity_info["legal"]["Raw"]
+                if "Raw" in identity_info["legal"]
+                else None,
+                "web": identity_info["web"]["Raw"]
+                if "Raw" in identity_info["web"]
+                else None,
+                "riot": identity_info["riot"]["Raw"]
+                if "Raw" in identity_info["riot"]
+                else None,
+                "email": identity_info["email"]["Raw"]
+                if "Raw" in identity_info["email"]
+                else None,
+                "pgp_fingerprint": identity_info["pgp_fingerprint"]
+                if identity_info["pgp_fingerprint"] is not None
+                else None,
+                "image": identity_info["image"]["Raw"]
+                if "Raw" in identity_info["image"]
+                else None,
+                "twitter": identity_info["twitter"]["Raw"]
+                if "Raw" in identity_info["twitter"]
+                else None,
+            }
+            split_str = str(storage_key).split("params=")
+            wallet_address = split_str[1].strip("[]'").rstrip("'])>").strip()
+            filtered_identities[wallet_address] = identity
+    return filtered_identities
+
+
 if __name__ == "__main__":
     # current_block = load_current_block()
     # dict_all, dict_ongoing = load_referenda_stats_gov1(current_block)
     # df_specific = load_specific_referendum_stats(211)
+    load_referenda_stats_gov2()
+    get_kusama_tracks()
     df_account = load_specific_account_stats(
-        "Eakn18SoWyCLE7o3hc23MABqMtNayE4nqNckpznSSZZgWFC",2
+        "Eakn18SoWyCLE7o3hc23MABqMtNayE4nqNckpznSSZZgWFC", 2
     )
     df_delegation = load_delegation_data(2)
