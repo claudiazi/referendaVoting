@@ -9,7 +9,7 @@ from substrateinterface.exceptions import SubstrateRequestException
 from collections.abc import MutableMapping
 
 
-subsquid_endpoint = "https://squid.subsquid.io/referenda-dashboard/v/v2/graphql"
+subsquid_endpoint = "https://squid.subsquid.io/referenda-dashboard/v/v3/graphql"
 polkassembly_graphql_endpoint = "https://kusama.polkassembly.io/v1/graphql"
 
 
