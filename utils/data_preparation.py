@@ -110,8 +110,8 @@ def load_referenda_stats_gov1(current_block):
     df = df.sort_values("referendum_index")
     df_ongoing = df[df["ended_at"].isnull()].sort_values("referendum_index")
     return (
-        df.to_dict("record"),
-        df_ongoing.to_dict("record"),
+        df.to_dict("records"),
+        df_ongoing.to_dict("records"),
     )
 
 
@@ -196,8 +196,8 @@ def load_referenda_stats_gov2():
     df = df.sort_values("referendum_index")
     df_ongoing = df[df["ended_at"].isnull()].sort_values("referendum_index")
     return (
-        df.to_dict("record"),
-        df_ongoing.to_dict("record"),
+        df.to_dict("records"),
+        df_ongoing.to_dict("records"),
     )
 
 
@@ -553,8 +553,8 @@ if __name__ == "__main__":
     # current_block = load_current_block()
     # dict_all, dict_ongoing = load_referenda_stats_gov1(current_block)
     # df_specific = load_specific_referendum_stats(211)
+    df_track = get_kusama_tracks()
     load_referenda_stats_gov2()
-    get_kusama_tracks()
     df_account = load_specific_account_stats(
         "Eakn18SoWyCLE7o3hc23MABqMtNayE4nqNckpznSSZZgWFC", 2
     )
