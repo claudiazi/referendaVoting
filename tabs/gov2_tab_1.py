@@ -33,7 +33,7 @@ def filter_referenda(
         ]
     for filter_input, filter in zip(cross_filters_input_list, cross_filters_list):
         if filter_input != None and filter_input != "All":
-            df_referenda = df_referenda[df_referenda[filter] == filter_input]
+            df_referenda = df_referenda[df_referenda[filter].isin(filter_input)]
     return df_referenda
 
 
@@ -45,7 +45,8 @@ def create_cross_filters(filters_list, gov_version):
             dcc.Dropdown(
                 id=f"crossfilter_{filter}_{gov_version}",
                 searchable=True,
-                style={
+                multi=True,
+        style={
                     "width": "90%",
                     "margin": 0,
                     "padding": 0,
@@ -612,6 +613,7 @@ def create_cross_filters(full_referenda_data):
                         options=filter_values,
                         id=f"crossfilter_{filter}_gov2",
                         searchable=searchable_bool,
+                        multi=True,
                         style={
                             "width": "90%",
                             "margin": 0,
@@ -1768,9 +1770,10 @@ def update_quiz_answer_chart(
         Output("crossfilter_section_gov2", "value"),
         Output("crossfilter_method_gov2", "value"),
         Output("crossfilter_track_name_gov2", "value"),
-        Output("crossfilter_proposer_gov2", "value"),
+        Output("crossfilter_submission_deposit_who_gov2", "value"),
+        Output("crossfilter_decision_deposit_who_gov2", "value"),
     ],
-    [Input("clear-radio", "n_clicks")],
+    [Input("clear-radio-gov2", "n_clicks")],
 )
 def clear_section_selections(*args):
-    return None, None, None, None
+    return None, None, None, None, None
