@@ -11,6 +11,7 @@ from collections.abc import MutableMapping
 
 subsquid_endpoint = "https://squid.subsquid.io/referenda-dashboard/v/v3/graphql"
 polkassembly_graphql_endpoint = "https://kusama.polkassembly.io/v1/graphql"
+substrate_endpoint = "wss://kusama-rpc.dwellir.com/"
 
 
 def load_current_block():
@@ -475,8 +476,7 @@ def flatten_df_columns(df, sep="_"):
 
 def get_kusama_tracks():
     # Create a SubstrateInterface instance to connect to Kusama
-    substrate = SubstrateInterface(url="wss://kusama-rpc.polkadot.io/")
-
+    substrate = SubstrateInterface(url=substrate_endpoint)
     # Get the 'Tracks' constant from the 'Referenda' module
     tracks = substrate.get_constant("Referenda", "Tracks")
     df = pd.DataFrame(tracks.value, columns=["id", "params"])
@@ -487,7 +487,7 @@ def get_kusama_tracks():
 
 def get_ksm_issuance():
     # Create a SubstrateInterface instance to connect to Kusama
-    substrate = SubstrateInterface(url="wss://kusama-rpc.polkadot.io/")
+    substrate = SubstrateInterface(url=substrate_endpoint)
 
     issuance = substrate.query("Balances", "TotalIssuance", [])
     print(issuance)
