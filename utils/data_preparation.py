@@ -24,6 +24,44 @@ def load_current_block():
     return json.loads(current_block)["data"]["squidStatus"]["height"]
 
 
+def get_kusama_identities(addresses_list):
+    substrate = SubstrateInterface(url=substrate_endpoint)
+    storage_keys = []
+    addresses_list = set(addresses_list)
+    for address in addresses_list:
+        try:
+            key = substrate.create_storage_key("Identity", "IdentityOf",
+                                               [address])
+        except Exception as e:
+            key = "None"
+        storage_keys.append(key)
+    result = substrate.query_multi(storage_keys)
+    filtered_identities = {}
+    for storage_key, value_obj in result:
+        split_str = str(storage_key).split("params=")
+        wallet_address = split_str[1].strip("[]'").rstrip("'])>").strip()
+        if value_obj != None:
+            if value_obj and value_obj["info"]:
+                identity_info = value_obj["info"]
+                identity = {
+                    "display": identity_info["display"]["Raw"]
+                    if "Raw" in identity_info["display"]
+                    else None
+                }
+                filtered_identities[wallet_address] = identity.get(
+                    "display", wallet_address
+                )
+        else:
+            filtered_identities[wallet_address] = wallet_address
+    return filtered_identities
+
+
+def add_identities_to_dataframe(df0, df1, merge_key, address_col):
+    df1=df1[[merge_key, address_col]]
+    df0[f"{address_col}_display"] = df0[address_col].map(get_kusama_identities(df1[address_col]))
+    return df0
+
+
 def load_referenda_stats_gov1(current_block):
     query = f"""query MyQuery {{
                      referendaStats {{
@@ -194,6 +232,10 @@ def load_referenda_stats_gov2():
         .drop(columns=["id"])
         .rename(columns={"name": "track_name"})
     )
+    for col in ["decision_deposit_who", "submission_deposit_who"]:
+        df1 = df.copy()
+        df1 = df1[df[col].notna()]
+        df = add_identities_to_dataframe(df, df1, "referendum_index", col)
     df = df.sort_values("referendum_index")
     df_ongoing = df[df["ended_at"].isnull()].sort_values("referendum_index")
     return (
@@ -505,57 +547,50 @@ def get_ksm_inactive_issuance():
     return inactive_issuance
 
 
-def get_kusama_identities(wallet_addresses):
-    substrate = SubstrateInterface(url="wss://kusama-rpc.polkadot.io/")
-    storage_keys = []
-    for address in wallet_addresses:
-        storage_keys.append(
-            substrate.create_storage_key("Identity", "IdentityOf", [address])
-        )
-    result = substrate.query_multi(storage_keys)
-    filtered_identities = {}
-    for storage_key, value_obj in result:
-        if value_obj and value_obj["info"]:
-            identity_info = value_obj["info"]
-            identity = {
-                "display": identity_info["display"]["Raw"]
-                if "Raw" in identity_info["display"]
-                else None,
-                "legal": identity_info["legal"]["Raw"]
-                if "Raw" in identity_info["legal"]
-                else None,
-                "web": identity_info["web"]["Raw"]
-                if "Raw" in identity_info["web"]
-                else None,
-                "riot": identity_info["riot"]["Raw"]
-                if "Raw" in identity_info["riot"]
-                else None,
-                "email": identity_info["email"]["Raw"]
-                if "Raw" in identity_info["email"]
-                else None,
-                "pgp_fingerprint": identity_info["pgp_fingerprint"]
-                if identity_info["pgp_fingerprint"] is not None
-                else None,
-                "image": identity_info["image"]["Raw"]
-                if "Raw" in identity_info["image"]
-                else None,
-                "twitter": identity_info["twitter"]["Raw"]
-                if "Raw" in identity_info["twitter"]
-                else None,
-            }
-            split_str = str(storage_key).split("params=")
-            wallet_address = split_str[1].strip("[]'").rstrip("'])>").strip()
-            filtered_identities[wallet_address] = identity
-    return filtered_identities
-
-
 if __name__ == "__main__":
     # current_block = load_current_block()
     # dict_all, dict_ongoing = load_referenda_stats_gov1(current_block)
     # df_specific = load_specific_referendum_stats(211)
+    # df_account = load_specific_account_stats(
+    #     "CrbJuFZWjY3yft424EMTY9hdbWoU878DFs74v3a8nNDeKJD", 2
+    # )
+    df0 = pd.DataFrame(load_referenda_stats_gov2())
+
+    get_kusama_identities(["FvrbaMus8iASyrQYkajQWDxsYvG5gb72PFPuvy8TvkFFVGn",
+    "GqC37KSFFeGAoL7YxSeP1YDwr85WJvLmDDQiSaprTDAm8Jj",
+    "EwR2jzx7gZSjxCXbkVZRm39W2fWGJtwXYYftQYdVfcJjtt4",
+    "DpRVpDe4kDnZSjnZZ1WHb4WegAsRVBhUvfbEGxymMo6PA1a",
+    "F1wAMxpzvjWCpsnbUMamgKfqFM7LRvNdkcQ44STkeVbemEZ",
+    "FykhnPA3pn269LAcQ8VQKDgUQ8ieAaSLwJDhAVhu3dcokVR",
+    "G1vFzWj69uQRrw8GmGqzLr1JycokGgdzc34E7WEgjhknQV9",
+    "EoH7Yh7S5pqwLz4fTakZcZrvyLB288ifbwhhXoXwwzrPZ5W",
+    "FykhnPA3pn269LAcQ8VQKDgUQ8ieAaSLwJDhAVhu3dcokVR",
+    "JLcdsEGtVtR22RuRPDa2tCMwBCox1FnyhJS8UWwSge1q8L6",
+    "D5WYdgC7f4W6jGCkQaQ3Lfe5P5F7JvfhYBAX9G6CBToMYe4",
+    "GLVeryFRbg5hEKvQZcAnLvXZEXhiYaBjzSDwrXBXrfPF7wj",
+    "GcDZZCVPwkPqoWxx8vfLb4Yfpz9yQ1f4XEyqngSH8ygsL9p",
+    "GcDZZCVPwkPqoWxx8vfLb4Yfpz9yQ1f4XEyqngSH8ygsL9p",
+    "G1vFzWj69uQRrw8GmGqzLr1JycokGgdzc34E7WEgjhknQV9",
+    "GcDZZCVPwkPqoWxx8vfLb4Yfpz9yQ1f4XEyqngSH8ygsL9p",
+    "GcDZZCVPwkPqoWxx8vfLb4Yfpz9yQ1f4XEyqngSH8ygsL9p",
+    "EcpCHPVabccG59mVG21JkdJR5LHfmdf5BTR88t525wX9VBb",
+    "G1vFzWj69uQRrw8GmGqzLr1JycokGgdzc34E7WEgjhknQV9",
+    "EJYeKKwU6Ua8H8TWqq85eRgAfcb1ZLneapYuR6FhRB5YgVL",
+    "Fzs6WWFcAuJhxAVyZa4EN2suxggjidJjV3AzJxKbRHjh2Jc",
+    "HBtJ7Poz9ya9pzS8AXK16tAqJ1qxXbVspkM9E6p57BJ1hJs",
+    "GcDZZCVPwkPqoWxx8vfLb4Yfpz9yQ1f4XEyqngSH8ygsL9p",
+    "G1vFzWj69uQRrw8GmGqzLr1JycokGgdzc34E7WEgjhknQV9",
+    "D5WYdgC7f4W6jGCkQaQ3Lfe5P5F7JvfhYBAX9G6CBToMYe4",
+    "ELkVhHcvaP9L43RK9SP6Wn3FBfusEN5EJe2gH7aA2ETiufP",
+    "Et9M3rrA7H2kHQEGRXHxufcp9HTEmFirMWtKHvjoJ85r1C9",
+    "DCZyhphXsRLcW84G9WmWEXtAA8DKGtVGSFZLJYty8Ajjyfa",
+    "FsnxqJnqWVNMZZgxaQdhaCk9c5sL3WSggRCRqp1qEzk1L2i",
+    "HERTWZK4ZpmuXsEgW3UfL5x27XCdT5fE9x4QRbyNWifafdU",
+    "FvrbaMus8iASyrQYkajQWDxsYvG5gb72PFPuvy8TvkFFVGn",
+    "HERTWZK4ZpmuXsEgW3UfL5x27XCdT5fE9x4QRbyNWifafdU",])
     df_track = get_kusama_tracks()
     load_referenda_stats_gov2()
-    df_account = load_specific_account_stats(
-        "Eakn18SoWyCLE7o3hc23MABqMtNayE4nqNckpznSSZZgWFC", 2
-    )
+
     df_delegation = load_delegation_data(2)
+
+
