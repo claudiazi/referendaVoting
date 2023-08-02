@@ -380,8 +380,8 @@ def update_specific_account_data(account_input):
                 ],
             )
         return (
-            df_specific_account.to_dict("record"),
-            df_delegation.to_dict("record"),
+            df_specific_account.to_dict("records"),
+            df_delegation.to_dict("records"),
             [warning],
         )
     return None, None, html.P()
