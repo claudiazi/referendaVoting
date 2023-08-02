@@ -375,10 +375,10 @@ def update_specific_referendum_data(referenda_data, referendum_input_gov2):
         if df_specific_referendum.empty:
             warning = html.P(className="alert alert-danger", children=["Invalid input"])
         return (
-            df_specific_referendum.to_dict("record"),
-            df_specific_referenda_stats.to_dict("record"),
-            df_specific_referendum_pa.to_dict("record"),
-            df_referendum_votes.to_dict("record"),
+            df_specific_referendum.to_dict("records"),
+            df_specific_referenda_stats.to_dict("records"),
+            df_specific_referendum_pa.to_dict("records"),
+            df_referendum_votes.to_dict("records"),
             [warning],
         )
     return None, None, None, None, html.P()
