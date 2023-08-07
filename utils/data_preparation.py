@@ -10,7 +10,6 @@ from collections.abc import MutableMapping
 
 
 subsquid_endpoint = "https://squid.subsquid.io/referenda-dashboard/v/v3/graphql"
-polkassembly_graphql_endpoint = "https://kusama.polkassembly.io/v1/graphql"
 substrate_endpoint = "wss://kusama-rpc.dwellir.com/"
 
 
@@ -147,6 +146,7 @@ def load_referenda_stats_gov1(current_block):
         else None,
         axis=1,
     )
+    print(df.head())
     df = df.sort_values("referendum_index")
     df_ongoing = df[df["ended_at"].isnull()].sort_values("referendum_index")
     return (
@@ -316,25 +316,20 @@ def load_specific_referendum_stats_gov2(referendum_index):  # TODO: refactor
 
 
 def load_pa_description(referendum_index):
+
     try:
-        query = f"""query MyQuery {{
-              posts(where: {{onchain_link: {{onchain_referendum_id: {{_eq: {referendum_index}}}}}}}) {{
-                content
-                created_at
-                title
-                onchain_link {{
-                    onchain_referendum_id
-                }}
-              }}
-            }}
-            """
         print("start to load specific referedum pa description")
         start_time = time.time()
-        pa_data = requests.post(
-            polkassembly_graphql_endpoint, json={"query": query}
-        ).text
-        pa_data = json.loads(pa_data)
-        df_pa_description = pd.DataFrame.from_dict(pa_data["data"]["posts"])
+        polkassembly_graphql_endpoint = f"https://api.polkassembly.io/api/v1/posts/on-chain-post?postId={referendum_index}&proposalType=referendums_v2"
+        payload = {}
+        headers = {
+            'x-network': 'kusama'
+        }
+        response = requests.request("GET", polkassembly_graphql_endpoint,
+                                   headers=headers, data=payload)
+        pa_data = json.loads(response.text)
+        df_pa_description = pd.DataFrame.from_dict(
+            {'title': [pa_data['title']], 'content': [pa_data['content']]})
         print(f"finish loading referedum pa description {time.time() - start_time}")
     except:
         df_pa_description = pd.DataFrame.from_dict(
