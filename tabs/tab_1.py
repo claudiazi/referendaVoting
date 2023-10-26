@@ -21,6 +21,26 @@ from utils.plotting import blank_figure
 
 def build_tab_1():
     return [
+        html.Div(
+            children=[
+                html.Span("The indexer indexing all the data for this site is currently paused. ", style={'fontSize': 24, 'color': 'red'}),
+                html.A(
+                    "Read more info here",
+                    href="https://kusama.polkassembly.io/referenda/92",
+                    style={'fontSize': 24, 'color': 'blue', 'textDecoration': 'underline'},
+                    target='_blank'  # opens link in a new tab
+                )
+            ],
+            className="pause-banner",
+            style={
+                'textAlign': 'center', 
+                'padding': '10px',
+                'backgroundColor': '#f7f7f7',  # light gray background
+                'border': '2px solid red',  # red border
+                'borderRadius': '5px',  # rounded corners
+                'margin': '10px'
+            }
+        ),
         html.Div(className="twelve columns", children=[html.Br()]),
         html.Div(className="section-banner", children="Ongoing Referenda"),
         html.Div(className="twelve columns", children=[html.Br()]),
