@@ -13,6 +13,9 @@ from utils.data_preparation import load_specific_account_stats, load_delegation_
 from utils.plotting import blank_figure
 
 
+gov_version = 2
+
+
 def build_tab_3():
     return [
         html.Div(
@@ -29,6 +32,7 @@ def build_tab_3():
                                     style={
                                         "width": "70%",
                                         "float": "middle",
+                                        "color": "black",
                                     },
                                 ),
                             ],
@@ -40,10 +44,10 @@ def build_tab_3():
                         ),
                         html.Div(
                             className="twelve columns",
-                            id="input_warning",
+                            id="gov2_input_warning",
                             children=[
                                 dcc.Loading(
-                                    id="account_input_warning",
+                                    id="gov2_account_input_warning",
                                 )
                             ],
                         ),
@@ -53,10 +57,10 @@ def build_tab_3():
         ),
         html.Div(
             className="twelve columns",
-            children=[dcc.Loading(id="tab3_charts", children=[])],
+            children=[dcc.Loading(id="gov2_tab3_charts", children=[])],
         ),
-        dcc.Store(id="specific-account-data", data=[], storage_type="memory"),
-        dcc.Store(id="delegation-data", data=[], storage_type="memory"),
+        dcc.Store(id="gov2-specific-account-data", data=[], storage_type="memory"),
+        dcc.Store(id="gov2-delegation-data", data=[], storage_type="memory"),
         html.Footer(
             className="logo-footer twelve columns",
             children=[
@@ -126,19 +130,19 @@ def build_charts():
                 html.Div(className="twelve columns", children=[html.Br()]),
                 html.Div(
                     className="twelve columns",
-                    id="tab3_card_row_1",
+                    id="gov2_tab3_card_row_1",
                     children=[],
                 ),
                 html.Div(className="twelve columns", children=[html.Br()]),
                 html.Div(
                     className="twelve columns",
-                    id="tab3_card_row_2",
+                    id="gov2_tab3_card_row_2",
                     children=[],
                 ),
                 html.Div(className="twelve columns", children=[html.Br()]),
                 html.Div(
                     className="twelve columns",
-                    id="tab3_card_row_3",
+                    id="gov2_tab3_card_row_3",
                     children=[],
                 ),
                 html.Div(className="twelve columns", children=[html.Br()]),
@@ -159,7 +163,7 @@ def build_charts():
                                                     className="twelve columns",
                                                     children=[
                                                         daq.ToggleSwitch(
-                                                            id="votes_split_selection",
+                                                            id="gov2_votes_split_selection",
                                                             label=[
                                                                 "Decision",
                                                                 "Outcome",
@@ -179,7 +183,7 @@ def build_charts():
                                                     children=[
                                                         html.Div(
                                                             dcc.Graph(
-                                                                id="voted_amount_barchart",
+                                                                id="gov2_voted_amount_barchart",
                                                                 figure=blank_figure(),
                                                             )
                                                         )
@@ -208,7 +212,7 @@ def build_charts():
                                                 html.Div(
                                                     dcc.Graph(
                                                         className="twelve columns",
-                                                        id="voting_time_distribution",
+                                                        id="gov2_voting_time_distribution",
                                                         figure=blank_figure(),
                                                     )
                                                 ),
@@ -240,7 +244,7 @@ def build_charts():
                                                     children=[
                                                         html.Div(
                                                             dcc.Graph(
-                                                                id="delegate_to_chart",
+                                                                id="gov2_delegate_to_chart",
                                                                 figure=blank_figure(),
                                                             )
                                                         )
@@ -264,7 +268,7 @@ def build_charts():
                                             children=[
                                                 html.Div(
                                                     dcc.Graph(
-                                                        id="delegated_chart",
+                                                        id="gov2_delegated_chart",
                                                         figure=blank_figure(),
                                                     )
                                                 )
@@ -296,7 +300,7 @@ def build_charts():
                                                     children=[
                                                         html.Div(
                                                             dcc.Graph(
-                                                                id="voter-type-timeline-chart",
+                                                                id="gov2-voter-type-timeline-chart",
                                                                 figure=blank_figure(),
                                                             )
                                                         )
@@ -315,7 +319,7 @@ def build_charts():
                                 html.H6(children="Quiz Correctness"),
                                 dcc.Loading(
                                     html.Div(
-                                        id="quiz-correctness-table",
+                                        id="gov2-quiz-correctness-table",
                                         children=[],
                                     )
                                 ),
@@ -333,9 +337,9 @@ layout = build_tab_3()
 
 @app.callback(
     [
-        Output("specific-account-data", "data"),
-        Output("delegation-data", "data"),
-        Output("account_input_warning", "children"),
+        Output("gov2-specific-account-data", "data"),
+        Output("gov2-delegation-data", "data"),
+        Output("gov2_account_input_warning", "children"),
     ],
     [
         Input("account_input", "value"),
@@ -347,8 +351,10 @@ def update_specific_account_data(account_input):
     df_delegation = pd.DataFrame()
     if account_input:
         try:
-            df_specific_account = load_specific_account_stats(account_input)
-            df_delegation = load_delegation_data()
+            df_specific_account = load_specific_account_stats(
+                account_input, gov_version
+            )
+            df_delegation = load_delegation_data(gov_version)
         except:
             warning = dcc.Loading(
                 id="loading-icon",
@@ -382,20 +388,20 @@ def update_specific_account_data(account_input):
 
 
 @app.callback(
-    output=Output("tab3_charts", "children"),
+    output=Output("gov2_tab3_charts", "children"),
     inputs=[
-        Input("account_input_warning", "children"),
+        Input("gov2_account_input_warning", "children"),
     ],
 )
-def build_tab3_charts(input_warning):
-    if input_warning == [None]:
+def build_gov2_tab3_charts(gov2_input_warning):
+    if gov2_input_warning == [None]:
         return build_charts()
 
 
 @app.callback(
-    output=Output("tab3_card_row_1", "children"),
+    output=Output("gov2_tab3_card_row_1", "children"),
     inputs=[
-        Input("specific-account-data", "data"),
+        Input("gov2-specific-account-data", "data"),
     ],
 )
 def update_card1(account_data):
@@ -471,10 +477,10 @@ def update_card1(account_data):
 
 
 @app.callback(
-    output=Output("tab3_card_row_2", "children"),
+    output=Output("gov2_tab3_card_row_2", "children"),
     inputs=[
-        Input("specific-account-data", "data"),
-        Input("delegation-data", "data"),
+        Input("gov2-specific-account-data", "data"),
+        Input("gov2-delegation-data", "data"),
     ],
 )
 def update_card2(account_data, delegation_data):
@@ -549,9 +555,9 @@ def update_card2(account_data, delegation_data):
 
 
 @app.callback(
-    output=Output("tab3_card_row_3", "children"),
+    output=Output("gov2_tab3_card_row_3", "children"),
     inputs=[
-        Input("specific-account-data", "data"),
+        Input("gov2-specific-account-data", "data"),
     ],
 )
 def update_card3(account_data):
@@ -609,10 +615,10 @@ def update_card3(account_data):
 
 
 @app.callback(
-    output=Output("cum_voter_amount_barchart", "figure"),
-    inputs=[Input("specific-referendum-data", "data")],
+    output=Output("gov2_cum_voter_amount_barchart", "figure"),
+    inputs=[Input("gov2-specific-referendum-data", "data")],
 )
-def cum_voter_amount_barchart(account_data):
+def gov2_cum_voter_amount_barchart(account_data):
     if account_data:
         df_account = pd.DataFrame(account_data)
         second_graph_data = [
@@ -647,10 +653,10 @@ def cum_voter_amount_barchart(account_data):
 
 
 @app.callback(
-    output=Output("voted_amount_barchart", "figure"),
+    output=Output("gov2_voted_amount_barchart", "figure"),
     inputs=[
-        Input("specific-account-data", "data"),
-        Input("votes_split_selection", "value"),
+        Input("gov2-specific-account-data", "data"),
+        Input("gov2_votes_split_selection", "value"),
     ],
 )
 def voter_amount_barchart(account_data, selected_votes_split):
@@ -711,8 +717,8 @@ def voter_amount_barchart(account_data, selected_votes_split):
 
 
 @app.callback(
-    Output("voting_time_distribution", "figure"),
-    Input("specific-account-data", "data"),
+    Output("gov2_voting_time_distribution", "figure"),
+    Input("gov2-specific-account-data", "data"),
 )
 def update_vote_timing_distribution(account_data):
     if account_data:
@@ -745,14 +751,14 @@ def update_vote_timing_distribution(account_data):
 
 
 @app.callback(
-    output=Output("delegate_to_chart", "figure"),
+    output=Output("gov2_delegate_to_chart", "figure"),
     inputs=[
-        Input("specific-account-data", "data"),
-        Input("delegation-data", "data"),
+        Input("gov2-specific-account-data", "data"),
+        Input("gov2-delegation-data", "data"),
         Input("full-referenda-data", "data"),
     ],
 )
-def update_delegate_to_chart(account_data, delegation_data, referenda_data):
+def update_gov2_delegate_to_chart(account_data, delegation_data, referenda_data):
     if account_data:
         df_account = pd.DataFrame(account_data)
         df_delegation = pd.DataFrame(delegation_data)
@@ -837,14 +843,14 @@ def update_delegate_to_chart(account_data, delegation_data, referenda_data):
 
 
 @app.callback(
-    output=Output("delegated_chart", "figure"),
+    output=Output("gov2_delegated_chart", "figure"),
     inputs=[
-        Input("specific-account-data", "data"),
-        Input("delegation-data", "data"),
+        Input("gov2-specific-account-data", "data"),
+        Input("gov2-delegation-data", "data"),
         Input("full-referenda-data", "data"),
     ],
 )
-def update_delegated_chart(account_data, delegation_data, referenda_data):
+def update_gov2_delegated_chart(account_data, delegation_data, referenda_data):
     if account_data:
         df_account = pd.DataFrame(account_data)
         df_delegation = pd.DataFrame(delegation_data)
@@ -920,9 +926,9 @@ def update_delegated_chart(account_data, delegation_data, referenda_data):
 
 
 @app.callback(
-    output=Output("voter-type-timeline-chart", "figure"),
+    output=Output("gov2-voter-type-timeline-chart", "figure"),
     inputs=[
-        Input("specific-account-data", "data"),
+        Input("gov2-specific-account-data", "data"),
     ],
 )
 def voter_type_barchart(account_data):
@@ -987,8 +993,8 @@ def voter_type_barchart(account_data):
 
 
 @app.callback(
-    Output("quiz-correctness-table", "children"),
-    inputs=[Input("specific-account-data", "data")],
+    Output("gov2-quiz-correctness-table", "children"),
+    inputs=[Input("gov2-specific-account-data", "data")],
 )
 def create_quiz_correctness_table(account_data):
     df = pd.DataFrame(account_data)

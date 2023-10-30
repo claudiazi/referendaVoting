@@ -10,8 +10,8 @@ from dash.dependencies import Input, Output
 
 from app import app
 from utils.data_preparation import (
-    load_refereundum_votes,
-    load_specific_referendum_stats,
+    load_refereundum_votes_gov2,
+    load_specific_referendum_stats_gov2,
     load_pa_description,
 )
 from utils.plotting import blank_figure
@@ -28,11 +28,12 @@ def build_tab_2():
                             className="twelve columns",
                             children=[
                                 dcc.Input(
-                                    id="referendum_input",
+                                    id="referendum_input_gov2",
                                     placeholder="Type in Referendum Index",
                                     style={
                                         "width": "70%",
                                         "float": "middle",
+                                        "color": "black"
                                     },
                                 ),
                             ],
@@ -47,7 +48,7 @@ def build_tab_2():
                             id="input_check",
                             children=[
                                 dcc.Loading(
-                                    id="referendum_input_warning",
+                                    id="referendum_input_warning_gov2",
                                 )
                             ],
                         ),
@@ -55,21 +56,23 @@ def build_tab_2():
                 ),
                 html.Div(
                     className="twelve columns",
-                    children=[dcc.Loading(id="tab2_charts", children=[])],
+                    children=[dcc.Loading(id="tab2_charts_gov2", children=[])],
                 ),
                 dcc.Store(
-                    id="specific-referendum-data",
+                    id="specific-referendum-data-gov2",
                     data=[],
                     storage_type="memory",
                 ),
                 dcc.Store(
-                    id="specific-referenda-stats",
+                    id="specific-referenda-stats-gov2",
                     data=[],
                     storage_type="memory",
                 ),
-                dcc.Store(id="specific-referendum-pa", data=[], storage_type="memory"),
                 dcc.Store(
-                    id="specific-referendum-votes",
+                    id="specific-referendum-pa-gov2", data=[], storage_type="memory"
+                ),
+                dcc.Store(
+                    id="specific-referendum-votes-gov2",
                     data=[],
                     storage_type="memory",
                 ),
@@ -136,7 +139,7 @@ def build_tab_2():
     ]
 
 
-def build_charts():
+def build_charts_gov2():
     return [
         dcc.Loading(
             id="loading-icon",
@@ -146,7 +149,7 @@ def build_charts():
                     children=[
                         dcc.Loading(
                             dcc.Graph(
-                                id="referendum_timeline",
+                                id="referendum_timeline_gov2",
                                 figure=blank_figure(),
                             )
                         )
@@ -154,19 +157,19 @@ def build_charts():
                 ),
                 html.Div(
                     className="twelve columns",
-                    id="tab_2_card_row_1",
+                    id="tab_2_card_row_1_gov2",
                     children=[],
                 ),
                 html.Div(className="twelve columns", children=[html.Br()]),
                 html.Div(
                     className="twelve columns graph-block",
                     children=[],
-                    id="pa-description",
+                    id="pa-description-gov2",
                 ),
                 html.Div(className="twelve columns", children=[html.Br()]),
                 html.Div(
                     className="twelve columns",
-                    id="tab_2_card_row_2",
+                    id="tab_2_card_row_2_gov2",
                     children=[],
                 ),
                 html.Div(className="twelve columns", children=[html.Br()]),
@@ -177,7 +180,7 @@ def build_charts():
                             className="four columns graph-block",
                             children=[
                                 html.Div(
-                                    id="iii-chart",
+                                    id="iii-chart-gov2",
                                     className="twelve columns",
                                     children=[
                                         dcc.Loading(
@@ -185,7 +188,7 @@ def build_charts():
                                             children=[
                                                 html.Div(
                                                     dcc.Graph(
-                                                        id="aye_nay_chart",
+                                                        id="aye_nay_chart_gov2",
                                                         figure=blank_figure(),
                                                     )
                                                 )
@@ -207,7 +210,7 @@ def build_charts():
                                             children=[
                                                 html.Div(
                                                     dcc.Graph(
-                                                        id="delegation_chart",
+                                                        id="delegation_chart_gov2",
                                                         figure=blank_figure(),
                                                     )
                                                 )
@@ -229,7 +232,7 @@ def build_charts():
                                             children=[
                                                 html.Div(
                                                     dcc.Graph(
-                                                        id="voter_type_chart",
+                                                        id="voter_type_chart_gov2",
                                                         figure=blank_figure(),
                                                     )
                                                 )
@@ -250,7 +253,7 @@ def build_charts():
                             className="six columns graph-block",
                             children=[
                                 html.Div(
-                                    id="first-chart",
+                                    id="first-chart-gov2",
                                     className="twelve columns",
                                     children=[
                                         dcc.Loading(
@@ -258,7 +261,7 @@ def build_charts():
                                             children=[
                                                 html.Div(
                                                     dcc.Graph(
-                                                        id="cum_voted_amount_chart",
+                                                        id="cum_voted_amount_chart_gov2",
                                                         figure=blank_figure(),
                                                     )
                                                 )
@@ -280,7 +283,7 @@ def build_charts():
                                             children=[
                                                 html.Div(
                                                     dcc.Graph(
-                                                        id="distribution_voted_amount_scatterchart",
+                                                        id="distribution_voted_amount_scatterchart_gov2",
                                                         figure=blank_figure(),
                                                     )
                                                 )
@@ -303,7 +306,20 @@ def build_charts():
                     children=[
                         dcc.Loading(
                             html.Div(
-                                id="top-5-delegated-table",
+                                id="top-5-delegated-table-gov2",
+                                children=[],
+                            )
+                        )
+                    ],
+                ),
+                html.Div(className="twelve columns", children=[html.Br()]),
+                html.Div(className="section-banner", children="Top 5 Direct Voters"),
+                html.Div(
+                    className="twelve columns",
+                    children=[
+                        dcc.Loading(
+                            html.Div(
+                                id="top-5-direct-voter-table-gov2",
                                 children=[],
                             )
                         )
@@ -320,32 +336,35 @@ layout = build_tab_2()
 
 @app.callback(
     [
-        Output("specific-referendum-data", "data"),
-        Output("specific-referenda-stats", "data"),
-        Output("specific-referendum-pa", "data"),
-        Output("specific-referendum-votes", "data"),
-        Output("referendum_input_warning", "children"),
+        Output("specific-referendum-data-gov2", "data"),
+        Output("specific-referenda-stats-gov2", "data"),
+        Output("specific-referendum-pa-gov2", "data"),
+        Output("specific-referendum-votes-gov2", "data"),
+        Output("referendum_input_warning_gov2", "children"),
     ],
     [
         Input("full-referenda-data", "data"),
-        Input("referendum_input", "value"),
+        Input("referendum_input_gov2", "value"),
     ],
 )
-def update_specific_referendum_data(referenda_data, referendum_input):
+def update_specific_referendum_data(referenda_data, referendum_input_gov2):
     warning = None
     df_specific_referendum = pd.DataFrame()
     df_referenda = pd.DataFrame(referenda_data)
     df_specific_referenda_stats = pd.DataFrame()
     df_specific_referendum_pa = pd.DataFrame()
     df_referendum_votes = pd.DataFrame()
-    if referendum_input:
+    if referendum_input_gov2:
         try:
-            df_specific_referendum = load_specific_referendum_stats(referendum_input)
+            df_specific_referendum = load_specific_referendum_stats_gov2(
+                referendum_input_gov2
+            )
             df_specific_referenda_stats = df_referenda[
-                df_referenda["referendum_index"] == int(referendum_input)
+                df_referenda["referendum_index"] == int(referendum_input_gov2)
             ]
-            df_specific_referendum_pa = load_pa_description(referendum_input)
-            df_referendum_votes = load_refereundum_votes(referendum_input)
+            # df_specific_referendum_pa = load_pa_description(referendum_input_gov2)
+            df_specific_referendum_pa = load_pa_description(referendum_input_gov2)
+            df_referendum_votes = load_refereundum_votes_gov2(referendum_input_gov2)
         except:
             warning = dcc.Loading(
                 id="loading-icon",
@@ -366,20 +385,20 @@ def update_specific_referendum_data(referenda_data, referendum_input):
 
 
 @app.callback(
-    output=Output("tab2_charts", "children"),
+    output=Output("tab2_charts_gov2", "children"),
     inputs=[
-        Input("referendum_input_warning", "children"),
+        Input("referendum_input_warning_gov2", "children"),
     ],
 )
-def build_tab2_charts(input_warning):
+def build_tab2_charts_gov2(input_warning):
     if input_warning == [None]:
-        return build_charts()
+        return build_charts_gov2()
 
 
 @app.callback(
-    output=Output("referendum_timeline", "figure"),
+    output=Output("referendum_timeline_gov2", "figure"),
     inputs=[
-        Input("specific-referenda-stats", "data"),
+        Input("specific-referenda-stats-gov2", "data"),
     ],
 )
 def update_timeline(referenda_data):
@@ -391,11 +410,8 @@ def update_timeline(referenda_data):
                 "referendum_index",
                 "created_at",
                 "cancelled_at",
-                "executed_at",
                 "passed_at",
                 "not_passed_at",
-                "ends_at",
-                "executes_at",
             ]
         ]
         now = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -403,8 +419,7 @@ def update_timeline(referenda_data):
         df_timeline["now"] = df_timeline.apply(
             lambda row: row["now"]
             if (
-                not row["executed_at"]
-                and not row["passed_at"]
+                not row["passed_at"]
                 and not row["not_passed_at"]
                 and not row["cancelled_at"]
             )
@@ -429,12 +444,9 @@ def update_timeline(referenda_data):
         for timeline in [
             "created_at",
             "cancelled_at",
-            "executed_at",
             "passed_at",
             "not_passed_at",
             "now",
-            "executes_at",
-            "ends_at",
         ]:
             df = df_timeline[df_timeline["timeline"] == timeline]
             first_graph_data.append(
@@ -512,9 +524,9 @@ def update_timeline(referenda_data):
 
 
 @app.callback(
-    output=Output("tab_2_card_row_1", "children"),
+    output=Output("tab_2_card_row_1_gov2", "children"),
     inputs=[
-        Input("specific-referenda-stats", "data"),
+        Input("specific-referenda-stats-gov2", "data"),
     ],
 )
 def update_card1(referenda_data):
@@ -568,10 +580,10 @@ def update_card1(referenda_data):
                             dbc.CardBody(
                                 [
                                     html.H5(
-                                        "Passing Threshold", className="card-title"
+                                        "Submission Deposit Who", className="card-title"
                                     ),
                                     html.P(
-                                        df_referenda["threshold_type"],
+                                        df_referenda["submission_deposit_who"],
                                         className="card-value",
                                     ),
                                 ]
@@ -588,9 +600,11 @@ def update_card1(referenda_data):
                         [
                             dbc.CardBody(
                                 [
-                                    html.H5("Proposer", className="card-title"),
+                                    html.H5(
+                                        "Decision Deposit Who", className="card-title"
+                                    ),
                                     html.P(
-                                        df_referenda["proposer"],
+                                        df_referenda["decision_deposit_who"],
                                         className="card-value",
                                     ),
                                 ]
@@ -605,9 +619,9 @@ def update_card1(referenda_data):
 
 
 @app.callback(
-    output=Output("tab_2_card_row_2", "children"),
+    output=Output("tab_2_card_row_2_gov2", "children"),
     inputs=[
-        Input("specific-referenda-stats", "data"),
+        Input("specific-referenda-stats-gov2", "data"),
     ],
 )
 def update_card2(referenda_data):
@@ -697,9 +711,9 @@ def update_card2(referenda_data):
 
 
 @app.callback(
-    output=Output("pa-description", "children"),
+    output=Output("pa-description-gov2", "children"),
     inputs=[
-        Input("specific-referendum-pa", "data"),
+        Input("specific-referendum-pa-gov2", "data"),
     ],
 )
 def update_pa_description(referendum_pa_data):
@@ -729,12 +743,12 @@ def update_pa_description(referendum_pa_data):
                                 className="small_card_body",
                             )
                         ),
-                        id="collapse",
+                        id="collapse-gov2",
                         is_open=False,
                     ),
                     dbc.Button(
                         children="Read more",
-                        id="collapse-button",
+                        id="collapse-gov2-button-gov2",
                         className="mb-3 click-button",
                         n_clicks=0,
                     ),
@@ -746,20 +760,23 @@ def update_pa_description(referendum_pa_data):
 
 
 @app.callback(
-    output=[Output("collapse", "is_open"), Output("collapse-button", "children")],
-    inputs=[Input("collapse-button", "n_clicks")],
+    output=[
+        Output("collapse-gov2", "is_open"),
+        Output("collapse-gov2-button-gov2", "children"),
+    ],
+    inputs=[Input("collapse-gov2-button-gov2", "n_clicks")],
 )
-def toggle_collapse(n):
+def toggle_collapse_gov2(n):
     if n % 2 == 0:
         return False, "Read more"
     return True, "Read less"
 
 
 @app.callback(
-    output=Output("cum_voted_amount_chart", "figure"),
-    inputs=[Input("specific-referendum-votes", "data")],
+    output=Output("cum_voted_amount_chart_gov2", "figure"),
+    inputs=[Input("specific-referendum-votes-gov2", "data")],
 )
-def cum_voted_amount_chart(votes_data):
+def cum_voted_amount_chart_gov2(votes_data):
     if votes_data:
         df_referenda = pd.DataFrame(votes_data)
         second_graph_data = [
@@ -796,8 +813,8 @@ def cum_voted_amount_chart(votes_data):
 
 
 @app.callback(
-    output=Output("distribution_voted_amount_scatterchart", "figure"),
-    inputs=[Input("specific-referendum-data", "data")],
+    output=Output("distribution_voted_amount_scatterchart_gov2", "figure"),
+    inputs=[Input("specific-referendum-data-gov2", "data")],
 )
 def voted_amount_distribution_chart(referendum_data):
     if referendum_data:
@@ -836,10 +853,10 @@ def voted_amount_distribution_chart(referendum_data):
 
 
 @app.callback(
-    output=Output("aye_nay_chart", "figure"),
-    inputs=[Input("specific-referenda-stats", "data")],
+    output=Output("aye_nay_chart_gov2", "figure"),
+    inputs=[Input("specific-referenda-stats-gov2", "data")],
 )
-def aye_nay_chart(referendum_data):
+def aye_nay_chart_gov2(referendum_data):
     if referendum_data:
         df_referenda = pd.DataFrame(referendum_data)
         df_referenda["voted_amount_with_conviction_aye_perc"] = round(
@@ -929,10 +946,10 @@ def aye_nay_chart(referendum_data):
 
 
 @app.callback(
-    output=Output("delegation_chart", "figure"),
-    inputs=[Input("specific-referenda-stats", "data")],
+    output=Output("delegation_chart_gov2", "figure"),
+    inputs=[Input("specific-referenda-stats-gov2", "data")],
 )
-def aye_nay_chart(referendum_data):
+def aye_nay_chart_gov2(referendum_data):
     if referendum_data:
         df_referenda = pd.DataFrame(referendum_data)
         df_referenda["voted_amount_with_conviction_direct_perc"] = round(
@@ -1027,10 +1044,10 @@ def aye_nay_chart(referendum_data):
 
 
 @app.callback(
-    output=Output("voter_type_chart", "figure"),
-    inputs=[Input("specific-referenda-stats", "data")],
+    output=Output("voter_type_chart_gov2", "figure"),
+    inputs=[Input("specific-referenda-stats-gov2", "data")],
 )
-def aye_nay_chart(referendum_data):
+def aye_nay_chart_gov2(referendum_data):
     if referendum_data:
         df_referenda = pd.DataFrame(referendum_data)
         df_referenda["voted_amount_with_conviction_validator_perc"] = round(
@@ -1038,7 +1055,6 @@ def aye_nay_chart(referendum_data):
             / (
                 df_referenda["voted_amount_with_conviction_validator"]
                 + df_referenda["voted_amount_with_conviction_normal"]
-                + df_referenda["voted_amount_with_conviction_councillor"]
             )
             * 100,
             2,
@@ -1048,17 +1064,6 @@ def aye_nay_chart(referendum_data):
             / (
                 df_referenda["voted_amount_with_conviction_validator"]
                 + df_referenda["voted_amount_with_conviction_normal"]
-                + df_referenda["voted_amount_with_conviction_councillor"]
-            )
-            * 100,
-            2,
-        )
-        df_referenda["voted_amount_with_conviction_councillor_perc"] = round(
-            df_referenda["voted_amount_with_conviction_councillor"]
-            / (
-                df_referenda["voted_amount_with_conviction_validator"]
-                + df_referenda["voted_amount_with_conviction_normal"]
-                + df_referenda["voted_amount_with_conviction_councillor"]
             )
             * 100,
             2,
@@ -1088,16 +1093,6 @@ def aye_nay_chart(referendum_data):
                 texttemplate="<b>%{x} %</b>",
                 textangle=0,
             ),
-            go.Bar(
-                name="Councillor Votes",
-                x=df_referenda["voted_amount_with_conviction_councillor_perc"],
-                y=["referendum_index"],
-                textposition="inside",
-                orientation="h",
-                marker_color="#ffb3e0",
-                texttemplate="<b>%{x} %</b>",
-                textangle=0,
-            ),
         ]
         annotations = []
         space = 0
@@ -1105,9 +1100,8 @@ def aye_nay_chart(referendum_data):
             [
                 df_referenda["voted_amount_with_conviction_validator_perc"].values[0],
                 df_referenda["voted_amount_with_conviction_normal_perc"].values[0],
-                df_referenda["voted_amount_with_conviction_councillor_perc"].values[0],
             ],
-            ["Validator", "Normal", "Councillor"],
+            ["Validator", "Normal"],
         ):
             annotations.append(
                 dict(
@@ -1153,13 +1147,13 @@ def aye_nay_chart(referendum_data):
 
 
 @app.callback(
-    Output("top-5-delegated-table", "children"),
-    inputs=[Input("specific-referendum-data", "data")],
+    Output("top-5-delegated-table-gov2", "children"),
+    inputs=[Input("specific-referendum-data-gov2", "data")],
 )
 def create_top_5_delegtation_table(referendum_data_data):
     df = pd.DataFrame(referendum_data_data)
     df = (
-        df.groupby("delegated_to")["voted_amount_with_conviction"]
+        df.groupby(["delegated_to", "decision"])["voted_amount_with_conviction"]
         .sum()
         .sort_values(ascending=False)
         .head()
@@ -1189,6 +1183,52 @@ def create_top_5_delegtation_table(referendum_data_data):
             "maxWidth": "100px",
             "overflow": "hidden",
             "textOverflow": "ellipsis",
+            "fontSize": 12,
+            "fontFamily": "Unbounded Blond",
+        },
+        style_header={"backgroundColor": "#161a28", "color": "darkgray"},
+        style_data={"backgroundColor": "#161a28", "color": "white"},
+    )
+    return my_table
+
+
+@app.callback(
+    Output("top-5-direct-voter-table-gov2", "children"),
+    inputs=[Input("specific-referendum-data-gov2", "data")],
+)
+def create_top_5_direct_voter_table(referendum_data_data):
+    df = pd.DataFrame(referendum_data_data)
+    df = (
+        df[df["delegated_to"].isnull()]
+        .sort_values(by="voted_amount_with_conviction", ascending=False)
+        .head()
+        .reset_index()[["voter", "decision", "voted_amount_with_conviction"]]
+    )
+    df["voted_amount_with_conviction"] = df["voted_amount_with_conviction"].apply(
+        lambda x: round(x, 2)
+    )
+    my_table = dash_table.DataTable(
+        data=df.to_dict("records"),
+        columns=[{"name": i, "id": i} for i in df.columns],
+        sort_action="native",
+        style_data_conditional=(
+            [
+                {
+                    "if": {
+                        "column_id": "voter",
+                    },
+                    "fontWeight": "bold",
+                    "color": "#e6007a",
+                }
+            ]
+        ),
+        style_cell={
+            "width": "100px",
+            "minWidth": "100px",
+            "maxWidth": "100px",
+            "overflow": "hidden",
+            "textOverflow": "ellipsis",
+            "fontSize": 12,
             "fontSize": 12,
             "fontFamily": "Unbounded Blond",
         },

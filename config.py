@@ -1,3 +1,8 @@
+default_ids_range_dict = {"Gov 1": 161, "Gov 2": 0}
+
+filters_gov1 = ["section", "method", "proposer"]
+filters_gov2 = ["section", "method", "track_name", "submission_deposit_who_display", "decision_deposit_who_display"]
+
 voting_group_dict = {
     "count_0_4_1_4_vote_duration": "0/4 - 1/4 vote duration",
     "count_1_4_2_4_vote_duration": "1/4 - 2/4 vote duration",

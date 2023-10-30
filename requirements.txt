@@ -1,8 +1,8 @@
-pandas
-dash
-plotly
-dash_daq
-dash_bootstrap_components
-substrate-interface
-Flask-Caching
-gunicorn
+pandas==2.0.3
+dash==2.11.1
+plotly==5.15.0
+dash-daq==0.5.0
+dash-bootstrap-components==1.4.1
+substrate-interface==1.7.3
+Flask-Caching==2.0.2
+gunicorn==20.1.0
