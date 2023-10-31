@@ -9,7 +9,7 @@ from substrateinterface.exceptions import SubstrateRequestException
 from collections.abc import MutableMapping
 
 
-subsquid_endpoint = "https://squid.subsquid.io/referenda-dashboard/graphql"
+subsquid_endpoint = "https://squid.subsquid.io/referenda-dashboard/v/v1/graphql"
 substrate_endpoint = "wss://kusama-rpc.polkadot.io/"
 
 
@@ -146,7 +146,6 @@ def load_referenda_stats_gov1(current_block):
         else None,
         axis=1,
     )
-    print(df.head())
     df = df.sort_values("referendum_index")
     df_ongoing = df[df["ended_at"].isnull()].sort_values("referendum_index")
     return (
@@ -234,12 +233,13 @@ def load_referenda_stats_gov2():
         .drop(columns=["id"])
         .rename(columns={"name": "track_name"})
     )
+    track_load_time = time.time()
+    print(f"finish loading tracks {track_load_time - referenda_stats_load_time}")
     # for col in ["decision_deposit_who", "submission_deposit_who"]:
     #     df1 = df.copy()
     #     df1 = df1[df[col].notna()]
     #     df = add_identities_to_dataframe(df, df1, "referendum_index", col)
-    # print(f"finish loading identity {time.time() - referenda_stats_load_time}")
-    print(df.columns)
+    # print(f"finish loading identity {time.time() - track_load_time}")
     df = df.sort_values("referendum_index")
     df_ongoing = df[df["ended_at"].isnull()].sort_values("referendum_index")
     return (
@@ -546,22 +546,22 @@ def get_ksm_inactive_issuance():
     return inactive_issuance
 
 
-if __name__ == "__main__":
-    # current_block = load_current_block()
-    # dict_all, dict_ongoing = load_referenda_stats_gov1(current_block)
-    # df_specific = load_specific_referendum_stats(211)
-    # df_account = load_specific_account_stats(
-    #     "CrbJuFZWjY3yft424EMTY9hdbWoU878DFs74v3a8nNDeKJD", 2
-    # )
-    df0 = pd.DataFrame(load_referenda_stats_gov2())
+# if __name__ == "__main__":
+#     # current_block = load_current_block()
+#     # dict_all, dict_ongoing = load_referenda_stats_gov1(current_block)
+#     # df_specific = load_specific_referendum_stats(211)
+#     # df_account = load_specific_account_stats(
+#     #     "CrbJuFZWjY3yft424EMTY9hdbWoU878DFs74v3a8nNDeKJD", 2
+#     # )
+#     df0 = pd.DataFrame(load_referenda_stats_gov2())
 
-    get_kusama_identities(
-        [
-            "FvrbaMus8iASyrQYkajQWDxsYvG5gb72PFPuvy8TvkFFVGn",
-            "GqC37KSFFeGAoL7YxSeP1YDwr85WJvLmDDQiSaprTDAm8Jj",
-        ]
-    )
-    df_track = get_kusama_tracks()
-    load_referenda_stats_gov2()
+#     # get_kusama_identities(
+#     #     [
+#     #         "FvrbaMus8iASyrQYkajQWDxsYvG5gb72PFPuvy8TvkFFVGn",
+#     #         "GqC37KSFFeGAoL7YxSeP1YDwr85WJvLmDDQiSaprTDAm8Jj",
+#     #     ]
+#     # )
+#     df_track = get_kusama_tracks()
+#     load_referenda_stats_gov2()
 
-    df_delegation = load_delegation_data(2)
+#     df_delegation = load_delegation_data(2)
