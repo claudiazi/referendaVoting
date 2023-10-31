@@ -146,7 +146,6 @@ def load_referenda_stats_gov1(current_block):
         else None,
         axis=1,
     )
-    print(df.head())
     df = df.sort_values("referendum_index")
     df_ongoing = df[df["ended_at"].isnull()].sort_values("referendum_index")
     return (
@@ -543,22 +542,22 @@ def get_ksm_inactive_issuance():
     return inactive_issuance
 
 
-if __name__ == "__main__":
-    # current_block = load_current_block()
-    # dict_all, dict_ongoing = load_referenda_stats_gov1(current_block)
-    # df_specific = load_specific_referendum_stats(211)
-    # df_account = load_specific_account_stats(
-    #     "CrbJuFZWjY3yft424EMTY9hdbWoU878DFs74v3a8nNDeKJD", 2
-    # )
-    df0 = pd.DataFrame(load_referenda_stats_gov2())
+# if __name__ == "__main__":
+#     # current_block = load_current_block()
+#     # dict_all, dict_ongoing = load_referenda_stats_gov1(current_block)
+#     # df_specific = load_specific_referendum_stats(211)
+#     # df_account = load_specific_account_stats(
+#     #     "CrbJuFZWjY3yft424EMTY9hdbWoU878DFs74v3a8nNDeKJD", 2
+#     # )
+#     df0 = pd.DataFrame(load_referenda_stats_gov2())
 
-    get_kusama_identities(
-        [
-            "FvrbaMus8iASyrQYkajQWDxsYvG5gb72PFPuvy8TvkFFVGn",
-            "GqC37KSFFeGAoL7YxSeP1YDwr85WJvLmDDQiSaprTDAm8Jj",
-        ]
-    )
-    df_track = get_kusama_tracks()
-    load_referenda_stats_gov2()
+#     # get_kusama_identities(
+#     #     [
+#     #         "FvrbaMus8iASyrQYkajQWDxsYvG5gb72PFPuvy8TvkFFVGn",
+#     #         "GqC37KSFFeGAoL7YxSeP1YDwr85WJvLmDDQiSaprTDAm8Jj",
+#     #     ]
+#     # )
+#     df_track = get_kusama_tracks()
+#     load_referenda_stats_gov2()
 
-    df_delegation = load_delegation_data(2)
+#     df_delegation = load_delegation_data(2)
