@@ -601,7 +601,6 @@ def create_rangeslider(full_referenda_data, gov_version):
 def create_cross_filters(full_referenda_data):
     df = pd.DataFrame(full_referenda_data)
     filters = [html.Div("Filters", className="two columns")]
-    print(df.head())
     for filter in filters_gov2:
         filter_list = list(df[filter].unique())
         searchable_bool = True if filter != [None] else False
