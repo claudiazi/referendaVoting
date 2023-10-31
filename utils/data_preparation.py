@@ -10,7 +10,7 @@ from collections.abc import MutableMapping
 
 
 subsquid_endpoint = "https://squid.subsquid.io/referenda-dashboard/graphql"
-substrate_endpoint = "wss://kusama-rpc.dwellir.com/"
+substrate_endpoint = "wss://kusama-rpc.polkadot.io/"
 
 
 def load_current_block():
