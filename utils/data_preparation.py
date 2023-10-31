@@ -225,7 +225,8 @@ def load_referenda_stats_gov2():
     referenda_data = requests.post(subsquid_endpoint, json={"query": query}).text
     referenda_data = json.loads(referenda_data)
     df = pd.DataFrame.from_dict(referenda_data["data"]["gov2referendaStats"])
-    print(f"finish loading referenda_stats {time.time() - start_time}")
+    referenda_stats_load_time = time.time()
+    print(f"finish loading referenda_stats {referenda_stats_load_time - start_time}")
     df_tracks = get_kusama_tracks()
     df_tracks = df_tracks[["id", "name"]]
     df = (
@@ -233,10 +234,12 @@ def load_referenda_stats_gov2():
         .drop(columns=["id"])
         .rename(columns={"name": "track_name"})
     )
-    for col in ["decision_deposit_who", "submission_deposit_who"]:
-        df1 = df.copy()
-        df1 = df1[df[col].notna()]
-        df = add_identities_to_dataframe(df, df1, "referendum_index", col)
+    # for col in ["decision_deposit_who", "submission_deposit_who"]:
+    #     df1 = df.copy()
+    #     df1 = df1[df[col].notna()]
+    #     df = add_identities_to_dataframe(df, df1, "referendum_index", col)
+    # print(f"finish loading identity {time.time() - referenda_stats_load_time}")
+    print(df.columns)
     df = df.sort_values("referendum_index")
     df_ongoing = df[df["ended_at"].isnull()].sort_values("referendum_index")
     return (
