@@ -9,7 +9,7 @@ from substrateinterface.exceptions import SubstrateRequestException
 from collections.abc import MutableMapping
 
 
-subsquid_endpoint = "https://squid.subsquid.io/referenda-dashboard-live/v/v1/graphql"
+subsquid_endpoint = "https://squid.subsquid.io/referenda-dashboard/v/v1/graphql"
 substrate_endpoint = "wss://kusama-rpc.polkadot.io/"
 
 
@@ -232,10 +232,10 @@ def load_referenda_stats_gov2():
         .drop(columns=["id"])
         .rename(columns={"name": "track_name"})
     )
-    for col in ["decision_deposit_who", "submission_deposit_who"]:
-        df1 = df.copy()
-        df1 = df1[df[col].notna()]
-        df = add_identities_to_dataframe(df, df1, "referendum_index", col)
+    # for col in ["decision_deposit_who", "submission_deposit_who"]:
+    #     df1 = df.copy()
+    #     df1 = df1[df[col].notna()]
+    #     df = add_identities_to_dataframe(df, df1, "referendum_index", col)
     df = df.sort_values("referendum_index")
     df_ongoing = df[df["ended_at"].isnull()].sort_values("referendum_index")
     return (
