@@ -30,6 +30,7 @@ def build_banner():
                     'margin-right': '12px',
                 },
                 ),
+                style={'display': 'none'},
             ),
         ],
     )
