@@ -465,7 +465,7 @@ def build_gov2_tab_1():
                                     children=[
                                         html.Div(
                                             dcc.Graph(
-                                                id="submission_deposit_who_display_piechart_gov2",
+                                                id="submission_deposit_who_piechart_gov2",
                                                 figure=blank_figure(),
                                             )
                                         )
@@ -703,8 +703,8 @@ def create_live_data_table(ongoing_referenda_data):
         Input("crossfilter_section_gov2", "value"),
         Input("crossfilter_method_gov2", "value"),
         Input("crossfilter_track_name_gov2", "value"),
-        Input("crossfilter_submission_deposit_who_display_gov2", "value"),
-        Input("crossfilter_decision_deposit_who_display_gov2", "value"),
+        Input("crossfilter_submission_deposit_who_gov2", "value"),
+        Input("crossfilter_decision_deposit_who_gov2", "value"),
     ],
     state=Input("full-referenda-data", "data"),
 )
@@ -715,8 +715,8 @@ def update_votes_counts_chart(
     selected_section,
     selected_method,
     selected_track_name,
-    selected_submission_deposit_who_display,
-    selected_decision_deposit_who_display,
+    selected_submission_deposit_who,
+    selected_decision_deposit_who,
     referenda_data,
 ):
     df_referenda = pd.DataFrame(referenda_data).sort_values(by="referendum_index")
@@ -724,8 +724,8 @@ def update_votes_counts_chart(
         selected_section,
         selected_method,
         selected_track_name,
-        selected_submission_deposit_who_display,
-        selected_decision_deposit_who_display,
+        selected_submission_deposit_who,
+        selected_decision_deposit_who,
     ]
     df_referenda = filter_referenda(
         df_referenda, selected_ids, filters_input, filters_gov2
@@ -813,8 +813,8 @@ def update_votes_counts_chart(
         Input("crossfilter_section_gov2", "value"),
         Input("crossfilter_method_gov2", "value"),
         Input("crossfilter_track_name_gov2", "value"),
-        Input("crossfilter_submission_deposit_who_display_gov2", "value"),
-        Input("crossfilter_decision_deposit_who_display_gov2", "value"),
+        Input("crossfilter_submission_deposit_who_gov2", "value"),
+        Input("crossfilter_decision_deposit_who_gov2", "value"),
     ],
 )
 def update_bar_chart(
@@ -824,16 +824,16 @@ def update_bar_chart(
     selected_section,
     selected_method,
     selected_track_name,
-    selected_submission_deposit_who_display,
-    selected_decision_deposit_who_display,
+    selected_submission_deposit_who,
+    selected_decision_deposit_who,
 ):
     df_referenda = pd.DataFrame(referenda_data)
     filters_input = [
         selected_section,
         selected_method,
         selected_track_name,
-        selected_submission_deposit_who_display,
-        selected_decision_deposit_who_display,
+        selected_submission_deposit_who,
+        selected_decision_deposit_who,
     ]
     df_referenda = filter_referenda(
         df_referenda, selected_ids, filters_input, filters_gov2
@@ -927,8 +927,8 @@ def update_bar_chart(
         Input("crossfilter_section_gov2", "value"),
         Input("crossfilter_method_gov2", "value"),
         Input("crossfilter_track_name_gov2", "value"),
-        Input("crossfilter_submission_deposit_who_display_gov2", "value"),
-        Input("crossfilter_decision_deposit_who_display_gov2", "value"),
+        Input("crossfilter_submission_deposit_who_gov2", "value"),
+        Input("crossfilter_decision_deposit_who_gov2", "value"),
     ],
 )
 def update_new_accounts_chart(
@@ -938,16 +938,16 @@ def update_new_accounts_chart(
     selected_section,
     selected_method,
     selected_track_name,
-    selected_submission_deposit_who_display,
-    selected_decision_deposit_who_display,
+    selected_submission_deposit_who,
+    selected_decision_deposit_who,
 ):
     df_referenda = pd.DataFrame(referenda_data)
     filters_input = [
         selected_section,
         selected_method,
         selected_track_name,
-        selected_submission_deposit_who_display,
-        selected_decision_deposit_who_display,
+        selected_submission_deposit_who,
+        selected_decision_deposit_who,
     ]
     df_referenda = filter_referenda(
         df_referenda, selected_ids, filters_input, filters_gov2
@@ -1004,8 +1004,8 @@ def update_new_accounts_chart(
         Input("crossfilter_section_gov2", "value"),
         Input("crossfilter_method_gov2", "value"),
         Input("crossfilter_track_name_gov2", "value"),
-        Input("crossfilter_submission_deposit_who_display_gov2", "value"),
-        Input("crossfilter_decision_deposit_who_display_gov2", "value"),
+        Input("crossfilter_submission_deposit_who_gov2", "value"),
+        Input("crossfilter_decision_deposit_who_gov2", "value"),
     ],
 )
 def update_vote_amount_with_conviction_chart(
@@ -1015,16 +1015,16 @@ def update_vote_amount_with_conviction_chart(
     selected_section,
     selected_method,
     selected_track_name,
-    selected_submission_deposit_who_display,
-    selected_decision_deposit_who_display,
+    selected_submission_deposit_who,
+    selected_decision_deposit_who,
 ):
     df_referenda = pd.DataFrame(referenda_data)
     filters_input = [
         selected_section,
         selected_method,
         selected_track_name,
-        selected_submission_deposit_who_display,
-        selected_decision_deposit_who_display,
+        selected_submission_deposit_who,
+        selected_decision_deposit_who,
     ]
     df_referenda = filter_referenda(
         df_referenda, selected_ids, filters_input, filters_gov2
@@ -1084,8 +1084,8 @@ def update_vote_amount_with_conviction_chart(
         Input("crossfilter_section_gov2", "value"),
         Input("crossfilter_method_gov2", "value"),
         Input("crossfilter_track_name_gov2", "value"),
-        Input("crossfilter_submission_deposit_who_display_gov2", "value"),
-        Input("crossfilter_decision_deposit_who_display_gov2", "value"),
+        Input("crossfilter_submission_deposit_who_gov2", "value"),
+        Input("crossfilter_decision_deposit_who_gov2", "value"),
     ],
 )
 def update_delegation_chart(
@@ -1095,16 +1095,16 @@ def update_delegation_chart(
     selected_section,
     selected_method,
     selected_track_name,
-    selected_submission_deposit_who_display,
-    selected_decision_deposit_who_display,
+    selected_submission_deposit_who,
+    selected_decision_deposit_who,
 ):
     df_referenda = pd.DataFrame(referenda_data)
     filters_input = [
         selected_section,
         selected_method,
         selected_track_name,
-        selected_submission_deposit_who_display,
-        selected_decision_deposit_who_display,
+        selected_submission_deposit_who,
+        selected_decision_deposit_who,
     ]
     df_referenda = filter_referenda(
         df_referenda, selected_ids, filters_input, filters_gov2
@@ -1198,8 +1198,8 @@ def update_delegation_chart(
         Input("crossfilter_section_gov2", "value"),
         Input("crossfilter_method_gov2", "value"),
         Input("crossfilter_track_name_gov2", "value"),
-        Input("crossfilter_submission_deposit_who_display_gov2", "value"),
-        Input("crossfilter_decision_deposit_who_display_gov2", "value"),
+        Input("crossfilter_submission_deposit_who_gov2", "value"),
+        Input("crossfilter_decision_deposit_who_gov2", "value"),
     ],
 )
 def update_voter_type_chart(
@@ -1209,16 +1209,16 @@ def update_voter_type_chart(
     selected_section,
     selected_method,
     selected_track_name,
-    selected_submission_deposit_who_display,
-    selected_decision_deposit_who_display,
+    selected_submission_deposit_who,
+    selected_decision_deposit_who,
 ):
     df_referenda = pd.DataFrame(referenda_data)
     filters_input = [
         selected_section,
         selected_method,
         selected_track_name,
-        selected_submission_deposit_who_display,
-        selected_decision_deposit_who_display,
+        selected_submission_deposit_who,
+        selected_decision_deposit_who,
     ]
     df_referenda = filter_referenda(
         df_referenda, selected_ids, filters_input, filters_gov2
@@ -1308,8 +1308,8 @@ def update_voter_type_chart(
         Input("crossfilter_section_gov2", "value"),
         Input("crossfilter_method_gov2", "value"),
         Input("crossfilter_track_name_gov2", "value"),
-        Input("crossfilter_submission_deposit_who_display_gov2", "value"),
-        Input("crossfilter_decision_deposit_who_display_gov2", "value"),
+        Input("crossfilter_submission_deposit_who_gov2", "value"),
+        Input("crossfilter_decision_deposit_who_gov2", "value"),
     ],
 )
 def update_voting_time_barchart(
@@ -1319,16 +1319,16 @@ def update_voting_time_barchart(
     selected_section,
     selected_method,
     selected_track_name,
-    selected_submission_deposit_who_display,
-    selected_decision_deposit_who_display,
+    selected_submission_deposit_who,
+    selected_decision_deposit_who,
 ):
     df_referenda = pd.DataFrame(referenda_data)
     filters_input = [
         selected_section,
         selected_method,
         selected_track_name,
-        selected_submission_deposit_who_display,
-        selected_decision_deposit_who_display,
+        selected_submission_deposit_who,
+        selected_decision_deposit_who,
     ]
     df_referenda = filter_referenda(
         df_referenda, selected_ids, filters_input, filters_gov2
@@ -1408,8 +1408,8 @@ def update_voting_time_barchart(
         Input("crossfilter_section_gov2", "value"),
         Input("crossfilter_method_gov2", "value"),
         Input("crossfilter_track_name_gov2", "value"),
-        Input("crossfilter_submission_deposit_who_display_gov2", "value"),
-        Input("crossfilter_decision_deposit_who_display_gov2", "value"),
+        Input("crossfilter_submission_deposit_who_gov2", "value"),
+        Input("crossfilter_decision_deposit_who_gov2", "value"),
     ],
 )
 def update_vote_timing_distribution(
@@ -1418,16 +1418,16 @@ def update_vote_timing_distribution(
     selected_section,
     selected_method,
     selected_track_name,
-    selected_submission_deposit_who_display,
-    selected_decision_deposit_who_display,
+    selected_submission_deposit_who,
+    selected_decision_deposit_who,
 ):
     df_referenda = pd.DataFrame(referenda_data)
     filters_input = [
         selected_section,
         selected_method,
         selected_track_name,
-        selected_submission_deposit_who_display,
-        selected_decision_deposit_who_display,
+        selected_submission_deposit_who,
+        selected_decision_deposit_who,
     ]
     df_referenda = filter_referenda(
         df_referenda, selected_ids, filters_input, filters_gov2
@@ -1472,8 +1472,8 @@ def update_vote_timing_distribution(
         Input("crossfilter_section_gov2", "value"),
         Input("crossfilter_method_gov2", "value"),
         Input("crossfilter_track_name_gov2", "value"),
-        Input("crossfilter_submission_deposit_who_display_gov2", "value"),
-        Input("crossfilter_decision_deposit_who_display_gov2", "value"),
+        Input("crossfilter_submission_deposit_who_gov2", "value"),
+        Input("crossfilter_decision_deposit_who_gov2", "value"),
     ],
 )
 def update_section_pie_chart(
@@ -1482,16 +1482,16 @@ def update_section_pie_chart(
     selected_section,
     selected_method,
     selected_track_name,
-    selected_submission_deposit_who_display,
-    selected_decision_deposit_who_display,
+    selected_submission_deposit_who,
+    selected_decision_deposit_who,
 ):
     df_referenda = pd.DataFrame(referenda_data)
     filters_input = [
         selected_section,
         selected_method,
         selected_track_name,
-        selected_submission_deposit_who_display,
-        selected_decision_deposit_who_display,
+        selected_submission_deposit_who,
+        selected_decision_deposit_who,
     ]
     df_referenda = filter_referenda(
         df_referenda, selected_ids, filters_input, filters_gov2
@@ -1530,8 +1530,8 @@ def update_section_pie_chart(
         Input("crossfilter_section_gov2", "value"),
         Input("crossfilter_method_gov2", "value"),
         Input("crossfilter_track_name_gov2", "value"),
-        Input("crossfilter_submission_deposit_who_display_gov2", "value"),
-        Input("crossfilter_decision_deposit_who_display_gov2", "value"),
+        Input("crossfilter_submission_deposit_who_gov2", "value"),
+        Input("crossfilter_decision_deposit_who_gov2", "value"),
     ],
 )
 def update_method_pie_chart(
@@ -1540,16 +1540,16 @@ def update_method_pie_chart(
     selected_section,
     selected_method,
     selected_track_name,
-    selected_submission_deposit_who_display,
-    selected_decision_deposit_who_display,
+    selected_submission_deposit_who,
+    selected_decision_deposit_who,
 ):
     df_referenda = pd.DataFrame(referenda_data)
     filters_input = [
         selected_section,
         selected_method,
         selected_track_name,
-        selected_submission_deposit_who_display,
-        selected_decision_deposit_who_display,
+        selected_submission_deposit_who,
+        selected_decision_deposit_who,
     ]
     df_referenda = filter_referenda(
         df_referenda, selected_ids, filters_input, filters_gov2
@@ -1591,15 +1591,15 @@ def update_method_pie_chart(
 
 
 @app.callback(
-    Output("submission_deposit_who_display_piechart_gov2", "figure"),
+    Output("submission_deposit_who_piechart_gov2", "figure"),
     [
         Input("full-referenda-data", "data"),
         Input("selected-ids-gov2", "value"),
         Input("crossfilter_section_gov2", "value"),
         Input("crossfilter_method_gov2", "value"),
         Input("crossfilter_track_name_gov2", "value"),
-        Input("crossfilter_submission_deposit_who_display_gov2", "value"),
-        Input("crossfilter_decision_deposit_who_display_gov2", "value"),
+        Input("crossfilter_submission_deposit_who_gov2", "value"),
+        Input("crossfilter_decision_deposit_who_gov2", "value"),
     ],
 )
 def update_submission_pie_chart(
@@ -1608,35 +1608,35 @@ def update_submission_pie_chart(
     selected_section,
     selected_method,
     selected_track_name,
-    selected_submission_deposit_who_display,
-    selected_decision_deposit_who_display,
+    selected_submission_deposit_who,
+    selected_decision_deposit_who,
 ):
     df_referenda = pd.DataFrame(referenda_data)
     filters_input = [
         selected_section,
         selected_method,
         selected_track_name,
-        selected_submission_deposit_who_display,
-        selected_decision_deposit_who_display,
+        selected_submission_deposit_who,
+        selected_decision_deposit_who,
     ]
     df_referenda = filter_referenda(
         df_referenda, selected_ids, filters_input, filters_gov2
     )
     df_proposer_count = (
-        df_referenda.groupby("submission_deposit_who_display")
+        df_referenda.groupby("submission_deposit_who")
         .size()
         .reset_index(name="count")
         .sort_values(by="count", ascending=False)
     )
     df_proposer_count["proposer_short"] = df_proposer_count[
-        "submission_deposit_who_display"
+        "submission_deposit_who"
     ].apply(lambda x: f"{x[:6]}...{x[-4:]}")
     xi_graph_data = [
         go.Pie(
             labels=df_proposer_count["proposer_short"],
             values=df_proposer_count["count"],
             marker=dict(colors=color_scale),
-            customdata=df_proposer_count["submission_deposit_who_display"],
+            customdata=df_proposer_count["submission_deposit_who"],
             textposition="inside",
             hovertemplate="%{customdata}<br>" + "%{percent}" + "<extra></extra>",
         )
@@ -1666,8 +1666,8 @@ def update_submission_pie_chart(
         Input("crossfilter_section_gov2", "value"),
         Input("crossfilter_method_gov2", "value"),
         Input("crossfilter_track_name_gov2", "value"),
-        Input("crossfilter_submission_deposit_who_display_gov2", "value"),
-        Input("crossfilter_decision_deposit_who_display_gov2", "value"),
+        Input("crossfilter_submission_deposit_who_gov2", "value"),
+        Input("crossfilter_decision_deposit_who_gov2", "value"),
     ],
 )
 def update_quiz_answer_chart(
@@ -1677,16 +1677,16 @@ def update_quiz_answer_chart(
     selected_section,
     selected_method,
     selected_track_name,
-    selected_submission_deposit_who_display,
-    selected_decision_deposit_who_display,
+    selected_submission_deposit_who,
+    selected_decision_deposit_who,
 ):
     df_referenda = pd.DataFrame(referenda_data)
     filters_input = [
         selected_section,
         selected_method,
         selected_track_name,
-        selected_submission_deposit_who_display,
-        selected_decision_deposit_who_display,
+        selected_submission_deposit_who,
+        selected_decision_deposit_who,
     ]
     df_referenda = filter_referenda(
         df_referenda, selected_ids, filters_input, filters_gov2
@@ -1769,8 +1769,8 @@ def update_quiz_answer_chart(
         Output("crossfilter_section_gov2", "value"),
         Output("crossfilter_method_gov2", "value"),
         Output("crossfilter_track_name_gov2", "value"),
-        Output("crossfilter_submission_deposit_who_display_gov2", "value"),
-        Output("crossfilter_decision_deposit_who_display_gov2", "value"),
+        Output("crossfilter_submission_deposit_who_gov2", "value"),
+        Output("crossfilter_decision_deposit_who_gov2", "value"),
     ],
     [Input("clear-radio-gov2", "n_clicks")],
 )
